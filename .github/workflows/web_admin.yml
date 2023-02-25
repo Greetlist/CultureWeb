@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build with make
-      run: make -j4
+      run: cd web_admin/server/ && make -j4
