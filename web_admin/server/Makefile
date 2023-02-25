@@ -1,7 +1,7 @@
 export GO111MODULE=on
 
 all:
-	swag init
+	/usr/bin/swag init
 	mkdir -p bin
 	go build -o ./bin/main main.go 
 default: all

@@ -31,9 +31,9 @@ func InitLogger() {
             LOG.LoggerLevel("error"): path.Join(config.GlobalConfig.LogDir, "error.log"),
             LOG.LoggerLevel("debug"): path.Join(config.GlobalConfig.LogDir, "debug.log"),
         },
-        MaxSize : 1024 * 1024,
-        MaxLine : 5,
-        DateSlice : "d",
+        MaxSize : 0,
+        MaxLine : 0,
+        DateSlice : "H",
         JsonFormat: false,
         Format: "%timestamp_format% [%level_string%][%file%:%line%] %body%",
     }
