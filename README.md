@@ -7,11 +7,11 @@
 > Golang + Vue 
 
 ## TODO List
-- [] Basic env set up
-- [] CICD suppor
-- [] ORM set up(New/Migration...etc)
-- [] Session && Cookie support
-- [] TLS support
-- [] Server Selection
-- [] Domain support
-- [] Auto Deployment
+- [ ] Basic env set up
+- [ ] CICD suppor
+- [ ] ORM set up(New/Migration...etc)
+- [ ] Session && Cookie support
+- [ ] TLS support
+- [ ] Server Selection
+- [ ] Domain support
+- [ ] Auto Deployment
