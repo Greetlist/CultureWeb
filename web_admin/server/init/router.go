@@ -5,9 +5,9 @@ import (
     "github.com/swaggo/files"
     ginSwagger "github.com/swaggo/gin-swagger"
 
-    "greetlist/CultureWeb/server/routers"
-    _ "greetlist/CultureWeb/server/docs"
-    midware "greetlist/CultureWeb/server/middleware"
+    "github.com/Greetlist/CultureWeb/web_admin/server/routers"
+    _ "github.com/Greetlist/CultureWeb/web_admin/server/docs"
+    midware "github.com/Greetlist/CultureWeb/web_admin/server/middleware"
 )
 
 func InitRouterAndMiddleware() *gin.Engine {

@@ -4,25 +4,23 @@ import (
     "github.com/spf13/cobra"
     "fmt"
     "os"
-    "server"
+    "github.com/Greetlist/CultureWeb/web_admin/server/server"
 )
 
 var (
-    bindAddr string
-    bindPort int64
+    config_file string
 )
 
 var rootCmd = &cobra.Command {
-    Use: "./web --bind_addr addr --bind_port port",
-    Short: "Statistic Web show Stock data automatic",
+    Use: "./web --config_file config_path",
+    Short: "Culture web admin",
     Run: func (cmd *cobra.Command, args []string) {
-        server.RunServer(bindAddr, bindPort)
+        server.RunServer(config_file)
     },
 }
 
 func init() {
-    rootCmd.PersistentFlags().StringVarP(&bindAddr, "bind_addr", "", "0.0.0.0", "server bind interface")
-    rootCmd.PersistentFlags().Int64VarP(&bindPort, "bind_port", "", 8080, "server bind port")
+    rootCmd.PersistentFlags().StringVarP(&config_file, "config_file", "", "config.yaml", "config file path")
 }
 
 func Execute() {

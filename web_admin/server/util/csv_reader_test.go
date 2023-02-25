@@ -8,7 +8,7 @@ import (
 
 func TestCsvReader(t *testing.T) {
     //csvReader := CsvReader{}
-    //fileName := "/home/greetlist/macd/data_storage/603788.XSHG/stock_daily_data/kline_daily.csv"
+    //fileName := "/home/Greetlist/macd/data_storage/603788.XSHG/stock_daily_data/kline_daily.csv"
     //if err := csvReader.ReadCsv(fileName); err != nil {
         //os.Exit(1)
     //}

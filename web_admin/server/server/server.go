@@ -1,11 +1,15 @@
 package server
 
 import (
-    initModel "greetlist/CultureWeb/server/init"
+    initModel "github.com/Greetlist/CultureWeb/web_admin/server/init"
+    "github.com/Greetlist/CultureWeb/web_admin/server/config"
+    "github.com/Greetlist/CultureWeb/web_admin/server/logger"
     "strconv"
 )
 
-func RunServer(bindAddr string, bindPort int64) {
+func RunServer(config_file string) {
+    config.InitConfig(config_file)
+    logger.InitLogger()
     router := initModel.InitRouterAndMiddleware()
-    router.Run(bindAddr + ":" + strconv.FormatInt(bindPort, 10))
+    router.Run(config.GlobalConfig.BindAddr + ":" + strconv.FormatInt(config.GlobalConfig.BindPort, 10))
 }

@@ -3,4 +3,5 @@ dist/
 *.swo
 docs/
 bin/
+log/
 README.md

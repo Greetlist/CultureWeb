@@ -1,13 +1,13 @@
 package routers
 
 import (
-    "greetlist/CultureWeb/server/api"
+    "github.com/Greetlist/CultureWeb/web_admin/server/controller"
     "github.com/gin-gonic/gin"
 )
 
 func InitStockApiRouter(RouterGroup *gin.RouterGroup) {
     StockRouterGroup := RouterGroup.Group("stock")
-    StockRouterGroup.GET("/getDailyCalcStockData", api.GetDailyCalcStockData)
-    StockRouterGroup.POST("/getQueryStockData", api.GetQueryStockData)
-    StockRouterGroup.GET("/getAllStockCode", api.GetAllStockCode)
+    StockRouterGroup.GET("/getDailyCalcStockData", controller.GetDailyCalcStockData)
+    StockRouterGroup.POST("/getQueryStockData", controller.GetQueryStockData)
+    StockRouterGroup.GET("/getAllStockCode", controller.GetAllStockCode)
 }
