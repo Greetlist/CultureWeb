@@ -14,5 +14,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
+    - name: Down load go packages
+      run: export GOPROXY=https://goproxy.io && go install github.com/swaggo/swag/cmd/swag@latest
     - name: Build with make
       run: export PATH=/home/greetlist/workspace/bin:$PATH && cd web_admin/server/ && make -j4
