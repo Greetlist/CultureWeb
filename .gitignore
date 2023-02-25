@@ -1,0 +1,6 @@
+dist/
+*.swp
+*.swo
+docs/
+bin/
+README.md

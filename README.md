@@ -1,14 +1,16 @@
-- [Culture Web Project](#culture-web-project)
+- [Description](#description)
   - [Language Selection](#language-selection)
   - [TODO List](#todo-list)
 
-# Culture Web Project
+# Description
+> Culture Web + WebAdmin Project
+
 ## Language Selection
 > Golang + Vue 
 
 ## TODO List
 - [ ] Basic env set up
-- [ ] CICD suppor
+- [ ] GitHub Runner set up and CICD support
 - [ ] ORM set up(New/Migration...etc)
 - [ ] Session && Cookie support
 - [ ] TLS support
