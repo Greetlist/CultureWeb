@@ -16,7 +16,10 @@ jobs:
     - uses: actions/checkout@v3
     - name: Down load go packages
       run: export GOPROXY=https://goproxy.io && go install github.com/swaggo/swag/cmd/swag@latest
-    - name: Build with make
+    - name: Print some var
       run: |
+        echo $GITHUB_PATH
         echo "/home/greetlist/worspace/bin" >> $GITHUB_PATH
-        cd web_admin/server/ && make -j4
+        echo $GITHUB_PATH
+    - name: Build with make
+      run: cd web_admin/server/ && make -j4
