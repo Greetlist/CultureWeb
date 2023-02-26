@@ -1,6 +1,6 @@
 - [Description](#description)
-  - [Language Selection](#language-selection)
-  - [TODO List](#todo-list)
+- [Language Selection](#language-selection)
+- [TODO List](#todo-list)
 
 ## Description
 > Culture Web + WebAdmin Project
