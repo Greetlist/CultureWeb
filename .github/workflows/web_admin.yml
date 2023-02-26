@@ -18,7 +18,14 @@ jobs:
       run: export GOPROXY=https://goproxy.io && go install github.com/swaggo/swag/cmd/swag@latest
     - name: Print some var
       run: |
-        /home/greetlist/workspace/bin/swag -h
+        echo $GITHUB_ENV
+        echo "SWAG_PATH=/home/greetlist/workspace/bin/" >> $GITHUB_ENV
+        echo $GITHUB_ENV
+
+    - name: Test var
+      run: |
+        echo "${{ env.SWAG_PATH }}" >> $GITHUB_PATH
+        ${{ env.SWAG_PATH }}/swag -h
     - name: Build with make
       run: |
         export GITHUB_PATH=$GITHUB_PATH:/home/greetlist/workspace/bin
