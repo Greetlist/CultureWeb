@@ -21,6 +21,7 @@ jobs:
         echo $GITHUB_PATH
         export GITHUB_PATH=$GITHUB_PATH:/home/greetlist/workspace/bin
         echo $GITHUB_PATH
+        swag -h
     - name: Build with make
       run: |
         export GITHUB_PATH=$GITHUB_PATH:/home/greetlist/workspace/bin
