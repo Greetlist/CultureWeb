@@ -19,7 +19,7 @@ jobs:
     - name: Print some var
       run: |
         echo $GITHUB_PATH
-        echo "/home/greetlist/worspace/bin" >> $GITHUB_PATH
+        export GITHUB_PATH=$GITHUB_PATH:/home/greetlist/worspace/bin
         echo $GITHUB_PATH
     - name: Build with make
       run: cd web_admin/server/ && make -j4
