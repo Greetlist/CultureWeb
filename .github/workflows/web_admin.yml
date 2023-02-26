@@ -11,10 +11,12 @@ on:
 
 jobs:
   Build-Test-Binary:
-    runs-on: ubuntu-20.04
+    runs-on: self-hosted
     steps:
     - uses: actions/checkout@v3
     - name: Down load go packages
       run: export GOPROXY=https://goproxy.io && go install github.com/swaggo/swag/cmd/swag@latest
     - name: Build with make
-      run: cd web_admin/server/ && make -j4
+      run: |
+        export GITHUB_PATH=$GITHUB_PATH:/home/greetlist/workspace/bin
+        cd web_admin/server/ && make -j4
