@@ -9,8 +9,8 @@
 > Golang + Vue 
 
 ## TODO List
-- [ ] Basic env set up
-- [ ] GitHub Runner set up and CICD support
+- [x] Basic env set up
+- [x] GitHub Runner set up and CICD support
 - [ ] ORM set up(New/Migration...etc)
 - [ ] Session && Cookie support
 - [ ] TLS support
