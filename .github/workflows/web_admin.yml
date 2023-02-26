@@ -13,16 +13,6 @@ jobs:
   Build-Test-Binary:
     runs-on: self-hosted
     steps:
-    - name: Print some var
-      run: |
-        echo $GITHUB_ENV
-        echo "SWAG_PATH=/home/greetlist/workspace/bin/" >> $GITHUB_ENV
-        echo $GITHUB_ENV
-        echo "/home/greetlist/workspace/bin/" >> $GITHUB_PATH
-    - name: Test var
-      run: |
-        ${{ env.SWAG_PATH }}/swag -h
-
     - uses: actions/checkout@v3
     - name: Down load go packages
       run: export GOPROXY=https://goproxy.io && go install github.com/swaggo/swag/cmd/swag@latest
