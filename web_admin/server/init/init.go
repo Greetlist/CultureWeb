@@ -28,6 +28,6 @@ func InitRouterAndMiddleware() *gin.Engine {
       API 相关组
     */
     ApiRouterGroup := Router.Group("api")
-    routers.InitStockApiRouter(ApiRouterGroup)
+    routers.InitUserApiRouter(ApiRouterGroup)
     return Router
 }

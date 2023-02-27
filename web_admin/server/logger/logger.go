@@ -7,12 +7,12 @@ import (
     "os"
 )
 
-var LOG *go_logger.Logger
+var Logger *go_logger.Logger
 
 func InitLogger() {
-    LOG = go_logger.NewLogger()
+    Logger = go_logger.NewLogger()
     os.MkdirAll(config.GlobalConfig.LogDir, os.ModePerm)
-    LOG.Detach("console")
+    Logger.Detach("console")
 
     consoleConfig := &go_logger.ConsoleConfig{
         Color: true,
@@ -20,22 +20,22 @@ func InitLogger() {
         Format: "%timestamp_format% [%level_string%][%file%:%line%] %body%",
     }
     // 添加 console 为 logger 的一个输出
-    LOG.Attach("console", go_logger.LOGGER_LEVEL_DEBUG, consoleConfig)
+    Logger.Attach("console", go_logger.LOGGER_LEVEL_DEBUG, consoleConfig)
 
     fileConfig := &go_logger.FileConfig {
         Filename: path.Join(config.GlobalConfig.LogDir, "total.log"),
         LevelFileName : map[int]string {
-            LOG.LoggerLevel("info"): path.Join(config.GlobalConfig.LogDir, "info.log"),
-            LOG.LoggerLevel("alert"): path.Join(config.GlobalConfig.LogDir, "alert.log"),
-            LOG.LoggerLevel("warning"): path.Join(config.GlobalConfig.LogDir, "warning.log"),
-            LOG.LoggerLevel("error"): path.Join(config.GlobalConfig.LogDir, "error.log"),
-            LOG.LoggerLevel("debug"): path.Join(config.GlobalConfig.LogDir, "debug.log"),
+            Logger.LoggerLevel("info"): path.Join(config.GlobalConfig.LogDir, "info.log"),
+            Logger.LoggerLevel("alert"): path.Join(config.GlobalConfig.LogDir, "alert.log"),
+            Logger.LoggerLevel("warning"): path.Join(config.GlobalConfig.LogDir, "warning.log"),
+            Logger.LoggerLevel("error"): path.Join(config.GlobalConfig.LogDir, "error.log"),
+            Logger.LoggerLevel("debug"): path.Join(config.GlobalConfig.LogDir, "debug.log"),
         },
         MaxSize : 0,
         MaxLine : 0,
-        DateSlice : "H",
+        DateSlice : "h",
         JsonFormat: false,
         Format: "%timestamp_format% [%level_string%][%file%:%line%] %body%",
     }
-    LOG.Attach("file", go_logger.LOGGER_LEVEL_DEBUG, fileConfig)
+    Logger.Attach("file", go_logger.LOGGER_LEVEL_DEBUG, fileConfig)
 }
