@@ -8,7 +8,19 @@ import (
     "github.com/Greetlist/CultureWeb/web_admin/server/routers"
     _ "github.com/Greetlist/CultureWeb/web_admin/server/docs"
     midware "github.com/Greetlist/CultureWeb/web_admin/server/middleware"
+    "github.com/Greetlist/CultureWeb/web_admin/server/config"
+    "github.com/Greetlist/CultureWeb/web_admin/server/logger"
+    "github.com/Greetlist/CultureWeb/web_admin/server/database"
+    "github.com/Greetlist/CultureWeb/web_admin/server/model"
 )
+
+func InitAllModule(config_file string) {
+    config.InitConfig(config_file)
+    logger.InitLogger()
+    database.InitDB()
+    database.AutoMigrate()
+    model.InitModel(database.DB)
+}
 
 func InitRouterAndMiddleware() *gin.Engine {
     //全局性设置

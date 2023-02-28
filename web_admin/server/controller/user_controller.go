@@ -30,8 +30,8 @@ func GetUserInfo(c *gin.Context) {
     res.UserInfo = userInfo
     if err != nil {
         LOG.Logger.Errorf("Get User Info Error: %v", err)
-        GenErrorReturn(ErrorCode.GetUserInfoError, &res.Result)
-        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        GenErrorReturn(err, &res.Result)
+        c.JSON(err.HttpStatusCode, res)
         return
     }
     GenSuccessReturn(&res.Result)
@@ -50,8 +50,8 @@ func GetTotalUserInfo(c *gin.Context) {
     userInfos, err := model.UserModel.GetTotalUserInfo()
     if err != nil {
         LOG.Logger.Errorf("Get User Info Error: %v", err)
-        GenErrorReturn(ErrorCode.GetUserInfoError, &res.Result)
-        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        GenErrorReturn(err, &res.Result)
+        c.JSON(err.HttpStatusCode, res)
         return
     }
     res.UserInfos = *userInfos
@@ -71,24 +71,24 @@ func GetTotalUserInfo(c *gin.Context) {
 func UserRegister(c *gin.Context) {
     var req UserRegisterRequest
     var res UserRegisterResponse
-    if e := c.ShouldBind(&req); e != nil {
+    if e := c.ShouldBindJSON(&req); e != nil {
         LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
         GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
         c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
         return
     }
-    err := model.UserModel.CreateUser(genUserSchema(&req))
+    err := model.UserModel.CreateUser(genCreateUserSchema(&req))
     if err != nil {
         LOG.Logger.Errorf("Create User Error: %v", err)
-        GenErrorReturn(ErrorCode.RegisterUserError, &res.Result)
-        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        GenErrorReturn(err, &res.Result)
+        c.JSON(err.HttpStatusCode, res)
         return
     }
     GenSuccessReturn(&res.Result)
     c.JSON(http.StatusOK, res)
 }
 
-func genUserSchema (req *UserRegisterRequest) *schema.User {
+func genCreateUserSchema (req *UserRegisterRequest) *schema.User {
     var user schema.User
     user.Account = req.Account
     user.Password = req.Password
@@ -96,6 +96,42 @@ func genUserSchema (req *UserRegisterRequest) *schema.User {
     user.Sex = req.Sex
     user.Age = req.Age
     return &user
+}
+func genModifyUserSchema (req *UserModifyRequest) *schema.User {
+    var user schema.User
+    user.Name = req.Name
+    user.Sex = req.Sex
+    user.Age = req.Age
+    return &user
+}
+
+// Modify User Info godoc
+// @Summary Modify User Info
+// @Description Modify User Info
+// @ID UserModify
+// @Accept json
+// @Produce json
+// @Param request_json body UserModifyRequest true "modify user info"
+// @Success 200 {object} UserModifyResponse
+// @Router /api/user/userModify [post]
+func UserModify(c *gin.Context) {
+    var req UserModifyRequest
+    var res UserModifyResponse
+    if e := c.ShouldBindJSON(&req); e != nil {
+        LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
+        GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
+    err := model.UserModel.ModifyUser(req.UserID, genModifyUserSchema(&req))
+    if err != nil {
+        LOG.Logger.Errorf("Modify User Error: %v", err)
+        GenErrorReturn(err, &res.Result)
+        c.JSON(err.HttpStatusCode, res)
+        return
+    }
+    GenSuccessReturn(&res.Result)
+    c.JSON(http.StatusOK, res)
 }
 
 // Login godoc

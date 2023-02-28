@@ -42,3 +42,13 @@ type GetTotalUserInfoResponse struct {
     Result RequestResult `json:"request_result"`
     UserInfos []schema.User `json:"user_infos"`
 }
+
+type UserModifyRequest struct {
+    UserID uint `json:"user_id"`
+    Name string `json:"name"`
+    Sex string `json:"sex"`
+    Age int `json:"age"`
+}
+type UserModifyResponse struct {
+    Result RequestResult `json:"request_result"`
+}

@@ -1,13 +1,13 @@
 package model
 
 import (
-    "github.com/Greetlist/CultureWeb/web_admin/server/database"
+    "gorm.io/gorm"
 )
 
 var (
     UserModel UserModelStruct
 )
 
-func InitModel() {
-    UserModel = UserModelStruct{DB: database.DB}
+func InitModel(db *gorm.DB) {
+    UserModel = UserModelStruct{DB: db}
 }
