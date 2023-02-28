@@ -18,7 +18,7 @@ func NewResponseError(code int, msg string, status int) *ResponseError {
     res := new(ResponseError)
     res.Code = code
     res.Message = msg
-    res.HttpStatusCode = code
+    res.HttpStatusCode = status
     return res
 }
 
@@ -34,5 +34,8 @@ var (
     DBModifyError = NewResponseError(20003, "数据库修改失败", http.StatusOK)
 
     //Use related Error
-    RegisterUserError = NewResponseError(30000, "注册用户失败", http.StatusOK)
+    GetUserInfoError = NewResponseError(30000, "获取用户信息失败", http.StatusOK)
+    RegisterUserError = NewResponseError(30001, "用户注册失败", http.StatusOK)
+    ModifyUserError = NewResponseError(30002, "修改用户信息失败", http.StatusOK)
+    DeleteUserError = NewResponseError(30003, "删除用户失败", http.StatusOK)
 )

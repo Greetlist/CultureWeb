@@ -1,5 +1,5 @@
 bind_addr: 0.0.0.0
-bind_port: 8888
+bind_port: 8900
 
 log_dir: ./log
 
