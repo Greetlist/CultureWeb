@@ -1,4 +1,5 @@
 export GO111MODULE=on
+export GOPROXY=https://goproxy.io
 
 all:
 	swag init

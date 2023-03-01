@@ -1,11 +1,17 @@
 name: web_admin
 on:
   push:
+    branches:
+      - master
+      - release
     paths-ignore:
       - 'web_admin/frontend/**'
       - 'web_front/**'
   pull_request:
-      paths-ignore:
+    branches:
+      - master
+      - release
+    paths-ignore:
       - 'web_admin/frontend/**'
       - 'web_front/**'
 
