@@ -6,7 +6,7 @@ import (
 
 type User struct {
     UserID uint `gorm:"column:user_id;primary_key;AUTO_INCREMENT;" json:"user_id"`
-    Account string `gorm:"column:account;not null;" json:"account"`
+    Account string `gorm:"column:account;unique;not null;" json:"account"`
     Password string `gorm:"column:password;not null;" json:"password"`
     Name string `gorm:"column:name;not null;" json:"name"`
     Sex string `gorm:"column:sex;not null;" json:"sex"`

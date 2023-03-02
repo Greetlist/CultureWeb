@@ -144,6 +144,30 @@ func UserModify(c *gin.Context) {
 // @Success 200 {object} UserLogoutRequest
 // @Router /api/user/login [post]
 func UserLogin(c *gin.Context) {
+    var req UserLoginRequest
+    var res UserLoginResponse
+    if e := c.ShouldBindJSON(&req); e != nil {
+        LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
+        GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
+    user, err := model.UserModel.FetchUserInfo(req.Account, req.Password)
+    if err != nil {
+        LOG.Logger.Errorf("Fetch User Error: %v", err)
+        GenErrorReturn(err, &res.Result)
+        c.JSON(err.HttpStatusCode, res)
+        return
+    }
+    token := model.NewToken()
+    if e := model.SetTokenToRedis(token, user); e != nil {
+        LOG.Logger.Errorf("Set Token Error: %v", err)
+        GenErrorReturn(err, &res.Result)
+    }
+    GenSuccessReturn(&res.Result)
+    res.UserID = user.UserID
+    c.JSON(http.StatusOK, res)
+    c.SetCookie(token.TokenName, token.Value, int(model.TOKEN_EXPIRE_TIME), "/", "culture.cn", true, false)
 }
 
 // Logout godoc

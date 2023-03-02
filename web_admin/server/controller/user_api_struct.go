@@ -29,6 +29,7 @@ type UserLoginRequest struct {
 }
 type UserLoginResponse struct {
     Result RequestResult `json:"request_result"`
+    UserID uint `json:"user_id"`
 }
 
 type UserLogoutRequest struct {
