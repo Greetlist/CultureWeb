@@ -3,6 +3,11 @@ bind_port: 8900
 
 log_dir: ./log
 
+
+tls_config:
+  server_crt: /home/greetlist/tls_ca/server.crt
+  server_key: /home/greetlist/tls_ca/server.key
+
 mysql_config:
   user: root
   password: nike0810

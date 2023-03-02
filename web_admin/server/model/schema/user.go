@@ -5,7 +5,7 @@ import (
 )
 
 type User struct {
-    ID uint `gorm:"primary_key;AUTO_INCREMENT;" json:"id"`
+    UserID uint `gorm:"column:user_id;primary_key;AUTO_INCREMENT;" json:"user_id"`
     Account string `gorm:"column:account;not null;" json:"account"`
     Password string `gorm:"column:password;not null;" json:"password"`
     Name string `gorm:"column:name;not null;" json:"name"`
@@ -18,7 +18,8 @@ type User struct {
     IsAdmin bool `gorm:"column:is_active;default:0;" json:"is_admin"`
     State string `gorm:"state;default:normal;" json:"state"`
     Score int `gorm:"column:score;default:0;" json:"score"`
-    Interests []Interest `gorm:"column:interests;foreignKey:UserID" json:"interests"`
+    Interests []Interest `gorm:"foreignKey:InterestID" json:"interests"`
+    Verifications []UserVerification `gorm:"foreignKey:UserVerificationID" json:"user_verifications"`
     CreateTime time.Time `gorm:"column:create_time;autoCreateTime:milli;" json:"create_time"`
     UpdateTime time.Time `gorm:"column:update_time;autoUpdateTime:milli;" json:"update_time"`
 }
