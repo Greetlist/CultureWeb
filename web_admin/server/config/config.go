@@ -7,6 +7,12 @@ import (
     "os"
 )
 
+type Redis struct {
+    PoolSize int `yaml:"pool_size"`
+    RedisServer string `yaml:"redis_server"`
+    RedisPort int64 `yaml:"redis_port"`
+}
+
 type TLS struct {
     ServerCrt string `yaml:"server_crt"`
     ServerKey string `yaml:"server_key"`
@@ -27,6 +33,7 @@ type YamlConfig struct {
     BindAddr string `yaml:"bind_addr"`
     BindPort int64 `yaml:"bind_port"`
     LogDir string `yaml:"log_dir"`
+    RedisConfig Redis `yaml:"redis_config"`
     TLSConfig TLS `yaml:"tls_config"`
     MysqlConfig Mysql `yaml:"mysql_config"`
 }

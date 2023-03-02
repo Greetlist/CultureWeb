@@ -142,7 +142,7 @@ func UserModify(c *gin.Context) {
 // @Produce json
 // @Param request_json body UserLoginRequest true "User Login"
 // @Success 200 {object} UserLogoutRequest
-// @Router /api/user/userLogin [post]
+// @Router /api/user/login [post]
 func UserLogin(c *gin.Context) {
 }
 
@@ -154,6 +154,6 @@ func UserLogin(c *gin.Context) {
 // @Produce json
 // @Param request_json body UserLogoutRequest true "User Logout"
 // @Success 200 {object} UserLogoutResponse
-// @Router /api/user/userLogout [post]
+// @Router /api/user/logout [post]
 func UserLogout(c *gin.Context) {
 }

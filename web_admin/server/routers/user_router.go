@@ -10,6 +10,6 @@ func InitUserApiRouter(RouterGroup *gin.RouterGroup) {
     UserRouterGroup.GET("/getUserInfo", controller.GetUserInfo)
     UserRouterGroup.GET("/getTotalUserInfo", controller.GetTotalUserInfo)
     UserRouterGroup.POST("/userRegister", controller.UserRegister)
-    UserRouterGroup.GET("/userLogin", controller.UserLogin)
-    UserRouterGroup.GET("/userLogout", controller.UserLogout)
+    UserRouterGroup.GET("/login", controller.UserLogin)
+    UserRouterGroup.GET("/logout", controller.UserLogout)
 }

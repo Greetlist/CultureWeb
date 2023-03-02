@@ -21,6 +21,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/gocarina/gocsv v0.0.0-20230223115542-dc4ee9de5fe2 // indirect
 	github.com/goccy/go-json v0.10.0 // indirect
+	github.com/gomodule/redigo v1.8.9 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect

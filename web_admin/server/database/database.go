@@ -37,6 +37,6 @@ func AutoMigrate() {
     DB.AutoMigrate(
         &schema.User{}, &schema.UserVerification{},
         &schema.Media{}, &schema.Interest{},
-        &schema.Article{},
+        &schema.Article{}, &schema.Statistic{},
     )
 }
