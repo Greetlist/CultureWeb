@@ -1,17 +1,17 @@
 package server
 
 import (
-    initModel "github.com/Greetlist/CultureWeb/web_admin/server/init"
+    initModule "github.com/Greetlist/CultureWeb/web_admin/server/init"
     "github.com/Greetlist/CultureWeb/web_admin/server/config"
-    "github.com/Greetlist/CultureWeb/web_admin/server/logger"
-    "github.com/Greetlist/CultureWeb/web_admin/server/database"
+    LOG "github.com/Greetlist/CultureWeb/web_admin/server/logger"
     "strconv"
 )
 
 func RunServer(config_file string) {
-    config.InitConfig(config_file)
-    logger.InitLogger()
-    database.InitDB()
-    router := initModel.InitRouterAndMiddleware()
-    router.Run(config.GlobalConfig.BindAddr + ":" + strconv.FormatInt(config.GlobalConfig.BindPort, 10))
+    initModule.InitAllModule(config_file)
+    router := initModule.InitRouterAndMiddleware()
+    //router.Run(config.GlobalConfig.BindAddr + ":" + strconv.FormatInt(config.GlobalConfig.BindPort, 10))
+    addr := config.GlobalConfig.BindAddr + ":" + strconv.FormatInt(config.GlobalConfig.BindPort, 10)
+    LOG.Logger.Infof("%v %v %v", addr, config.GlobalConfig.TLSConfig.ServerCrt, config.GlobalConfig.TLSConfig.ServerKey)
+    router.RunTLS(addr, config.GlobalConfig.TLSConfig.ServerCrt, config.GlobalConfig.TLSConfig.ServerKey)
 }

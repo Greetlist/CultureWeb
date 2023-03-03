@@ -1,7 +1,16 @@
 bind_addr: 0.0.0.0
-bind_port: 8888
+bind_port: 8900
 
 log_dir: ./log
+
+redis_config:
+  pool_size: 10
+  redis_server: 127.0.0.1
+  redis_port: 6379
+
+tls_config:
+  server_crt: /home/greetlist/tls_ca/server.crt
+  server_key: /home/greetlist/tls_ca/server.key
 
 mysql_config:
   user: root

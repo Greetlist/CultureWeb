@@ -4,6 +4,7 @@ import (
     "gorm.io/gorm"
     "gorm.io/driver/mysql"
     "github.com/Greetlist/CultureWeb/web_admin/server/config"
+    "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
     "time"
     "fmt"
     "os"
@@ -30,4 +31,12 @@ func InitDB() {
     mysql.SetMaxIdleConns(config.GlobalConfig.MysqlConfig.MaxIdleConns)
     mysql.SetMaxOpenConns(config.GlobalConfig.MysqlConfig.MaxOpenConns)
     mysql.SetConnMaxLifetime(time.Hour)
+}
+
+func AutoMigrate() {
+    DB.AutoMigrate(
+        &schema.User{}, &schema.UserVerification{},
+        &schema.Media{}, &schema.Interest{},
+        &schema.Article{}, &schema.Statistic{},
+    )
 }
