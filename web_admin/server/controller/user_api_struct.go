@@ -47,6 +47,7 @@ type GetTotalUserInfoResponse struct {
 type UserModifyRequest struct {
     UserID uint `json:"user_id"`
     Name string `json:"name"`
+    Password string `json:"password"`
     Sex string `json:"sex"`
     Age int `json:"age"`
 }

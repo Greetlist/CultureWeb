@@ -7,6 +7,7 @@ import (
     "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
     LOG "github.com/Greetlist/CultureWeb/web_admin/server/logger"
     ErrorCode "github.com/Greetlist/CultureWeb/web_admin/server/error"
+    "github.com/Greetlist/CultureWeb/web_admin/server/config"
 )
 
 // GetUserInfo godoc
@@ -100,6 +101,7 @@ func genCreateUserSchema (req *UserRegisterRequest) *schema.User {
 func genModifyUserSchema (req *UserModifyRequest) *schema.User {
     var user schema.User
     user.Name = req.Name
+    user.Password = req.Password
     user.Sex = req.Sex
     user.Age = req.Age
     return &user
@@ -166,8 +168,8 @@ func UserLogin(c *gin.Context) {
     }
     GenSuccessReturn(&res.Result)
     res.UserID = user.UserID
+    c.SetCookie(token.TokenName, token.Value, int(config.GlobalConfig.TokenConfig.TokenExpireTime), "/", "192.168.199.123", true, false)
     c.JSON(http.StatusOK, res)
-    c.SetCookie(token.TokenName, token.Value, int(model.TOKEN_EXPIRE_TIME), "/", "culture.cn", true, false)
 }
 
 // Logout godoc
@@ -180,4 +182,16 @@ func UserLogin(c *gin.Context) {
 // @Success 200 {object} UserLogoutResponse
 // @Router /api/user/logout [post]
 func UserLogout(c *gin.Context) {
+    var req UserLogoutRequest
+    var res UserLogoutResponse
+    if e := c.ShouldBindJSON(&req); e != nil {
+        LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
+        GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
+    cookie, _ := c.Cookie(config.GlobalConfig.TokenConfig.TokenName)
+    model.CleanRedisToken(cookie)
+    GenSuccessReturn(&res.Result)
+    c.JSON(http.StatusOK, res)
 }

@@ -21,3 +21,7 @@ mysql_config:
   params: charset=utf8mb4&parseTime=True
   max_idle_conns: 10
   max_open_conns: 100
+
+token_config:
+  token_name: "culture_web"
+  token_expire_time: 28800

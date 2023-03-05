@@ -1,17 +1,17 @@
 package model
 
 import (
-    redisPool "github.com/Greetlist/CultureWeb/web_admin/server/redis"
+    "time"
+
+    uuid "github.com/nu7hatch/gouuid"
     "github.com/gomodule/redigo/redis"
+
+    redisPool "github.com/Greetlist/CultureWeb/web_admin/server/redis"
     "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
     LOG "github.com/Greetlist/CultureWeb/web_admin/server/logger"
-    err "github.com/Greetlist/CultureWeb/web_admin/server/error"
-    uuid "github.com/nu7hatch/gouuid"
-    "time"
+    ErrorCode "github.com/Greetlist/CultureWeb/web_admin/server/error"
+    "github.com/Greetlist/CultureWeb/web_admin/server/config"
 )
-
-const TOKEN_NAME = "culture_web"
-const TOKEN_EXPIRE_TIME = 8 * 3600
 
 type UserToken struct {
     TokenName string
@@ -30,42 +30,56 @@ func NewToken() *UserToken {
     uid, _ := uuid.NewV4()
     tokenValue := getCryptoString(uid.String())
     return &UserToken {
-        TokenName: TOKEN_NAME,
+        TokenName: config.GlobalConfig.TokenConfig.TokenName,
         Value: tokenValue,
-        ExpireTime: time.Now().Unix() + TOKEN_EXPIRE_TIME,
+        ExpireTime: time.Now().Unix() + config.GlobalConfig.TokenConfig.TokenExpireTime,
     }
 }
 
-func VerifyToken(token string) (bool, *err.ResponseError) {
+func VerifyToken(token string, checkAdmin bool) (bool, *ErrorCode.ResponseError) {
     redisClient, _ := <- redisPool.RedisPool
+    defer redisPool.ReturnRedisClient(redisClient)
     var saveMap RedisSaveStruct
     v, e := redis.Values(redisClient.Do("HGETALL", token))
     if e != nil {
-        LOG.Logger.Errorf("HGETALL error is: %v", e)
-        return false, err.RedisCommandError
+        LOG.Logger.Errorf("HGETALL ErrorCodeor is: %v", e)
+        return false, ErrorCode.RedisCommandError
     }
     if e := redis.ScanStruct(v, &saveMap); e != nil {
-        LOG.Logger.Errorf("Parse error is: %v", e)
-        return false, err.RedisParseStructError
+        LOG.Logger.Errorf("Parse ErrorCodeor is: %v", e)
+        return false, ErrorCode.RedisParseStructError
     }
 
     currentTimestamp := time.Now().Unix()
     if currentTimestamp > saveMap.ExpireTime {
-        return false, err.RedisKeyExpireError
+        CleanRedisToken(token)
+        return false, ErrorCode.RedisKeyExpireError
+    }
+    if checkAdmin && !saveMap.IsAdmin {
+        return false, ErrorCode.CheckAdminError
     }
     return true, nil
 }
 
-func SetTokenToRedis(ut *UserToken, user *schema.User) *err.ResponseError {
+func SetTokenToRedis(ut *UserToken, user *schema.User) *ErrorCode.ResponseError {
     redisClient, _ := <- redisPool.RedisPool
+    defer redisPool.ReturnRedisClient(redisClient)
     var saveMap RedisSaveStruct
     saveMap.Account = user.Account
     saveMap.UserName = user.Name
     saveMap.IsAdmin = user.IsAdmin
     saveMap.ExpireTime = ut.ExpireTime
     if _, e := redisClient.Do("HSET", redis.Args{}.Add(ut.Value).AddFlat(&saveMap)...); e != nil {
-        return err.RedisCommandError
+        LOG.Logger.Errorf("HSET error is: %v", e)
+        return ErrorCode.RedisCommandError
     }
-    redisPool.RedisPool <- redisClient
     return nil
+}
+
+func CleanRedisToken(token string) {
+    redisClient, _ := <- redisPool.RedisPool
+    defer redisPool.ReturnRedisClient(redisClient)
+    if _, e := redisClient.Do("DEL", token); e != nil {
+        LOG.Logger.Errorf("DEL error is: %v", e)
+    }
 }

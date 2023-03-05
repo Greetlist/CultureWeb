@@ -9,7 +9,7 @@ type Article struct {
     Rank uint `gorm:"column:rank;default:0;" json:"rank"`
     Title string `gorm:"column:title;not null;" json:"title"`
     Content string `gorm:"column:content;not null;" json:"content"`
-    Lables []Label `gorm:"foreignKey:LabelID" json:"labels"`
+    Lables []Label `gorm:"many2many:labels;" json:"labels"`
     CreateTime time.Time `gorm:"column:create_time;autoCreateTime:milli;" json:"create_time"`
     UpdateTime time.Time `gorm:"column:update_time;autoUpdateTime:milli;" json:"update_time"`
 }

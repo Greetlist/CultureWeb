@@ -43,4 +43,9 @@ var (
     RedisCommandError = NewResponseError(40000, "Redis命令失败", http.StatusOK)
     RedisParseStructError = NewResponseError(40001, "Redis解析Struct失败", http.StatusOK)
     RedisKeyExpireError = NewResponseError(40002, "Redis Key超时", http.StatusOK)
+
+    //cookie Error
+    GetCookieError = NewResponseError(50000, "获取Cookie失败,请先登录", http.StatusOK)
+    CookieExpireError = NewResponseError(50001, "Cookie 超时,请重新登录", http.StatusOK)
+    CheckAdminError = NewResponseError(50002, "检查Admin权限失败", http.StatusOK)
 )

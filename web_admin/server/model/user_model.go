@@ -55,7 +55,8 @@ func (user *UserModelStruct) CreateUser(u *schema.User) *err.ResponseError {
 
 func (user *UserModelStruct) ModifyUser(userID uint, u *schema.User) *err.ResponseError {
     u.UserID = userID
-    update_res := user.DB.Model(u).Updates(schema.User{Name: u.Name, Sex: u.Sex, Age: u.Age})
+    newPassword := getCryptoString(u.Password)
+    update_res := user.DB.Model(u).Updates(schema.User{Name: u.Name, Password: newPassword, Sex: u.Sex, Age: u.Age})
     if update_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", update_res.Error)
         return err.ModifyUserError

@@ -11,9 +11,9 @@
 ## TODO List
 - [x] Basic env set up
 - [x] GitHub Runner set up and CICD support
-- [ ] ORM set up(New/Migration...etc)
-- [ ] Session && Cookie support
-- [ ] TLS support
+- [x] ORM set up(New/Migration...etc)
+- [x] Session && Cookie support
+- [x] TLS support
 - [ ] Server Selection
 - [ ] Domain support
 - [ ] Auto Deployment

@@ -15,10 +15,10 @@ type User struct {
     IdentifyID string `gorm:"column:idnentify_id;default:NULL;" json:"identify_id"`
     IsVerify bool `gorm:"column:is_verify;default:0;" json:"is_verify"`
     IsActive bool `gorm:"column:is_active;default:1;" json:"is_active"`
-    IsAdmin bool `gorm:"column:is_active;default:0;" json:"is_admin"`
+    IsAdmin bool `gorm:"column:is_admin;default:0;" json:"is_admin"`
     State string `gorm:"state;default:normal;" json:"state"`
     Score int `gorm:"column:score;default:0;" json:"score"`
-    Interests []Interest `gorm:"foreignKey:InterestID" json:"interests"`
+    Collections []Collection `gorm:"foreignKey:CollectionID" json:"collections"`
     Verifications []UserVerification `gorm:"foreignKey:UserVerificationID" json:"user_verifications"`
     CreateTime time.Time `gorm:"column:create_time;autoCreateTime:milli;" json:"create_time"`
     UpdateTime time.Time `gorm:"column:update_time;autoUpdateTime:milli;" json:"update_time"`

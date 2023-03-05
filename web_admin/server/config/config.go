@@ -29,6 +29,11 @@ type Mysql struct {
     MaxOpenConns int `yaml:"max_open_conns"`
 }
 
+type Token struct {
+    TokenName string `yaml:"token_name"`
+    TokenExpireTime int64 `yaml:"token_expire_time"`
+}
+
 type YamlConfig struct {
     BindAddr string `yaml:"bind_addr"`
     BindPort int64 `yaml:"bind_port"`
@@ -36,6 +41,7 @@ type YamlConfig struct {
     RedisConfig Redis `yaml:"redis_config"`
     TLSConfig TLS `yaml:"tls_config"`
     MysqlConfig Mysql `yaml:"mysql_config"`
+    TokenConfig Token `yaml:"token_config"`
 }
 
 var GlobalConfig YamlConfig
