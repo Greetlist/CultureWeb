@@ -33,18 +33,18 @@ func (user *UserModelStruct) GetTotalUserInfo() (*[]schema.User, *err.ResponseEr
     return &res, nil
 }
 
-func (user *UserModelStruct) FetchUserInfo(account, password string) (*schema.User, *err.ResponseError) {
+func (user *UserModelStruct) FetchUserInfo(account string) (*schema.User, *err.ResponseError) {
     var res schema.User
-    query_res := user.DB.Where(&schema.User{Account: account, Password: getCryptoString(password)}).First(&res)
+    query_res := user.DB.Where(&schema.User{Account: account}).First(&res)
     if query_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", query_res.Error)
-        return &res, err.GetUserInfoError
+        return nil, err.GetUserInfoError
     }
     return &res, nil
 }
 
 func (user *UserModelStruct) CreateUser(u *schema.User) *err.ResponseError {
-    u.Password = getCryptoString(u.Password)
+    u.Password = GetCryptoString(u.Password)
     insert_res := user.DB.Create(u)
     if insert_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", insert_res.Error)
@@ -55,7 +55,7 @@ func (user *UserModelStruct) CreateUser(u *schema.User) *err.ResponseError {
 
 func (user *UserModelStruct) ModifyUser(userID uint, u *schema.User) *err.ResponseError {
     u.UserID = userID
-    newPassword := getCryptoString(u.Password)
+    newPassword := GetCryptoString(u.Password)
     update_res := user.DB.Model(u).Updates(schema.User{Name: u.Name, Password: newPassword, Sex: u.Sex, Age: u.Age})
     if update_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", update_res.Error)
@@ -64,7 +64,18 @@ func (user *UserModelStruct) ModifyUser(userID uint, u *schema.User) *err.Respon
     return nil
 }
 
-func getCryptoString(target string) string {
+func (user *UserModelStruct) ChangePassword(userID uint, password string) *err.ResponseError {
+    u := schema.User{UserID: userID}
+    passwordCrypto := GetCryptoString(password)
+    update_res := user.DB.Model(&u).Updates(schema.User{Password: passwordCrypto})
+    if update_res.Error != nil {
+        LOG.Logger.Errorf("DB Error: %v", update_res.Error)
+        return err.ChangePasswordError
+    }
+    return nil
+}
+
+func GetCryptoString(target string) string {
     h := sha256.New()
     h.Write([]byte(target))
     cryptoBytes := h.Sum(nil)

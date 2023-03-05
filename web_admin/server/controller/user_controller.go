@@ -17,7 +17,7 @@ import (
 // @Produce json
 // @Param user_id query string false "user id"
 // @Success 200 {object} GetUserInfoResponse
-// @Router /api/user/getUserInfo [get]
+// @Router /api/admin/getUserInfo [get]
 func GetUserInfo(c *gin.Context) {
     var req GetUserInfoRequest
     var res GetUserInfoResponse
@@ -45,7 +45,7 @@ func GetUserInfo(c *gin.Context) {
 // @ID GetTotalUserInfo
 // @Produce json
 // @Success 200 {object} GetTotalUserInfoResponse
-// @Router /api/user/getTotalUserInfo [get]
+// @Router /api/admin/getTotalUserInfo [get]
 func GetTotalUserInfo(c *gin.Context) {
     var res GetTotalUserInfoResponse
     userInfos, err := model.UserModel.GetTotalUserInfo()
@@ -68,7 +68,7 @@ func GetTotalUserInfo(c *gin.Context) {
 // @Produce json
 // @Param request_json body UserRegisterRequest true "User Basic Info"
 // @Success 200 {object} UserRegisterResponse
-// @Router /api/user/userRegister [post]
+// @Router /api/user/normal/userRegister [post]
 func UserRegister(c *gin.Context) {
     var req UserRegisterRequest
     var res UserRegisterResponse
@@ -107,35 +107,6 @@ func genModifyUserSchema (req *UserModifyRequest) *schema.User {
     return &user
 }
 
-// Modify User Info godoc
-// @Summary Modify User Info
-// @Description Modify User Info
-// @ID UserModify
-// @Accept json
-// @Produce json
-// @Param request_json body UserModifyRequest true "modify user info"
-// @Success 200 {object} UserModifyResponse
-// @Router /api/user/userModify [post]
-func UserModify(c *gin.Context) {
-    var req UserModifyRequest
-    var res UserModifyResponse
-    if e := c.ShouldBindJSON(&req); e != nil {
-        LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
-        GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
-        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
-        return
-    }
-    err := model.UserModel.ModifyUser(req.UserID, genModifyUserSchema(&req))
-    if err != nil {
-        LOG.Logger.Errorf("Modify User Error: %v", err)
-        GenErrorReturn(err, &res.Result)
-        c.JSON(err.HttpStatusCode, res)
-        return
-    }
-    GenSuccessReturn(&res.Result)
-    c.JSON(http.StatusOK, res)
-}
-
 // Login godoc
 // @Summary User Login
 // @Description User Login
@@ -144,7 +115,7 @@ func UserModify(c *gin.Context) {
 // @Produce json
 // @Param request_json body UserLoginRequest true "User Login"
 // @Success 200 {object} UserLogoutRequest
-// @Router /api/user/login [post]
+// @Router /api/user/normal/login [post]
 func UserLogin(c *gin.Context) {
     var req UserLoginRequest
     var res UserLoginResponse
@@ -154,13 +125,18 @@ func UserLogin(c *gin.Context) {
         c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
         return
     }
-    user, err := model.UserModel.FetchUserInfo(req.Account, req.Password)
+    user, err := model.UserModel.FetchUserInfo(req.Account)
     if err != nil {
         LOG.Logger.Errorf("Fetch User Error: %v", err)
         GenErrorReturn(err, &res.Result)
         c.JSON(err.HttpStatusCode, res)
         return
+    } else if user.Password != model.GetCryptoString(req.Password) {
+        GenErrorReturn(ErrorCode.PasswordNotCorrectError, &res.Result)
+        c.JSON(ErrorCode.PasswordNotCorrectError.HttpStatusCode, res)
+        return
     }
+
     token := model.NewToken()
     if e := model.SetTokenToRedis(token, user); e != nil {
         LOG.Logger.Errorf("Set Token Error: %v", err)
@@ -180,7 +156,7 @@ func UserLogin(c *gin.Context) {
 // @Produce json
 // @Param request_json body UserLogoutRequest true "User Logout"
 // @Success 200 {object} UserLogoutResponse
-// @Router /api/user/logout [post]
+// @Router /api/user/normal/logout [post]
 func UserLogout(c *gin.Context) {
     var req UserLogoutRequest
     var res UserLogoutResponse
@@ -192,6 +168,82 @@ func UserLogout(c *gin.Context) {
     }
     cookie, _ := c.Cookie(config.GlobalConfig.TokenConfig.TokenName)
     model.CleanRedisToken(cookie)
+    GenSuccessReturn(&res.Result)
+    c.JSON(http.StatusOK, res)
+}
+
+// Modify User Info godoc
+// @Summary Modify User Info
+// @Description Modify User Info
+// @ID UserModify
+// @Accept json
+// @Produce json
+// @Param request_json body UserModifyRequest true "modify user info"
+// @Success 200 {object} UserModifyResponse
+// @Router /api/user/auth/userModify [post]
+func UserModify(c *gin.Context) {
+    var req UserModifyRequest
+    var res UserModifyResponse
+    if e := c.ShouldBindJSON(&req); e != nil {
+        LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
+        GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
+
+    cookie, _ := c.Cookie(config.GlobalConfig.TokenConfig.TokenName)
+    userRedisInfo, err := model.GetUserInfoFromRedis(cookie)
+    if err != nil {
+        GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
+
+    err = model.UserModel.ModifyUser(userRedisInfo.UserID, genModifyUserSchema(&req))
+    if err != nil {
+        LOG.Logger.Errorf("Modify User Error: %v", err)
+        GenErrorReturn(err, &res.Result)
+        c.JSON(err.HttpStatusCode, res)
+        return
+    }
+    GenSuccessReturn(&res.Result)
+    c.JSON(http.StatusOK, res)
+}
+
+// Change User Password godoc
+// @Summary Change User Password
+// @Description Modify User Password
+// @ID ChangePassword
+// @Accept json
+// @Produce json
+// @Param request_json body ChangePwdRequest true "change user password"
+// @Success 200 {object} ChangePwdResponse
+// @Router /api/user/auth/changePassword [post]
+func ChangePassword(c *gin.Context) {
+    var req ChangePwdRequest
+    var res ChangePwdResponse
+    if e := c.ShouldBindJSON(&req); e != nil {
+        LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
+        GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
+
+    cookie, _ := c.Cookie(config.GlobalConfig.TokenConfig.TokenName)
+    userRedisInfo, err := model.GetUserInfoFromRedis(cookie)
+    if err != nil {
+        GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
+
+    err = model.UserModel.ChangePassword(userRedisInfo.UserID, req.Password)
+    if err != nil {
+        LOG.Logger.Errorf("Change User Password Error: %v", err)
+        GenErrorReturn(err, &res.Result)
+        c.JSON(err.HttpStatusCode, res)
+        return
+    }
     GenSuccessReturn(&res.Result)
     c.JSON(http.StatusOK, res)
 }

@@ -20,6 +20,7 @@ type UserToken struct {
 }
 
 type RedisSaveStruct struct {
+    UserID uint `redis:"user_id"`
     Account string `redis:"account"`
     UserName string `redis:"user_name"`
     IsAdmin bool `redis:"is_admin"`
@@ -28,7 +29,7 @@ type RedisSaveStruct struct {
 
 func NewToken() *UserToken {
     uid, _ := uuid.NewV4()
-    tokenValue := getCryptoString(uid.String())
+    tokenValue := GetCryptoString(uid.String())
     return &UserToken {
         TokenName: config.GlobalConfig.TokenConfig.TokenName,
         Value: tokenValue,
@@ -37,29 +38,10 @@ func NewToken() *UserToken {
 }
 
 func VerifyToken(token string, checkAdmin bool) (bool, *ErrorCode.ResponseError) {
-    redisClient, _ := <- redisPool.RedisPool
-    defer redisPool.ReturnRedisClient(redisClient)
-
-    isExists, checkExistsError := redis.Int(redisClient.Do("EXISTS", token))
-    if checkExistsError != nil {
-        LOG.Logger.Errorf("EXISTS ErrorCode is: %v", checkExistsError)
-        return false, ErrorCode.RedisCommandError
-    } else if isExists != 1 {
-        LOG.Logger.Infof("Cookie: %v is not exists, user already logout.", token)
-        return false, ErrorCode.CookieIsCleanedError
+    saveMap, getErr := GetUserInfoFromRedis(token)
+    if getErr != nil {
+        return false, getErr
     }
-
-    var saveMap RedisSaveStruct
-    v, e := redis.Values(redisClient.Do("HGETALL", token))
-    if e != nil {
-        LOG.Logger.Errorf("HGETALL ErrorCode is: %v", e)
-        return false, ErrorCode.RedisCommandError
-    }
-    if e := redis.ScanStruct(v, &saveMap); e != nil {
-        LOG.Logger.Errorf("Parse ErrorCode is: %v", e)
-        return false, ErrorCode.RedisParseStructError
-    }
-
     currentTimestamp := time.Now().Unix()
     if currentTimestamp > saveMap.ExpireTime {
         CleanRedisToken(token)
@@ -75,6 +57,7 @@ func SetTokenToRedis(ut *UserToken, user *schema.User) *ErrorCode.ResponseError 
     redisClient, _ := <- redisPool.RedisPool
     defer redisPool.ReturnRedisClient(redisClient)
     var saveMap RedisSaveStruct
+    saveMap.UserID = user.UserID
     saveMap.Account = user.Account
     saveMap.UserName = user.Name
     saveMap.IsAdmin = user.IsAdmin
@@ -92,4 +75,29 @@ func CleanRedisToken(token string) {
     if _, e := redisClient.Do("DEL", token); e != nil {
         LOG.Logger.Errorf("DEL error is: %v", e)
     }
+}
+
+func GetUserInfoFromRedis(token string) (*RedisSaveStruct, *ErrorCode.ResponseError) {
+    redisClient, _ := <- redisPool.RedisPool
+    defer redisPool.ReturnRedisClient(redisClient)
+
+    isExists, checkExistsError := redis.Int(redisClient.Do("EXISTS", token))
+    if checkExistsError != nil {
+        LOG.Logger.Errorf("EXISTS ErrorCode is: %v", checkExistsError)
+        return nil, ErrorCode.RedisCommandError
+    } else if isExists != 1 {
+        LOG.Logger.Infof("Cookie: %v is not exists, user already logout.", token)
+        return nil, ErrorCode.CookieIsCleanedError
+    }
+    var saveMap RedisSaveStruct
+    v, e := redis.Values(redisClient.Do("HGETALL", token))
+    if e != nil {
+        LOG.Logger.Errorf("HGETALL ErrorCode is: %v", e)
+        return nil, ErrorCode.RedisCommandError
+    }
+    if e := redis.ScanStruct(v, &saveMap); e != nil {
+        LOG.Logger.Errorf("Parse ErrorCode is: %v", e)
+        return nil, ErrorCode.RedisParseStructError
+    }
+    return &saveMap, nil
 }

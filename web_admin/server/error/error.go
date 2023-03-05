@@ -38,6 +38,8 @@ var (
     RegisterUserError = NewResponseError(30001, "用户注册失败", http.StatusOK)
     ModifyUserError = NewResponseError(30002, "修改用户信息失败", http.StatusOK)
     DeleteUserError = NewResponseError(30003, "删除用户失败", http.StatusOK)
+    ChangePasswordError = NewResponseError(30004, "修改密码失败", http.StatusOK)
+    PasswordNotCorrectError = NewResponseError(30005, "用户密码错误", http.StatusOK)
 
     //Redis Error
     RedisCommandError = NewResponseError(40000, "Redis命令失败", http.StatusOK)

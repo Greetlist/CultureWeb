@@ -39,6 +39,7 @@ func InitRouterAndMiddleware() *gin.Engine {
     //WebInterfaceGroup := Router.Group("")
 
     ApiRouterGroup := Router.Group("api")
-    routers.InitUserApiRouter(ApiRouterGroup)
+    routers.InitAdminUserApiRouter(ApiRouterGroup)
+    routers.InitNormalUserApiRouter(ApiRouterGroup)
     return Router
 }

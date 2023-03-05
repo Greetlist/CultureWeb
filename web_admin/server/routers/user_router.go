@@ -6,11 +6,25 @@ import (
     "github.com/gin-gonic/gin"
 )
 
-func InitUserApiRouter(RouterGroup *gin.RouterGroup) {
+func InitAdminUserApiRouter(RouterGroup *gin.RouterGroup) {
+    AdminUserRouterGroup := RouterGroup.Group("admin")
+    AdminUserRouterGroup.Use(middleware.AdminCookieChecker())
+    AdminUserRouterGroup.GET("/getUserInfo", controller.GetUserInfo)
+    AdminUserRouterGroup.GET("/getTotalUserInfo", controller.GetTotalUserInfo)
+}
+
+func InitNormalUserApiRouter(RouterGroup *gin.RouterGroup) {
     UserRouterGroup := RouterGroup.Group("user")
-    UserRouterGroup.GET("/getUserInfo", middleware.AdminCookieChecker(), controller.GetUserInfo)
-    UserRouterGroup.GET("/getTotalUserInfo", middleware.AdminCookieChecker(), controller.GetTotalUserInfo)
-    UserRouterGroup.POST("/userRegister", controller.UserRegister)
-    UserRouterGroup.POST("/login", controller.UserLogin)
-    UserRouterGroup.POST("/logout", controller.UserLogout)
+
+    // no cookie needed
+    UserNormalRouterGroup := UserRouterGroup.Group("normal")
+    UserNormalRouterGroup.POST("/userRegister", controller.UserRegister)
+    UserNormalRouterGroup.POST("/login", controller.UserLogin)
+    UserNormalRouterGroup.POST("/logout", controller.UserLogout)
+
+    // need cookie
+    LoginUserRouterGroup := UserRouterGroup.Group("auth")
+    LoginUserRouterGroup.Use(middleware.CookieChecker())
+    LoginUserRouterGroup.POST("/userModify", controller.UserModify)
+    LoginUserRouterGroup.POST("/changePassword", controller.ChangePassword)
 }
