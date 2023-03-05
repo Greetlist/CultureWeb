@@ -39,14 +39,24 @@ func NewToken() *UserToken {
 func VerifyToken(token string, checkAdmin bool) (bool, *ErrorCode.ResponseError) {
     redisClient, _ := <- redisPool.RedisPool
     defer redisPool.ReturnRedisClient(redisClient)
+
+    isExists, checkExistsError := redis.Int(redisClient.Do("EXISTS", token))
+    if checkExistsError != nil {
+        LOG.Logger.Errorf("EXISTS ErrorCode is: %v", checkExistsError)
+        return false, ErrorCode.RedisCommandError
+    } else if isExists != 1 {
+        LOG.Logger.Infof("Cookie: %v is not exists, user already logout.", token)
+        return false, ErrorCode.CookieIsCleanedError
+    }
+
     var saveMap RedisSaveStruct
     v, e := redis.Values(redisClient.Do("HGETALL", token))
     if e != nil {
-        LOG.Logger.Errorf("HGETALL ErrorCodeor is: %v", e)
+        LOG.Logger.Errorf("HGETALL ErrorCode is: %v", e)
         return false, ErrorCode.RedisCommandError
     }
     if e := redis.ScanStruct(v, &saveMap); e != nil {
-        LOG.Logger.Errorf("Parse ErrorCodeor is: %v", e)
+        LOG.Logger.Errorf("Parse ErrorCode is: %v", e)
         return false, ErrorCode.RedisParseStructError
     }
 
