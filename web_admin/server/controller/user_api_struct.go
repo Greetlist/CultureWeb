@@ -12,12 +12,31 @@ type GetUserInfoResponse struct {
     UserInfo schema.User `json:"user_info"`
 }
 
+type AddUserRequest struct {
+    Account string `json:"account"`
+    Password string `json:"password"`
+    Name string `json:"name"`
+    PhoneNumber string `json:"phone_number"`
+    Sex string `json:"sex"`
+    Age int `json:"age"`
+    Address string `json:"address"`
+    IdentifyID string `json:"identify_id"`
+    IsActive bool `json:"is_active"`
+    IsAdmin bool `json:"is_admin"`
+    State string `json:"state"`
+}
+type AddUserResponse struct {
+    Result RequestResult `json:"request_result"`
+}
+
 type UserRegisterRequest struct {
     Account string `json:"account"`
     Password string `json:"password"`
     Name string `json:"name"`
+    PhoneNumber string `json:"phone_number"`
     Sex string `json:"sex"`
     Age int `json:"age"`
+    Address string `json:"address"`
 }
 type UserRegisterResponse struct {
     Result RequestResult `json:"request_result"`

@@ -26,6 +26,18 @@ const routes = [
     path: "/admin",
     name: "admin",
     component: () => import("@/views/Admin/AdminHome.vue"),
+    children: [
+      {
+        path: "/addUser",
+        name: "addUser",
+        component: () => import("@/views/Admin/AddUser.vue"),
+      }
+    ]
+  },
+  {
+    path: "/addUserTest",
+    name: "addUserTest",
+    component: () => import("@/views/Admin/AddUser.vue"),
   }
 ];
 

@@ -60,6 +60,35 @@ func GetTotalUserInfo(c *gin.Context) {
     c.JSON(http.StatusOK, res)
 }
 
+// AddUser godoc
+// @Summary Add User by admin
+// @Description Add User by admin
+// @ID AddUser
+// @Accept json
+// @Produce json
+// @Param request_json body AddUserRequest true "User Basic Info"
+// @Success 200 {object} AddUserResponse
+// @Router /api/admin/addUser [post]
+func AddUser(c *gin.Context) {
+    var req AddUserRequest
+    var res AddUserResponse
+    if e := c.ShouldBindJSON(&req); e != nil {
+        LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
+        GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
+    err := model.UserModel.CreateUser(genAddUserSchema(&req))
+    if err != nil {
+        LOG.Logger.Errorf("Create User Error: %v", err)
+        GenErrorReturn(err, &res.Result)
+        c.JSON(err.HttpStatusCode, res)
+        return
+    }
+    GenSuccessReturn(&res.Result)
+    c.JSON(http.StatusOK, res)
+}
+
 // UserRegister godoc
 // @Summary User Register
 // @Description User Register
@@ -94,8 +123,24 @@ func genCreateUserSchema (req *UserRegisterRequest) *schema.User {
     user.Account = req.Account
     user.Password = req.Password
     user.Name = req.Name
+    user.PhoneNumber = req.PhoneNumber
     user.Sex = req.Sex
     user.Age = req.Age
+    return &user
+}
+func genAddUserSchema (req *AddUserRequest) *schema.User {
+    var user schema.User
+    user.Account = req.Account
+    user.Password = req.Password
+    user.Name = req.Name
+    user.PhoneNumber = req.PhoneNumber
+    user.Sex = req.Sex
+    user.Age = req.Age
+    user.Address = req.Address
+    user.IdentifyID = req.IdentifyID
+    user.IsActive = req.IsActive
+    user.IsAdmin = req.IsAdmin
+    user.State = req.State
     return &user
 }
 func genModifyUserSchema (req *UserModifyRequest) *schema.User {
