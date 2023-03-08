@@ -10,4 +10,5 @@ export function loginout(params) {
 
 export const authApi = {
   login,
+  loginout,
 };

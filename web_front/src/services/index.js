@@ -1,5 +1,9 @@
-import { authApi } from "./auth";
+import { authApi } from "./admin/auth";
+import { normalApi } from "./admin/normal";
 
-export const api = {
+export const adminApi = {};
+
+export const userApi = {
   ...authApi,
+  ...normalApi,
 };
