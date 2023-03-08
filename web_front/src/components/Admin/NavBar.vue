@@ -1,19 +1,44 @@
 <template>
-  <el-menu
-    :default-active="1"
-    class="el-menu-demo"
-    mode="horizontal"
-    @select="handleSelect"
-    background-color="#545c64"
-    text-color="#fff"
-    active-text-color="#ffd04b">
-    <el-menu-item index="1">用户首页</el-menu-item>
-  </el-menu>
+  <div class="nav-bar">
+    <el-row>
+      <el-col :span="18">
+        <div>{{ title }}</div>
+      </el-col>
+      <el-col :span="6" class="user-info">
+        <div>
+          <span class="welcome-msg">欢迎您，管理员</span>
+          <span class="logout-btn" @click="signout">退出</span>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
 </template>
-
-
 <script>
 export default {
-  name: 'NavBar'
-}
+  name: "NavBar",
+  props: {
+    title: {
+      type: String,
+      default: "默认标题",
+    },
+  },
+  methods: {
+    signout() {},
+  },
+};
 </script>
+<style lang="scss" scoped>
+.nav-bar {
+  line-height: 45px;
+  padding: 0 15px;
+  text-align: left;
+  color: #fff;
+  background-color: #606266;
+  .user-info {
+    text-align: right;
+    .welcome-msg {
+      margin: 0 10px;
+    }
+  }
+}
+</style>

@@ -1,2 +1,2 @@
-export { default as Navbar } from "./Home/NavBar";
-export { default as Sidebar } from "./Home/SideBar";
+export { default as Navbar } from "./Admin/NavBar";
+export { default as Sidebar } from "./Admin/SideBar";

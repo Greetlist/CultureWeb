@@ -4,10 +4,20 @@
       <el-input v-model="user_form.account" clearable></el-input>
     </el-form-item>
     <el-form-item label="密码">
-      <el-input v-model="user_form.password" type="password" autocomplete="off" clearable></el-input>
+      <el-input
+        v-model="user_form.password"
+        type="password"
+        autocomplete="off"
+        clearable
+      ></el-input>
     </el-form-item>
     <el-form-item label="再次输入密码">
-      <el-input v-model="user_form.double_password" type="password" autocomplete="off" clearable></el-input>
+      <el-input
+        v-model="user_form.double_password"
+        type="password"
+        autocomplete="off"
+        clearable
+      ></el-input>
     </el-form-item>
     <el-form-item label="昵称">
       <el-input v-model="user_form.name" clearable></el-input>
@@ -45,33 +55,33 @@
 
 <script>
 export default {
-  name: 'AddUser',
+  name: "AddUser",
   data: function () {
     var checkAccount = (rule, value, callback) => {
-      if (value === '') {
-        return callback(new Error("账户不能为空"))
+      if (value === "") {
+        return callback(new Error("账户不能为空"));
       }
-      callback()
-    }
+      callback();
+    };
     var checkPassword = (rule, value, callback) => {
-      if (value === '') {
-        return callback(new Error("密码不能为空"))
-      } else if (this.user_form.password.value !== '') {
+      if (value === "") {
+        return callback(new Error("密码不能为空"));
+      } else if (this.user_form.password.value !== "") {
         if (value.length < 6) {
-          return callback(new Error("密码需大于6位"))
+          return callback(new Error("密码需大于6位"));
         }
       }
-      callback()
-    }
+      callback();
+    };
     var doubleCheckPassword = (rule, value, callback) => {
-      if (value === '') {
-        return callback(new Error("请再次输入密码"))
+      if (value === "") {
+        return callback(new Error("请再次输入密码"));
       } else if (value !== this.user_form.password.value) {
-        return callback(new Error("两次密码不同"))
+        return callback(new Error("两次密码不同"));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       user_form: {
         account: "",
@@ -84,51 +94,44 @@ export default {
         address: "",
         identify_id: "",
         is_active: "",
-        is_admin: ""
+        is_admin: "",
       },
       rules: {
-        account: [
-          { validator: checkAccount, trigger: 'blur' }
-        ],
-        password: [
-          { validator: checkPassword, trigger: 'blur' }
-        ],
-        double_password: [
-          { validator: doubleCheckPassword, trigger: 'blur' }
-        ]
-      }
-    }
+        account: [{ validator: checkAccount, trigger: "blur" }],
+        password: [{ validator: checkPassword, trigger: "blur" }],
+        double_password: [{ validator: doubleCheckPassword, trigger: "blur" }],
+      },
+    };
   },
   methods: {
     submit() {
       this.user_form.validate((valid) => {
         if (valid) {
-          console.log("commit")
+          console.log("commit");
         } else {
           return false;
         }
-      })
+      });
     },
     reset() {
-      this.user_form.account = ""
-      this.user_form.password = ""
-      this.user_form.double_password = ""
-      this.user_form.name = ""
-      this.user_form.phone_number = ""
-      this.user_form.sex = ""
-      this.user_form.age = ""
-      this.user_form.address = ""
-      this.user_form.identify_id = ""
-      this.user_form.is_active = ""
-      this.user_form.is_admin = ""
-    }
-  }
-}
-
+      this.user_form.account = "";
+      this.user_form.password = "";
+      this.user_form.double_password = "";
+      this.user_form.name = "";
+      this.user_form.phone_number = "";
+      this.user_form.sex = "";
+      this.user_form.age = "";
+      this.user_form.address = "";
+      this.user_form.identify_id = "";
+      this.user_form.is_active = "";
+      this.user_form.is_admin = "";
+    },
+  },
+};
 </script>
 
 <style>
 .el-input {
-  width: 50%
+  width: 50%;
 }
 </style>
