@@ -1,5 +1,5 @@
-import { authApi } from "./admin/auth";
-import { normalApi } from "./admin/normal";
+import { authApi } from "./user/auth";
+import { normalApi } from "./user/normal";
 
 export const adminApi = {};
 
