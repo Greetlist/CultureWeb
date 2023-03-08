@@ -10,6 +10,7 @@ module.exports = defineConfig({
       alias: {
         "@": path.resolve(__dirname, "src"),
         "@js": path.resolve(__dirname, "src/assets/js"),
+        "@constant": path.resolve(__dirname, "src/assets/constant"),
         "@style": path.resolve(__dirname, "src/assets/style"),
         "@img": path.resolve(__dirname, "src/assets/images"),
         "@c": path.resolve(__dirname, "src/components"),
