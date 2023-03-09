@@ -12,6 +12,8 @@
     "core-js": "^3.8.3",
     "element-plus": "^2.2.34",
     "element-ui": "^2.15.13",
+    "https-browserify": "^1.0.0",
+    "node-polyfill-webpack-plugin": "^2.0.1",
     "node-sass": "^8.0.0",
     "sass-loader": "^13.2.0",
     "vue": "^2.6.14",

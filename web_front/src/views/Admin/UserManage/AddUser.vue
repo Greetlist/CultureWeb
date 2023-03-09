@@ -1,9 +1,9 @@
 <template>
-  <el-form ref="user_form" :model="user_form" label-width="180px" size="medium">
-    <el-form-item label="账户">
+  <el-form ref="user_form" status-icon :rules="user_check_rules" :model="user_form" label-width="180px" size="medium">
+    <el-form-item label="账户" prop="account">
       <el-input v-model="user_form.account" clearable></el-input>
     </el-form-item>
-    <el-form-item label="密码">
+    <el-form-item label="密码" prop="password">
       <el-input
         v-model="user_form.password"
         type="password"
@@ -11,7 +11,7 @@
         clearable
       ></el-input>
     </el-form-item>
-    <el-form-item label="再次输入密码">
+    <el-form-item label="再次输入密码" prop="double_password">
       <el-input
         v-model="user_form.double_password"
         type="password"
@@ -54,34 +54,12 @@
 </template>
 
 <script>
+
+import { adminApi } from "@services/admin/"
+
 export default {
   name: "AddUser",
   data: function () {
-    var checkAccount = (rule, value, callback) => {
-      if (value === "") {
-        return callback(new Error("账户不能为空"));
-      }
-      callback();
-    };
-    var checkPassword = (rule, value, callback) => {
-      if (value === "") {
-        return callback(new Error("密码不能为空"));
-      } else if (this.user_form.password.value !== "") {
-        if (value.length < 6) {
-          return callback(new Error("密码需大于6位"));
-        }
-      }
-      callback();
-    };
-    var doubleCheckPassword = (rule, value, callback) => {
-      if (value === "") {
-        return callback(new Error("请再次输入密码"));
-      } else if (value !== this.user_form.password.value) {
-        return callback(new Error("两次密码不同"));
-      } else {
-        callback();
-      }
-    };
     return {
       user_form: {
         account: "",
@@ -96,18 +74,53 @@ export default {
         is_active: "",
         is_admin: "",
       },
-      rules: {
-        account: [{ validator: checkAccount, trigger: "blur" }],
-        password: [{ validator: checkPassword, trigger: "blur" }],
-        double_password: [{ validator: doubleCheckPassword, trigger: "blur" }],
+      user_check_rules: {
+        account: [
+          { required: true, message: "请输入账户", trigger: ["change", "blur"] },
+          { validator: this.checkAccount, trigger: ["change", "blur"] },
+        ],
+        password: [
+          { required: true, message: "请输入密码", trigger: ["change", "blur"] },
+          { validator: this.checkPassword, trigger: ["change", "blur"] },
+        ],
+        double_password: [
+          { required: true, message: "请再次输入密码", trigger: ["change", "blur"] },
+          { validator: this.doubleCheckPassword, trigger: ["change", "blur"] },
+        ],
       },
     };
   },
   methods: {
+    checkAccount(rule, value, callback) {
+      if (value === "") {
+        return callback(new Error("账户不能为空"));
+      }
+      callback();
+    },
+    checkPassword(rule, value, callback) {
+      if (value === "") {
+        return callback(new Error("密码不能为空"));
+      } else if (this.user_form.password !== "") {
+        if (value.length < 6) {
+          return callback(new Error("密码需大于6位"));
+        }
+      }
+      callback();
+    },
+    doubleCheckPassword(rule, value, callback) {
+      if (value === "") {
+        return callback(new Error("请再次输入密码"));
+      } else if (value !== this.user_form.password) {
+        return callback(new Error("两次密码不同"));
+      } else {
+        callback();
+      }
+    },
     submit() {
-      this.user_form.validate((valid) => {
+      this.$refs["user_form"].validate((valid) => {
         if (valid) {
-          console.log("commit");
+          adminApi.addUser(this.user_form)
+          //adminApi.getTotalUserInfo()
         } else {
           return false;
         }

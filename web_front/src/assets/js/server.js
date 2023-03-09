@@ -1,10 +1,20 @@
 import axios from "axios";
-axios.defaults.baseURL = process.env.VUE_APP_BASE_API;
+import https from "https";
+//axios.defaults.baseURL = process.env.VUE_APP_BASE_API;
+axios.defaults.baseURL = "https://121.5.100.186:8900";
+
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false,
+})
+axios.defaults.httpsAgent = httpsAgent
+const header = {
+  'Access-Control-Allow-Origin': '*',
+}
 
 export const Get = (url, params = {}) =>
   new Promise((resolve) => {
     axios
-      .get(url, params)
+      .get(url, params, { header })
       .then((result) => {
         resolve(result);
       })
@@ -16,7 +26,7 @@ export const Get = (url, params = {}) =>
 export const Post = (url, data = {}) => {
   return new Promise((resolve) => {
     axios
-      .post(url, data)
+      .post(url, data, { header })
       .then((result) => {
         resolve(result);
       })
