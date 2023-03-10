@@ -46,5 +46,11 @@ func checkCookie(c *gin.Context, checkAdmin bool) bool {
         sendError(c, err)
         return false
     }
+    err = model.RefreshRedisToken(cookie)
+    if err != nil {
+        LOG.Logger.Errorf("refresh cookie err is: %v", err)
+        sendError(c, err)
+        return false
+    }
     return true
 }

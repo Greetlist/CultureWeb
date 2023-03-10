@@ -11,7 +11,7 @@ func InitAdminUserApiRouter(RouterGroup *gin.RouterGroup) {
     AdminUserRouterGroup.Use(middleware.AdminCookieChecker())
     AdminUserRouterGroup.GET("/getUserInfo", controller.GetUserInfo)
     AdminUserRouterGroup.GET("/getTotalUserInfo", controller.GetTotalUserInfo)
-    AdminUserRouterGroup.GET("/addUser", controller.AddUser)
+    AdminUserRouterGroup.POST("/addUser", controller.AddUser)
 }
 
 func InitNormalUserApiRouter(RouterGroup *gin.RouterGroup) {

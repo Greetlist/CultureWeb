@@ -237,7 +237,7 @@ func UserModify(c *gin.Context) {
     }
 
     cookie, _ := c.Cookie(config.GlobalConfig.TokenConfig.TokenName)
-    userRedisInfo, err := model.GetUserInfoFromRedis(cookie)
+    userRedisInfo, err := model.GetUserInfoFromRedis(cookie, nil)
     if err != nil {
         GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
         c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
@@ -275,7 +275,7 @@ func ChangePassword(c *gin.Context) {
     }
 
     cookie, _ := c.Cookie(config.GlobalConfig.TokenConfig.TokenName)
-    userRedisInfo, err := model.GetUserInfoFromRedis(cookie)
+    userRedisInfo, err := model.GetUserInfoFromRedis(cookie, nil)
     if err != nil {
         GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
         c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)

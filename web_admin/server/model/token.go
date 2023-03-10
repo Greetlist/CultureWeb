@@ -38,7 +38,7 @@ func NewToken() *UserToken {
 }
 
 func VerifyToken(token string, checkAdmin bool) (bool, *ErrorCode.ResponseError) {
-    saveMap, getErr := GetUserInfoFromRedis(token)
+    saveMap, getErr := GetUserInfoFromRedis(token, nil)
     if getErr != nil {
         return false, getErr
     }
@@ -69,6 +69,27 @@ func SetTokenToRedis(ut *UserToken, user *schema.User) *ErrorCode.ResponseError 
     return nil
 }
 
+func CleanAllExpireRedisKey() {
+    redisClient, _ := <- redisPool.RedisPool
+    defer redisPool.ReturnRedisClient(redisClient)
+    keys, e := redis.Strings(redisClient.Do("KEYS", "*"))
+    if e != nil {
+        LOG.Logger.Errorf("Get all Keys error is: %v", e)
+        return
+    }
+    for _, key := range keys {
+        saveMap, e := GetUserInfoFromRedis(key, redisClient)
+        if e != nil {
+            LOG.Logger.Errorf("Get token info error is: %v", e)
+            continue
+        }
+        currentTimestamp := time.Now().Unix()
+        if currentTimestamp > saveMap.ExpireTime {
+            CleanRedisToken(key)
+        }
+    }
+}
+
 func CleanRedisToken(token string) {
     redisClient, _ := <- redisPool.RedisPool
     defer redisPool.ReturnRedisClient(redisClient)
@@ -77,9 +98,25 @@ func CleanRedisToken(token string) {
     }
 }
 
-func GetUserInfoFromRedis(token string) (*RedisSaveStruct, *ErrorCode.ResponseError) {
+func RefreshRedisToken(token string) *ErrorCode.ResponseError {
     redisClient, _ := <- redisPool.RedisPool
     defer redisPool.ReturnRedisClient(redisClient)
+    newExpireTime := time.Now().Unix() + config.GlobalConfig.TokenConfig.TokenExpireTime
+    if _, e := redisClient.Do("HSET", token, "expire_time", newExpireTime); e != nil {
+        LOG.Logger.Errorf("HSET error is: %v", e)
+        return ErrorCode.RedisCommandError
+    }
+    return nil
+}
+
+func GetUserInfoFromRedis(token string, rc redis.Conn) (*RedisSaveStruct, *ErrorCode.ResponseError) {
+    var redisClient redis.Conn
+    if rc == nil {
+        redisClient, _ := <- redisPool.RedisPool
+        defer redisPool.ReturnRedisClient(redisClient)
+    } else {
+        redisClient = rc
+    }
 
     isExists, checkExistsError := redis.Int(redisClient.Do("EXISTS", token))
     if checkExistsError != nil {
