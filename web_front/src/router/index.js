@@ -58,12 +58,12 @@ const routes = [
       },
       {
         path: "/articalList",
-        name: "articalList", // 活动列表
+        name: "articalList", // 文章列表
         component: () => import("@/views/Admin/Artical/ArticalList.vue"),
       },
       {
         path: "/addArtical",
-        name: "addArtical", // 新增活动
+        name: "addArtical", // 新增文章
         component: () => import("@/views/Admin/Artical/AddArtical.vue"),
       },
       {

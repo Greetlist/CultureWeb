@@ -37,7 +37,10 @@ type Token struct {
 type YamlConfig struct {
     BindAddr string `yaml:"bind_addr"`
     BindPort int64 `yaml:"bind_port"`
+    BaseUrl string `yaml:"base_url"`
     LogDir string `yaml:"log_dir"`
+    MediaSaveDir string `yaml:"media_save_basedir"`
+    MediaBaseUrl string `yaml:"media_base_url"`
     RedisConfig Redis `yaml:"redis_config"`
     TLSConfig TLS `yaml:"tls_config"`
     MysqlConfig Mysql `yaml:"mysql_config"`

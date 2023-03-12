@@ -1,7 +1,8 @@
 import axios from "axios";
 import https from "https";
 //axios.defaults.baseURL = process.env.VUE_APP_BASE_API;
-axios.defaults.baseURL = "https://121.5.100.186:8900";
+export const baseURL = "https://121.5.100.186:8900";
+axios.defaults.baseURL = baseURL;
 
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false,

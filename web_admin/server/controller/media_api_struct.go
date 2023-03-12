@@ -6,4 +6,5 @@ type GetTotalMediaResponse struct {
 
 type SaveMediaResponse struct {
     Result RequestResult `json:"request_result"`
+    FetchUrl string `json:"fetch_url"`
 }

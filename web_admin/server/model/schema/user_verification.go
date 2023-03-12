@@ -6,7 +6,8 @@ type UserVerification struct {
     IsVerified bool `gorm:"column:user_id;default:0;" json:"user_verified"`
     IsReject bool `gorm:"column:is_reject;default:0;" json:"is_reject"`
     IsActive bool `gorm:"column:is_active;default:1;" json:"is_active"`
-    Medias []Media `gorm:"foreignKey:MediaID" json:"medias"`
+    FirstMedia uint `gorm:"column:first_media" json:"first_media"`
+    SecondMedia uint `gorm:"column:second_media" json:"second_media"`
 }
 
 func (uv UserVerification) TableName() string {

@@ -26,6 +26,8 @@ var (
     //General Error
     RequestSuccess = NewResponseError(0, "成功", http.StatusOK)
     ParseParamError = NewResponseError(10000, "参数解析失败", http.StatusOK)
+    EmptyFileParamError = NewResponseError(10001, "没有上传文件", http.StatusOK)
+    UploadFileError = NewResponseError(10002, "上传文件失败", http.StatusOK)
 
     //DB Error
     DBInsertError = NewResponseError(20000, "数据库插入失败", http.StatusOK)
