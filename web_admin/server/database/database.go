@@ -36,7 +36,7 @@ func InitDB() {
 func AutoMigrate() {
     DB.AutoMigrate(
         &schema.User{}, &schema.UserVerification{},
-        &schema.Media{}, &schema.Interest{},
+        &schema.Media{}, &schema.Collection{},
         &schema.Article{}, &schema.Statistic{},
     )
 }

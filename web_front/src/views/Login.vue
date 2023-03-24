@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { api } from "@services/index";
+import { userApi } from "@services/index";
 
 export default {
   name: "LoginView",
@@ -58,7 +58,7 @@ export default {
         });
         if (valid) {
           const { userInfo } = this;
-          const { status, data } = await api.login({
+          const { status, data } = await userApi.login({
             account: userInfo?.name ?? "",
             passwd: userInfo?.passwd ?? "",
           });
@@ -74,7 +74,7 @@ export default {
               duration: 1000,
             });
             setTimeout(() => {
-              this.$router.replace("/home");
+              this.$router.replace("/admin");
             }, 1000);
           }
         } else {

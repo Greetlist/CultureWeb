@@ -1,6 +1,7 @@
 package init
 
 import (
+    "net/http"
     "github.com/gin-gonic/gin"
     "github.com/swaggo/files"
     ginSwagger "github.com/swaggo/gin-swagger"
@@ -35,10 +36,15 @@ func InitRouterAndMiddleware() *gin.Engine {
     //API Doc
     Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+    //Static media, jpg,png,mp4 etc
+    Router.StaticFS(config.GlobalConfig.MediaBaseUrl, http.Dir(config.GlobalConfig.MediaSaveDir))
+
     //前端展示路由,需要跟vue集成
     //WebInterfaceGroup := Router.Group("")
 
     ApiRouterGroup := Router.Group("api")
-    routers.InitUserApiRouter(ApiRouterGroup)
+    routers.InitAdminUserApiRouter(ApiRouterGroup)
+    routers.InitAdminArticleApiRouter(ApiRouterGroup)
+    routers.InitNormalUserApiRouter(ApiRouterGroup)
     return Router
 }

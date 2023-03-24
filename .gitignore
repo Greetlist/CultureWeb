@@ -4,3 +4,6 @@ dist/
 docs/
 bin/
 log/
+*.out
+*.png
+*.jpg

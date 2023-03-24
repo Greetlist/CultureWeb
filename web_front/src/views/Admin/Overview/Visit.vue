@@ -1,8 +1,8 @@
 <template>
-  <div></div>
+  <div><h1>访问总览</h1></div>
 </template>
 <script>
 export default {
-  name: "UserManage",
+  name: "VisitOvewview",
 };
 </script>
