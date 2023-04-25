@@ -5,6 +5,10 @@ export function addUser(params) {
   return Post("/api/admin/addUser", params);
 }
 
+export function submitArticle(params) {
+  return Post("/api/admin/submitArticle", params)
+}
+
 export function getTotalUserInfo() {
   return Get("/api/admin/getTotalUserInfo", {});
 }
@@ -17,6 +21,7 @@ export const uploadMediaURL = baseURL + "/api/admin/saveMedia";
 
 export const adminApi = {
   addUser,
+  submitArticle,
   getTotalUserInfo,
   getUserInfo,
 };

@@ -1,6 +1,7 @@
 bind_addr: 0.0.0.0
 bind_port: 8900
-base_url: https://121.5.100.186:8900
+base_url: http://121.5.100.186:8900
+https_base_url: https://121.5.100.186:8900
 
 log_dir: ./log
 media_save_basedir: /home/greetlist/workspace/CultureWeb/web_admin/media/

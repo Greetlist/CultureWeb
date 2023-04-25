@@ -10,6 +10,7 @@ func InitAdminArticleApiRouter(RouterGroup *gin.RouterGroup) {
     AdminUserRouterGroup := RouterGroup.Group("admin")
     //AdminUserRouterGroup.Use(middleware.AdminCookieChecker())
     AdminUserRouterGroup.POST("/saveMedia", controller.SaveMedia)
+    AdminUserRouterGroup.POST("/submitArticle", controller.SubmitArticle)
 }
 
 

@@ -34,6 +34,7 @@ var (
     DBUpdateError = NewResponseError(20001, "数据库更新失败", http.StatusOK)
     DBDeleteError = NewResponseError(20002, "数据库删除失败", http.StatusOK)
     DBModifyError = NewResponseError(20003, "数据库修改失败", http.StatusOK)
+    DBQueryError = NewResponseError(20004, "数据库查询失败", http.StatusOK)
 
     //Use related Error
     GetUserInfoError = NewResponseError(30000, "获取用户信息失败", http.StatusOK)
