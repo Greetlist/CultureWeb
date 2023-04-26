@@ -43,7 +43,7 @@ func (article *ArticleModelStruct) SaveArticle(req *SubmitArticleRequest) *Error
 func saveArticleLocal(req *SubmitArticleRequest) (string, *ErrorCode.ResponseError) {
     todayStr := util.GetTodayStr()
     baseDir := path.Join(config.GlobalConfig.ArticleSaveDir, todayStr)
-    os.Mkdir(baseDir, os.FileMode(0744))
+    os.MkdirAll(baseDir, os.FileMode(0744))
     uid, _ := uuid.NewV4()
     fileName := uid.String() + ".html"
     finalPath := path.Join(baseDir, fileName)
@@ -58,5 +58,6 @@ func saveArticleLocal(req *SubmitArticleRequest) (string, *ErrorCode.ResponseErr
         LOG.Logger.Errorf("Write File Error: %v", err)
         return "", ErrorCode.WriteFileError
     }
+    w.Flush()
     return fileName, nil
 }

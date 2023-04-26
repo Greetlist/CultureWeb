@@ -19,7 +19,7 @@ type MediaModelStruct struct {
 func (media *MediaModelStruct) SaveMedia(size int, category, extension string) (string, string, *ErrorCode.ResponseError) {
     todayStr := util.GetTodayStr()
     baseDir := path.Join(config.GlobalConfig.MediaSaveDir, todayStr)
-    os.Mkdir(baseDir, os.FileMode(0744))
+    os.MkdirAll(baseDir, os.FileMode(0744))
     uid, _ := uuid.NewV4()
     fileName := uid.String() + "." + extension
     var m schema.Media
