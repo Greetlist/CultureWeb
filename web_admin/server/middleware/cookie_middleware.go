@@ -5,7 +5,6 @@ import (
     LOG "github.com/Greetlist/CultureWeb/web_admin/server/logger"
     "github.com/Greetlist/CultureWeb/web_admin/server/model"
     "github.com/Greetlist/CultureWeb/web_admin/server/config"
-    "github.com/Greetlist/CultureWeb/web_admin/server/controller"
     ErrorCode "github.com/Greetlist/CultureWeb/web_admin/server/error"
 )
 
@@ -28,8 +27,8 @@ func AdminCookieChecker() gin.HandlerFunc {
 }
 
 func sendError(c *gin.Context, err *ErrorCode.ResponseError) {
-    var res controller.RequestResult
-    controller.GenErrorReturn(err, &res)
+    var res model.RequestResult
+    model.GenErrorReturn(err, &res)
     c.AbortWithStatusJSON(err.HttpStatusCode, res)
 }
 

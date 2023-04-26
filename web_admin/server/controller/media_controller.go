@@ -5,7 +5,6 @@ import (
     "strconv"
     "github.com/gin-gonic/gin"
     "github.com/Greetlist/CultureWeb/web_admin/server/model"
-    _ "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
     LOG "github.com/Greetlist/CultureWeb/web_admin/server/logger"
     ErrorCode "github.com/Greetlist/CultureWeb/web_admin/server/error"
     _ "github.com/Greetlist/CultureWeb/web_admin/server/config"
@@ -16,14 +15,14 @@ import (
 // @Description Save Media to local storage
 // @ID SaveMedia
 // @Produce json
-// @Success 200 {object} SaveMediaResponse
+// @Success 200 {object} model.SaveMediaResponse
 // @Router /api/admin/saveMedia [post]
 func SaveMedia(c *gin.Context) {
-    var res SaveMediaResponse
+    var res model.SaveMediaResponse
     file, e := c.FormFile("file")
     if e != nil {
         LOG.Logger.Errorf("Empty File Error: %v", ErrorCode.EmptyFileParamError)
-        GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        model.GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
         c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
         return
     }
@@ -31,7 +30,7 @@ func SaveMedia(c *gin.Context) {
     sizeInt, e := strconv.Atoi(size)
     if e != nil {
         LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
-        GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        model.GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
         c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
         return
     }
@@ -40,12 +39,12 @@ func SaveMedia(c *gin.Context) {
     savePath, fetchUrl, e := model.MediaModel.SaveMedia(sizeInt, category, extension)
     if e = c.SaveUploadedFile(file, savePath); e != nil {
         LOG.Logger.Errorf("Empty File Error: %v", ErrorCode.UploadFileError)
-        GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        model.GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
         c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
         return
     }
 
-    GenSuccessReturn(&res.Result)
+    model.GenSuccessReturn(&res.Result)
     res.FetchUrl = fetchUrl
     c.JSON(http.StatusOK, res)
 }
@@ -55,10 +54,10 @@ func SaveMedia(c *gin.Context) {
 // @Description Return Media List
 // @ID GetTotalMedia
 // @Produce json
-// @Success 200 {object} GetTotalMediaResponse
+// @Success 200 {object} model.GetTotalMediaResponse
 // @Router /api/admin/getTotalMedia [get]
 func GetTotalMedia(c *gin.Context) {
-    var res GetTotalMediaResponse
-    GenSuccessReturn(&res.Result)
+    var res model.GetTotalMediaResponse
+    model.GenSuccessReturn(&res.Result)
     c.JSON(http.StatusOK, res)
 }

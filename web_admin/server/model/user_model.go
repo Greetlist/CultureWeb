@@ -43,8 +43,21 @@ func (user *UserModelStruct) FetchUserInfo(account string) (*schema.User, *Error
     return &res, nil
 }
 
-func (user *UserModelStruct) CreateUser(u *schema.User) *ErrorCode.ResponseError {
-    u.Password = GetCryptoString(u.Password)
+func (user *UserModelStruct) CreateUser(req *AddUserRequest) *ErrorCode.ResponseError {
+    encryptPassword := GetCryptoString(req.Password)
+    u := &schema.User{
+        Account: req.Account,
+        Password: encryptPassword,
+        Name: req.Name,
+        PhoneNumber: req.PhoneNumber,
+        Sex: req.Sex,
+        Age: req.Age,
+        Address: req.Address,
+        IdentifyID: req.IdentifyID,
+        IsActive: req.IsActive,
+        IsAdmin: req.IsAdmin,
+        State: req.State,
+    }
     insert_res := user.DB.Create(u)
     if insert_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", insert_res.Error)
@@ -53,10 +66,11 @@ func (user *UserModelStruct) CreateUser(u *schema.User) *ErrorCode.ResponseError
     return nil
 }
 
-func (user *UserModelStruct) ModifyUser(userID uint, u *schema.User) *ErrorCode.ResponseError {
+func (user *UserModelStruct) ModifyUser(userID uint, req *UserModifyRequest) *ErrorCode.ResponseError {
+    var u schema.User
     u.UserID = userID
-    newPassword := GetCryptoString(u.Password)
-    update_res := user.DB.Model(u).Updates(schema.User{Name: u.Name, Password: newPassword, Sex: u.Sex, Age: u.Age})
+    newPassword := GetCryptoString(req.Password)
+    update_res := user.DB.Model(u).Updates(schema.User{Name: req.Name, Password: newPassword, Sex: req.Sex, Age: req.Age})
     if update_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", update_res.Error)
         return ErrorCode.ModifyUserError
@@ -65,9 +79,9 @@ func (user *UserModelStruct) ModifyUser(userID uint, u *schema.User) *ErrorCode.
 }
 
 func (user *UserModelStruct) ChangePassword(userID uint, password string) *ErrorCode.ResponseError {
-    u := schema.User{UserID: userID}
+    u := &schema.User{UserID: userID}
     passwordCrypto := GetCryptoString(password)
-    update_res := user.DB.Model(&u).Updates(schema.User{Password: passwordCrypto})
+    update_res := user.DB.Model(u).Updates(schema.User{Password: passwordCrypto})
     if update_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", update_res.Error)
         return ErrorCode.ChangePasswordError

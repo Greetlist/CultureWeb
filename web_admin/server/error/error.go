@@ -28,6 +28,8 @@ var (
     ParseParamError = NewResponseError(10000, "参数解析失败", http.StatusOK)
     EmptyFileParamError = NewResponseError(10001, "没有上传文件", http.StatusOK)
     UploadFileError = NewResponseError(10002, "上传文件失败", http.StatusOK)
+    CreateFileError = NewResponseError(10003, "创建文件失败", http.StatusOK)
+    WriteFileError = NewResponseError(10004, "写文件失败", http.StatusOK)
 
     //DB Error
     DBInsertError = NewResponseError(20000, "数据库插入失败", http.StatusOK)
@@ -54,4 +56,7 @@ var (
     CookieExpireError = NewResponseError(50001, "Cookie 超时,请重新登录", http.StatusOK)
     CheckAdminError = NewResponseError(50002, "检查Admin权限失败", http.StatusOK)
     CookieIsCleanedError = NewResponseError(50003, "Cookie已被清空,请重新登录", http.StatusOK)
+
+    //article Error
+    InsertArticleError = NewResponseError(60000, "新增文章失败", http.StatusOK)
 )
