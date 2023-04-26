@@ -35,3 +35,21 @@ func SubmitArticle(c *gin.Context) {
     model.GenSuccessReturn(&res.Result)
     c.JSON(http.StatusOK, res)
 }
+
+// GetTotalArticle godoc
+// @Summary Get Total Article
+// @Description Get Total Article
+// @ID GetTotalArticle
+// @Produce json
+// @Success 200 {object} model.GetTotalArticleResponse
+// @Router /api/admin/getTotalArticle [get]
+func GetTotalArticle(c *gin.Context) {
+    var res model.GetTotalArticleResponse
+    if e := model.ArticleModel.GetTotalArticle(&res); e != nil {
+        model.GenErrorReturn(ErrorCode.GetArticleError, &res.Result)
+        c.JSON(ErrorCode.GetArticleError.HttpStatusCode, res)
+        return
+    }
+    model.GenSuccessReturn(&res.Result)
+    c.JSON(http.StatusOK, res)
+}

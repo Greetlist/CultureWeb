@@ -61,3 +61,12 @@ func saveArticleLocal(req *SubmitArticleRequest) (string, *ErrorCode.ResponseErr
     w.Flush()
     return fileName, nil
 }
+
+func (article *ArticleModelStruct) GetTotalArticle(res *GetTotalArticleResponse) *ErrorCode.ResponseError {
+    query_res := article.DB.Model(&schema.Article{}).Find(&res.ArticleList)
+    if query_res.Error != nil {
+        LOG.Logger.Errorf("DB Error: %v", query_res.Error)
+        return ErrorCode.GetUserInfoError
+    }
+    return nil
+}

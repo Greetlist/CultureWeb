@@ -17,6 +17,10 @@ export function getUserInfo(params) {
   return Get("/api/admin/getUserInfo", paramas);
 }
 
+export function getTotalArticle() {
+  return Get("/api/admin/getTotalArticle", {});
+}
+
 export const uploadMediaURL = baseURL + "/api/admin/saveMedia";
 
 export const adminApi = {
@@ -24,4 +28,5 @@ export const adminApi = {
   submitArticle,
   getTotalUserInfo,
   getUserInfo,
+  getTotalArticle,
 };

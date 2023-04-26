@@ -59,4 +59,5 @@ var (
 
     //article Error
     InsertArticleError = NewResponseError(60000, "新增文章失败", http.StatusOK)
+    GetArticleError = NewResponseError(60000, "获取文章失败", http.StatusOK)
 )
