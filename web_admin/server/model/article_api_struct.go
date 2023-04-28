@@ -1,5 +1,9 @@
 package model
 
+import (
+    "time"
+)
+
 type SubmitArticleRequest struct {
     Title string `json:"title"`
     Rank uint `json:"rank"`
@@ -22,8 +26,9 @@ type AdminFetchArticleStruct struct {
     Author string `gorm:"column:author;not null;" json:"author"`
     IsEnable bool `gorm:"column:is_enable;default:1;" json:"is_enable"`
     IsTop bool `gorm:"column:is_top;default:0;" json:"is_top"`
-    IsDelete bool `gorm:"column:is_delete;not null;" json:"is_delete"`
     VisitNumber uint `gorm:"column:visit_number;default:0;" json:"visit_number"`
+    CreateTime time.Time `gorm:"column:create_time;autoCreateTime:milli;" json:"create_time"`
+    UpdateTime time.Time `gorm:"column:update_time;autoUpdateTime:milli;" json:"update_time"`
     LocalSaveName string `gorm:"column:local_save_name;not null;" json:"local_save_name"`
 }
 
