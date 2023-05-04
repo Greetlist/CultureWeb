@@ -9,6 +9,7 @@ var (
     MediaModel MediaModelStruct
     ArticleModel ArticleModelStruct
     StatisticModel StatisticModelStruct
+    LabelModel LabelModelStruct
 )
 
 func InitModel(db *gorm.DB) {
@@ -16,4 +17,5 @@ func InitModel(db *gorm.DB) {
     MediaModel = MediaModelStruct{DB: db}
     ArticleModel = ArticleModelStruct{DB: db}
     StatisticModel = StatisticModelStruct{DB: db}
+    LabelModel = LabelModelStruct{DB: db}
 }

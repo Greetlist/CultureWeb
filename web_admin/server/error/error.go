@@ -25,39 +25,43 @@ func NewResponseError(code int, msg string, status int) *ResponseError {
 var (
     //General Error
     RequestSuccess = NewResponseError(0, "成功", http.StatusOK)
-    ParseParamError = NewResponseError(10000, "参数解析失败", http.StatusOK)
-    EmptyFileParamError = NewResponseError(10001, "没有上传文件", http.StatusOK)
-    UploadFileError = NewResponseError(10002, "上传文件失败", http.StatusOK)
-    CreateFileError = NewResponseError(10003, "创建文件失败", http.StatusOK)
-    WriteFileError = NewResponseError(10004, "写文件失败", http.StatusOK)
+    ParseParamError = NewResponseError(1000, "参数解析失败", http.StatusOK)
+    EmptyFileParamError = NewResponseError(1001, "没有上传文件", http.StatusOK)
+    UploadFileError = NewResponseError(1002, "上传文件失败", http.StatusOK)
+    CreateFileError = NewResponseError(1003, "创建文件失败", http.StatusOK)
+    WriteFileError = NewResponseError(1004, "写文件失败", http.StatusOK)
 
     //DB Error
-    DBInsertError = NewResponseError(20000, "数据库插入失败", http.StatusOK)
-    DBUpdateError = NewResponseError(20001, "数据库更新失败", http.StatusOK)
-    DBDeleteError = NewResponseError(20002, "数据库删除失败", http.StatusOK)
-    DBModifyError = NewResponseError(20003, "数据库修改失败", http.StatusOK)
-    DBQueryError = NewResponseError(20004, "数据库查询失败", http.StatusOK)
+    DBInsertError = NewResponseError(2000, "数据库插入失败", http.StatusOK)
+    DBUpdateError = NewResponseError(2001, "数据库更新失败", http.StatusOK)
+    DBDeleteError = NewResponseError(2002, "数据库删除失败", http.StatusOK)
+    DBModifyError = NewResponseError(2003, "数据库修改失败", http.StatusOK)
+    DBQueryError = NewResponseError(2004, "数据库查询失败", http.StatusOK)
 
     //Use related Error
-    GetUserInfoError = NewResponseError(30000, "获取用户信息失败", http.StatusOK)
-    RegisterUserError = NewResponseError(30001, "用户注册失败", http.StatusOK)
-    ModifyUserError = NewResponseError(30002, "修改用户信息失败", http.StatusOK)
-    DeleteUserError = NewResponseError(30003, "删除用户失败", http.StatusOK)
-    ChangePasswordError = NewResponseError(30004, "修改密码失败", http.StatusOK)
-    PasswordNotCorrectError = NewResponseError(30005, "用户密码错误", http.StatusOK)
+    GetUserInfoError = NewResponseError(3000, "获取用户信息失败", http.StatusOK)
+    RegisterUserError = NewResponseError(3001, "用户注册失败", http.StatusOK)
+    ModifyUserError = NewResponseError(3002, "修改用户信息失败", http.StatusOK)
+    DeleteUserError = NewResponseError(3003, "删除用户失败", http.StatusOK)
+    ChangePasswordError = NewResponseError(3004, "修改密码失败", http.StatusOK)
+    PasswordNotCorrectError = NewResponseError(3005, "用户密码错误", http.StatusOK)
 
     //Redis Error
-    RedisCommandError = NewResponseError(40000, "Redis命令失败", http.StatusOK)
-    RedisParseStructError = NewResponseError(40001, "Redis解析Struct失败", http.StatusOK)
-    RedisKeyExpireError = NewResponseError(40002, "Redis Key超时", http.StatusOK)
+    RedisCommandError = NewResponseError(4000, "Redis命令失败", http.StatusOK)
+    RedisParseStructError = NewResponseError(4001, "Redis解析Struct失败", http.StatusOK)
+    RedisKeyExpireError = NewResponseError(4002, "Redis Key超时", http.StatusOK)
 
     //cookie Error
-    GetCookieError = NewResponseError(50000, "获取Cookie失败,请先登录", http.StatusOK)
-    CookieExpireError = NewResponseError(50001, "Cookie 超时,请重新登录", http.StatusOK)
-    CheckAdminError = NewResponseError(50002, "检查Admin权限失败", http.StatusOK)
-    CookieIsCleanedError = NewResponseError(50003, "Cookie已被清空,请重新登录", http.StatusOK)
+    GetCookieError = NewResponseError(5000, "获取Cookie失败,请先登录", http.StatusOK)
+    CookieExpireError = NewResponseError(5001, "Cookie 超时,请重新登录", http.StatusOK)
+    CheckAdminError = NewResponseError(5002, "检查Admin权限失败", http.StatusOK)
+    CookieIsCleanedError = NewResponseError(5003, "Cookie已被清空,请重新登录", http.StatusOK)
 
     //article Error
-    InsertArticleError = NewResponseError(60000, "新增文章失败", http.StatusOK)
-    GetArticleError = NewResponseError(60000, "获取文章失败", http.StatusOK)
+    InsertArticleError = NewResponseError(6000, "新增文章失败", http.StatusOK)
+    GetArticleError = NewResponseError(6001, "获取文章失败", http.StatusOK)
+
+    //label Error
+    GetLabelError = NewResponseError(7000, "获取标签失败", http.StatusOK)
+    AddLabelError = NewResponseError(7001, "添加标签失败", http.StatusOK)
 )

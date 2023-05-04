@@ -6,7 +6,7 @@ import (
     "github.com/Greetlist/CultureWeb/web_admin/server/model"
     //"github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
     //LOG "github.com/Greetlist/CultureWeb/web_admin/server/logger"
-    //ErrorCode "github.com/Greetlist/CultureWeb/web_admin/server/error"
+    ErrorCode "github.com/Greetlist/CultureWeb/web_admin/server/error"
     //"github.com/Greetlist/CultureWeb/web_admin/server/config"
 )
 
@@ -19,5 +19,11 @@ import (
 // @Router /user/normal/getTotalLabel [get]
 func GetTotalLabel(c *gin.Context) {
     var res model.GetTotalLabelResponse
+    if e := model.LabelModel.GetLabelList(&res); e != nil {
+        model.GenErrorReturn(ErrorCode.GetLabelError, &res.Result)
+        c.JSON(ErrorCode.GetLabelError.HttpStatusCode, res)
+        return
+    }
+    model.GenSuccessReturn(&res.Result)
     c.JSON(http.StatusOK, res)
 }

@@ -66,7 +66,7 @@ func (article *ArticleModelStruct) GetTotalArticle(res *GetTotalArticleResponse)
     query_res := article.DB.Model(&schema.Article{}).Find(&res.ArticleList)
     if query_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", query_res.Error)
-        return ErrorCode.GetUserInfoError
+        return ErrorCode.GetArticleError
     }
     return nil
 }
