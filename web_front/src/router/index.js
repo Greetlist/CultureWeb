@@ -8,6 +8,7 @@ import ArticalIndex from "@/views/Admin/Artical/index.vue";
 import ActivityIndex from "@/views/Admin/Activities/index.vue";
 import SiteIndex from "@/views/Admin/Site/index.vue";
 import UserIndex from "@/views/Admin/UserManage/index.vue";
+import LabelIndex from "@/views/Admin/Label/index.vue";
 
 Vue.use(VueRouter);
 
@@ -104,6 +105,25 @@ const adminRoutes = {
             title: "新增用户",
           },
         },
+      ],
+    },
+    {
+      path: "/admin/labelManage",
+      name: "labelManage",
+      component: LabelIndex,
+      meta: {
+        title: "标签管理",
+        icon: "el-icon-reading",
+      },
+      children: [
+        {
+          path: "labelList",
+          name: "labelList",
+          component: () => import("@/views/Admin/Label/LabelList.vue"),
+          meta: {
+            title: "标签列表",
+          },
+        }
       ],
     },
     {

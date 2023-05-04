@@ -22,7 +22,15 @@ export function getTotalArticle() {
 }
 
 export function batchModifyArticle(params) {
-  return Post("api/admin/batchModifyArticle", params)
+  return Post("/api/admin/batchModifyArticle", params)
+}
+
+export function getTotalLabel() {
+  return Get("/api/user/normal/getTotalLabel")
+}
+
+export function addSingleLabel(params) {
+  return Post("/api/admin/addSingleLabel", params)
 }
 
 export const uploadMediaURL = baseURL + "/api/admin/saveMedia";
@@ -33,5 +41,7 @@ export const adminApi = {
   getTotalUserInfo,
   getUserInfo,
   getTotalArticle,
-  batchModifyArticle
+  batchModifyArticle,
+  getTotalLabel,
+  addSingleLabel
 };

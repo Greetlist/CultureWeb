@@ -8,7 +8,7 @@ type SubmitArticleRequest struct {
     Title string `json:"title"`
     Rank uint `json:"rank"`
     Summary string `json:"summary"`
-    Label string `json:"label"`
+    Labels []string `json:"label_list"`
     IsTop bool `json:"is_top"`
     Content string `json:"content"`
     Author string `json:"author"`
@@ -21,7 +21,7 @@ type ModifyArticleItem struct {
     Title string `json:"title"`
     Summary string `json:"summary"`
     Rank uint `json:"rank"`
-    Label string `json:"label"`
+    Labels []string `json:"label_list"`
     IsTop bool `json:"is_top"`
     IsEnable bool `json:"is_enable"`
 }

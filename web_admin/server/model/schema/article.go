@@ -19,7 +19,7 @@ type Article struct {
     Rank uint `gorm:"column:rank;default:0;" json:"rank"`
     Summary string `gorm:"column:summary;not null;" json:"summary"`
     Content string `gorm:"column:content;not null;" json:"content"`
-    Labels []Label `gorm:"many2many:labels;" json:"labels"`
+    Labels []*Label `gorm:"many2many:article_labels;" json:"labels"`
     Comments []Comment `gorm:"foreignKey:CommentID" json:"comments"`
     State string `gorm:"column:state;default:normal;" json:"state"`
     Author string `gorm:"column:author;not null;" json:"author"`

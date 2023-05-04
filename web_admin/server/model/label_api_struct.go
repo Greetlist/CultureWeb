@@ -4,6 +4,13 @@ import (
 )
 
 type GetTotalLabelResponse struct {
-    Labels []schema.Label `json:"labels"`
+    LabelList []schema.Label `json:"label_list"`
+    Result RequestResult `json:"request_result"`
+}
+
+type AddSingleLabelRequest struct {
+    LabelName string `json:"label_name"`
+}
+type AddSingleLabelResponse struct {
     Result RequestResult `json:"request_result"`
 }

@@ -46,5 +46,6 @@ func InitRouterAndMiddleware() *gin.Engine {
     routers.InitAdminUserApiRouter(ApiRouterGroup)
     routers.InitAdminArticleApiRouter(ApiRouterGroup)
     routers.InitNormalUserApiRouter(ApiRouterGroup)
+    routers.InitAdminLabelApiRouter(ApiRouterGroup)
     return Router
 }

@@ -4,7 +4,7 @@ import (
     "gorm.io/gorm"
     //"path"
     //"os"
-    //"github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
+    "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
     //"github.com/Greetlist/CultureWeb/web_admin/server/config"
     //"github.com/Greetlist/CultureWeb/web_admin/server/util"
     //uuid "github.com/nu7hatch/gouuid"
@@ -17,10 +17,19 @@ type LabelModelStruct struct {
 }
 
 func (label *LabelModelStruct) GetLabelList(response *GetTotalLabelResponse) *ErrorCode.ResponseError {
-    query_res := label.DB.Find(&response.Labels)
+    query_res := label.DB.Find(&response.LabelList)
     if query_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", query_res.Error)
         return ErrorCode.GetLabelError
+    }
+    return nil
+}
+
+func (label *LabelModelStruct) AddSingleLabel(req *AddSingleLabelRequest) *ErrorCode.ResponseError {
+    query_res := label.DB.Create(&schema.Label{LabelName: req.LabelName})
+    if query_res.Error != nil {
+        LOG.Logger.Errorf("DB Error: %v", query_res.Error)
+        return ErrorCode.AddLabelError
     }
     return nil
 }

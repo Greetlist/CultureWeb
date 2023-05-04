@@ -12,7 +12,13 @@
         <el-input-number v-model="article_form.rank" :min="1" :max="10" :step="1"></el-input>
       </el-form-item>
       <el-form-item label="标签" prop="label">
-        <el-select v-model="article_form.label" clearable>
+        <el-select
+          v-model="article_form.label_list"
+          clearable
+          multiple
+          collapse-tags
+          placeholder="请选择标签"
+        >
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -143,7 +149,7 @@ export default {
       this.article_form.title = ''
       this.article_form.summary = ''
       this.article_form.rank = ''
-      this.article_form.label = ''
+      this.article_form.label_list = []
       this.article_form.is_top = false
       this.article_form.content = ''
     }
@@ -154,25 +160,23 @@ export default {
     }
   },
   created() {
-    this.options = [
-      {
-        value: '文化建设',
-        label: '文化建设'
-      },
-      {
-        value: '旅游宣传',
-        label: '旅游宣传'
-      }, {
-        value: '美食推广',
-        label: '美食推广'
-      }, {
-        value: '活动预览',
-        label: '活动预览'
-      }, {
-        value: '前瞻报告',
-        label: '前瞻报告'
+    var instance = this
+    instance.totalLabelList = []
+    adminApi.getTotalLabel().then(function (res) {
+      var request_result = res.data.request_result
+      if (request_result["return_code"] !== 0) {
+        instance.totalLabelList = []
+      } else {
+        for (let idx in res.data.label_list) {
+          var item = res.data.label_list[idx]
+          var option = {
+            'value': item.label_id,
+            'label': item.label_name
+          }
+          instance.options.push(option)
+        }
       }
-    ]
+    })
   }
 };
 </script>

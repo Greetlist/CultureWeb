@@ -8,9 +8,9 @@ import (
 
 func InitAdminLabelApiRouter(RouterGroup *gin.RouterGroup) {
     //TODO API
-    //AdminUserRouterGroup := RouterGroup.Group("admin")
+    AdminUserRouterGroup := RouterGroup.Group("admin")
     //AdminUserRouterGroup.Use(middleware.AdminCookieChecker())
-    //AdminUserRouterGroup.POST("/addNewLabel", controller.AddNewLabel)
+    AdminUserRouterGroup.POST("/addSingleLabel", controller.AddSingleLabel)
 
     UserRouterGroup := RouterGroup.Group("user")
     UserNormalRouterGroup := UserRouterGroup.Group("normal")
