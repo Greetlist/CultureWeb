@@ -33,10 +33,13 @@
             v-if="item.col === 'is_delete' || item.col === 'is_enable' || item.col === 'is_top'"
             v-model="row[item.col]"
             active-color="#13ce66"
+            @change=hasEditRow(row)
           />
           <el-input
             v-else-if="item.col === 'title' || item.col === 'summary'"
-            v-model="row[item.col]"/>
+            v-model="row[item.col]"
+            @change=hasEditRow(row)
+          />
           <template v-else-if="item.col === 'article_link'">
             <el-button size="small" type="primary" icon="el-icon-edit" circle @click="openEditDialog(row)"></el-button>
             <el-button size="small" type="success" icon="el-icon-view" circle @click="openViewDialog(row)"></el-button>
@@ -50,12 +53,11 @@
             size="small"
             :min="1"
             :max="10"
-            :step="1"></el-input-number>
-          <el-input
-            v-else
-            disabled
-            v-model="row[item.col]"
-          />
+            :step="1"
+            @change=hasEditRow(row)
+          >
+          </el-input-number>
+          <div v-else v-html="convertHtml(row[item.col])"></div>
         </template>
       </el-table-column>
     </el-table>
@@ -71,6 +73,49 @@
       style="text-align: center;"
     >
     </el-pagination>
+
+    <el-dialog
+      title="二次确认"
+      :visible.sync="modifyVisible"
+      width="70%"
+      :before-close="closeModifyDialog"
+    >
+      <el-table
+        :data="modifiedRowsList"
+        border
+        highlight-current-row
+        :fit="true"
+        style="width: 100%; margin-top: 15px;"
+      >
+        <el-table-column
+          align="center"
+          v-for="item in modifyShowColumns"
+          :key="item.col"
+          :prop="item.col"
+          :label="item.name"
+          :sortable="item.sort"
+        >
+          <template slot-scope="{ row }">
+            <el-switch
+              v-if="item.col === 'is_delete' || item.col === 'is_enable' || item.col === 'is_top'"
+              v-model="row[item.col]"
+              active-color="#13ce66"
+              disabled
+            />
+            <el-input
+              v-else-if="item.col === 'title' || item.col === 'summary'"
+              v-model="row[item.col]"
+              disabled
+            />
+            <div v-else v-html="convertHtml(row[item.col])"></div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-row type="flex">
+        <el-col :span="2" :offset="20" style="padding-top: 15px"><el-button type="danger" @click="batchModifyArticle()">确认</el-button></el-col>
+        <el-col :span="2" style="padding-top: 15px"><el-button type="success" @click="closeModifyDialog()">取消</el-button></el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -97,7 +142,18 @@ export default {
         {"col": "update_time", "name": "更新时间", "sort": true},
         {"col": "operation", "name": "操作", "sort": false},
       ],
-      selected_rows: []
+      modifyShowColumns: [
+        {"col": "title", "name": "标题", "sort": false},
+        {"col": "summary", "name": "摘要", "sort": false},
+        {"col": "is_enable", "name": "是否激活", "sort": false},
+        {"col": "is_top", "name": "是否置顶", "sort": false},
+        {"col": "rank", "name": "排序权重", "sort": false},
+      ],
+      selectedRows: [],
+      modifiedMap: '',
+      modifiedRowsList: [],
+      modifyVisible: false,
+      deleteVisible: false
     }
   },
   methods: {
@@ -108,42 +164,79 @@ export default {
       this.currentPage = val
     },
     handleSelectionChange(val) {
-      this.selected_rows = val
+      this.selectedRows = val
+    },
+    hasEditRow(row) {
+      this.modifiedMap[row.article_id] = row
     },
     deleteArticle(row) {
       console.log(row)
     },
+    convertHtml(text) {
+      return `<span> ${text} </span>`
+    },
     saveAllChanges() {
-      console.log(row)
+      for (let article_id in this.modifiedMap) {
+        this.modifiedRowsList.push(this.modifiedMap[article_id])
+      }
+      this.modifyVisible = true
     },
     deleteAllSelected() {
-      console.log(row)
+      console.log(this.selectedRows)
+    },
+    closeModifyDialog() {
+      this.modifyVisible = false
+      this.modifiedRowsList = []
+    },
+    displayApiResult(returnCode) {
+      if (returnCode !== 0) {
+        this.$notify({
+            title: 'Result',
+            type: 'error',
+            message: '调用失败'
+        })
+        this.totalArticleList = []
+      } else {
+        this.$notify({
+            title: 'Result',
+            type: 'success',
+            message: '调用成功'
+        })
+      }
+    },
+    queryAllArticle() {
+      var instance = this
+      instance.totalArticleList = []
+      adminApi.getTotalArticle().then(function (res) {
+        var request_result = res.data.request_result
+        instance.displayApiResult(request_result["return_code"])
+        if (request_result["return_code"] !== 0) {
+          instance.totalArticleList = []
+        } else {
+          for (let idx in res.data.article_list) {
+            var item = res.data.article_list[idx]
+            item["article_link"] = "/get_article" + "?article_id=" + item["local_save_name"]
+            instance.totalArticleList.push(item)
+          }
+        }
+      })
+    },
+    batchModifyArticle() {
+      var instance = this
+      var req = {
+        modify_list: instance.modifiedRowsList
+      }
+      console.log(req)
+      adminApi.batchModifyArticle(req).then(function (res) {
+        var request_result = res.data.request_result
+        instance.displayApiResult(request_result["return_code"])
+        instance.queryAllArticle()
+      })
     }
   },
   created() {
-    var instance = this
-    adminApi.getTotalArticle().then(function (res) {
-      var request_result = res.data.request_result
-      if (request_result["return_code"] !== 0) {
-        instance.$notify({
-            title: 'Result',
-            type: 'error',
-            message: '查询失败'
-        })
-        instance.totalArticleList = []
-      } else {
-        instance.$notify({
-            title: 'Result',
-            type: 'success',
-            message: '查询成功'
-        })
-        for (let idx in res.data.article_list) {
-          var item = res.data.article_list[idx]
-          item["article_link"] = "/get_article" + "?article_id=" + item["local_save_name"]
-          instance.totalArticleList.push(item)
-        }
-      }
-    })
+    this.modifiedMap = new Map()
+    this.queryAllArticle()
   }
 };
 </script>

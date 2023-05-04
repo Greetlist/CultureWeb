@@ -14,11 +14,15 @@ export function getTotalUserInfo() {
 }
 
 export function getUserInfo(params) {
-  return Get("/api/admin/getUserInfo", paramas);
+  return Get("/api/admin/getUserInfo", params);
 }
 
 export function getTotalArticle() {
   return Get("/api/admin/getTotalArticle", {});
+}
+
+export function batchModifyArticle(params) {
+  return Post("api/admin/batchModifyArticle", params)
 }
 
 export const uploadMediaURL = baseURL + "/api/admin/saveMedia";
@@ -29,4 +33,5 @@ export const adminApi = {
   getTotalUserInfo,
   getUserInfo,
   getTotalArticle,
+  batchModifyArticle
 };

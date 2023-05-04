@@ -17,6 +17,21 @@ type SubmitArticleResponse struct {
     Result RequestResult `json:"request_result"`
 }
 
+type ModifyArticleItem struct {
+    Title string `json:"title"`
+    Summary string `json:"summary"`
+    Rank uint `json:"rank"`
+    Label string `json:"label"`
+    IsTop bool `json:"is_top"`
+    IsEnable bool `json:"is_enable"`
+}
+type BatchModifyArticleRequest struct {
+    ModifyList []ModifyArticleItem `json:"modify_list"`
+}
+type BatchModifyArticleResponse struct {
+    Result RequestResult `json:"request_result"`
+}
+
 type AdminFetchArticleStruct struct {
     ArticleID uint `gorm:"column:article_id;primary_key;AUTO_INCREMENT;" json:"article_id"`
     Title string `gorm:"column:title;not null;" json:"title"`

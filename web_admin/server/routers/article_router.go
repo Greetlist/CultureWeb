@@ -12,4 +12,5 @@ func InitAdminArticleApiRouter(RouterGroup *gin.RouterGroup) {
     AdminUserRouterGroup.POST("/saveMedia", controller.SaveMedia)
     AdminUserRouterGroup.POST("/submitArticle", controller.SubmitArticle)
     AdminUserRouterGroup.GET("/getTotalArticle", controller.GetTotalArticle)
+    AdminUserRouterGroup.POST("/batchModifyArticle", controller.BatchModifyArticle)
 }

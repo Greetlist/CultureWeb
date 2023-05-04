@@ -53,3 +53,25 @@ func GetTotalArticle(c *gin.Context) {
     model.GenSuccessReturn(&res.Result)
     c.JSON(http.StatusOK, res)
 }
+
+// BatchModifyArticle godoc
+// @Summary Modify Article
+// @Description Modify Article
+// @ID BatchModifyArticle
+// @Produce json
+// @Param request_json body model.BatchModifyArticleRequest true "Ariticle Form"
+// @Success 200 {object} model.BatchModifyArticleResponse
+// @Router /api/admin/batchModifyArticle [post]
+func BatchModifyArticle(c *gin.Context) {
+    var req model.BatchModifyArticleRequest
+    var res model.BatchModifyArticleResponse
+    if e := c.ShouldBind(&req); e != nil {
+        LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
+        model.GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
+    LOG.Logger.Infof("Req is: %v", req)
+    model.GenSuccessReturn(&res.Result)
+    c.JSON(http.StatusOK, res)
+}
