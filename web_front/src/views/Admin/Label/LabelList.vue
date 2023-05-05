@@ -208,8 +208,8 @@ export default {
         if (request_result["return_code"] !== 0) {
           instance.totalLabelList = []
         } else {
-          for (let idx in res.data.label_list) {
-            var item = res.data.label_list[idx]
+          for (let idx in res.data.labels) {
+            var item = res.data.labels[idx]
             item["is_new"] = false
             instance.totalLabelList.push(item)
           }

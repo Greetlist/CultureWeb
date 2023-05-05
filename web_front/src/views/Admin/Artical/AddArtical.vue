@@ -13,7 +13,7 @@
       </el-form-item>
       <el-form-item label="标签" prop="label">
         <el-select
-          v-model="article_form.label_list"
+          v-model="article_form.labels"
           clearable
           multiple
           collapse-tags
@@ -149,7 +149,7 @@ export default {
       this.article_form.title = ''
       this.article_form.summary = ''
       this.article_form.rank = ''
-      this.article_form.label_list = []
+      this.article_form.labels = []
       this.article_form.is_top = false
       this.article_form.content = ''
     }
@@ -167,8 +167,8 @@ export default {
       if (request_result["return_code"] !== 0) {
         instance.totalLabelList = []
       } else {
-        for (let idx in res.data.label_list) {
-          var item = res.data.label_list[idx]
+        for (let idx in res.data.labels) {
+          var item = res.data.labels[idx]
           var option = {
             'value': item.label_id,
             'label': item.label_name

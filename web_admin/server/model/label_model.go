@@ -17,7 +17,7 @@ type LabelModelStruct struct {
 }
 
 func (label *LabelModelStruct) GetLabelList(response *GetTotalLabelResponse) *ErrorCode.ResponseError {
-    query_res := label.DB.Find(&response.LabelList)
+    query_res := label.DB.Order("label_id").Find(&response.LabelList)
     if query_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", query_res.Error)
         return ErrorCode.GetLabelError

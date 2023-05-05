@@ -4,7 +4,7 @@ import (
 )
 
 type GetTotalLabelResponse struct {
-    LabelList []schema.Label `json:"label_list"`
+    LabelList []schema.Label `json:"labels"`
     Result RequestResult `json:"request_result"`
 }
 

@@ -71,7 +71,11 @@ func BatchModifyArticle(c *gin.Context) {
         c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
         return
     }
-    LOG.Logger.Infof("Req is: %v", req)
+    if e := model.ArticleModel.BatchModifyArticle(&req.ModifyList); e != nil {
+        LOG.Logger.Errorf("Req param is: %v", req)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
     model.GenSuccessReturn(&res.Result)
     c.JSON(http.StatusOK, res)
 }

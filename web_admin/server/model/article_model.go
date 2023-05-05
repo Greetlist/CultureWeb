@@ -23,14 +23,23 @@ func (article *ArticleModelStruct) SaveArticle(req *SubmitArticleRequest) *Error
     if e != nil {
         return e
     }
+    var labelList []*schema.Label
+    for _, labelID := range(req.Labels) {
+        var item schema.Label
+        item.LabelID = labelID
+        labelList = append(labelList, &item)
+    }
     a := &schema.Article {
-        ArticleID: 0,
-        Title: req.Title,
-        Rank: req.Rank,
-        Summary: req.Summary,
-        IsTop: req.IsTop,
+        ArticleDetail: schema.ArticleDetail {
+            ArticleID: 0,
+            Title: req.Title,
+            Rank: req.Rank,
+            Summary: req.Summary,
+            Labels: labelList,
+            IsTop: req.IsTop,
+            LocalSaveName: local_save_name,
+        },
         Content: req.Content,
-        LocalSaveName: local_save_name,
     }
     insert_res := article.DB.Create(&a)
     if insert_res.Error != nil {
@@ -63,10 +72,51 @@ func saveArticleLocal(req *SubmitArticleRequest) (string, *ErrorCode.ResponseErr
 }
 
 func (article *ArticleModelStruct) GetTotalArticle(res *GetTotalArticleResponse) *ErrorCode.ResponseError {
-    query_res := article.DB.Model(&schema.Article{}).Find(&res.ArticleList)
+    var articleList []schema.Article
+    query_res := article.DB.Model(schema.Article{}).Preload("Labels").Find(&articleList)
     if query_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", query_res.Error)
         return ErrorCode.GetArticleError
     }
+    for _, article := range(articleList) {
+        res.ArticleList = append(res.ArticleList, article.ArticleDetail)
+    }
     return nil
 }
+
+func (article *ArticleModelStruct) BatchModifyArticle(articleList *[]ModifyArticleItem) *ErrorCode.ResponseError {
+    tx := article.DB.Begin()
+    for _, item := range(*articleList) {
+        var article schema.Article
+        article.ArticleDetail.ArticleID = item.ArticleID
+        if e := tx.Model(&article).Updates(
+            schema.Article{
+                ArticleDetail: schema.ArticleDetail{
+                    Title: item.Title,
+                    Summary: item.Summary,
+                    Rank: item.Rank,
+                    IsTop: item.IsTop,
+                    IsEnable: item.IsEnable,
+                },
+            }).Error; e != nil {
+            LOG.Logger.Errorf("DB Error: %v", e)
+            tx.Rollback()
+            return ErrorCode.ModifyArticleDetailError
+        }
+        var labelList []*schema.Label
+        for _, labelID := range(item.Labels) {
+            labelList = append(labelList, &schema.Label{LabelID: labelID})
+        }
+        LOG.Logger.Infof("labelList: %v", labelList)
+        tx.Model(&article).Association("Labels").Replace(labelList)
+    }
+    if e := tx.Commit().Error; e != nil {
+        LOG.Logger.Errorf("DB Error: %v", e)
+        tx.Rollback()
+        return ErrorCode.ModifyArticleDetailError
+    }
+    return nil
+}
+
+
+
