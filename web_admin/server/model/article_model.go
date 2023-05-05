@@ -118,5 +118,11 @@ func (article *ArticleModelStruct) BatchModifyArticle(articleList *[]ModifyArtic
     return nil
 }
 
+func (article *ArticleModelStruct) BatchDeleteArticle(deleteList *[]int) *ErrorCode.ResponseError {
+    return nil
+}
+
+
+
 
 

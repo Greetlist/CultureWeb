@@ -26,7 +26,6 @@ func SubmitArticle(c *gin.Context) {
         c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
         return
     }
-    LOG.Logger.Infof("Req is: %v", req)
     if e := model.ArticleModel.SaveArticle(&req); e != nil {
         model.GenErrorReturn(ErrorCode.InsertArticleError, &res.Result)
         c.JSON(ErrorCode.InsertArticleError.HttpStatusCode, res)
@@ -72,6 +71,33 @@ func BatchModifyArticle(c *gin.Context) {
         return
     }
     if e := model.ArticleModel.BatchModifyArticle(&req.ModifyList); e != nil {
+        LOG.Logger.Errorf("Req param is: %v", req)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
+    model.GenSuccessReturn(&res.Result)
+    c.JSON(http.StatusOK, res)
+}
+
+// BatchDeleteArticle godoc
+// @Summary Delete Article
+// @Description Delete Article
+// @ID BatchDeleteArticle
+// @Produce json
+// @Param request_json body model.BatchDeleteArticleRequest true "Ariticle Form"
+// @Success 200 {object} model.BatchDeleteArticleResponse
+// @Router /api/admin/batchDeleteArticle [post]
+func BatchDeleteArticle(c *gin.Context) {
+    var req model.BatchDeleteArticleRequest
+    var res model.BatchDeleteArticleResponse
+    if e := c.ShouldBind(&req); e != nil {
+        LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
+        model.GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
+    LOG.Logger.Infof("Req is: %v", req)
+    if e := model.ArticleModel.BatchDeleteArticle(&req.DeleteList); e != nil {
         LOG.Logger.Errorf("Req param is: %v", req)
         c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
         return

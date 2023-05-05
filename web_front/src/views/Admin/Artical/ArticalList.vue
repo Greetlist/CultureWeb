@@ -3,7 +3,7 @@
     <el-row type="flex">
       <el-col :span="2"><h2>文章列表</h2></el-col>
       <el-col :span="2" style="padding-top: 15px"><el-button type="success" @click="saveAllChanges(row)">保存所有更改</el-button></el-col>
-      <el-col :span="2" style="padding-top: 15px"><el-button type="danger" @click="deleteAllSelected(row)">删除所选</el-button></el-col>
+      <el-col :span="2" style="padding-top: 15px"><el-button type="danger" @click="deleteAllSelected()">删除所选</el-button></el-col>
     </el-row>
     <el-table
       :data="
@@ -13,10 +13,13 @@
       highlight-current-row
       :fit="true"
       style="width: 100%; margin-top: 15px;"
+      :row-key="(row) => {return row.article_id}"
       @selection-change="handleSelectionChange"
+      ref="artileTable"
     >
       <el-table-column
         type="selection"
+        :reserve-selection="true"
         width="55"
       >
       </el-table-column>
@@ -61,7 +64,7 @@
             </el-select>
           </template>
           <template v-else-if="item.col === 'operation'">
-            <el-button size="small" type="danger" icon="el-icon-delete" @click="deleteArticle(scope.row)"></el-button>
+            <el-button size="small" type="danger" icon="el-icon-delete" @click="deleteSingleArticle(scope.row)"></el-button>
           </template>
           <el-input-number 
             v-else-if="item.col === 'rank'"
@@ -91,7 +94,7 @@
     </el-pagination>
 
     <el-dialog
-      title="二次确认"
+      title="批量修改确认"
       :visible.sync="modifyVisible"
       width="70%"
       :before-close="closeModifyDialog"
@@ -105,7 +108,7 @@
       >
         <el-table-column
           align="center"
-          v-for="item in modifyShowColumns"
+          v-for="item in dialogShowColumns"
           :key="item.col"
           :prop="item.col"
           :label="item.name"
@@ -138,8 +141,72 @@
         </el-table-column>
       </el-table>
       <el-row type="flex">
-        <el-col :span="2" :offset="20" style="padding-top: 15px"><el-button type="danger" @click="batchModifyArticle()">确认</el-button></el-col>
-        <el-col :span="2" style="padding-top: 15px"><el-button type="success" @click="closeModifyDialog()">取消</el-button></el-col>
+        <el-col :span="2" :offset="20" style="padding-top: 15px"><el-button type="danger" @click="batchModifyArticle()">确认修改</el-button></el-col>
+        <el-col :span="2" style="padding-top: 15px"><el-button type="success" @click="closeModifyDialog()">取消修改</el-button></el-col>
+      </el-row>
+    </el-dialog>
+
+    <el-dialog
+      title="批量删除确认"
+      :visible.sync="batchDeleteVisible"
+      width="70%"
+      :before-close="closeDeleteDialog"
+    >
+      <el-table
+        :data="batchSelectedRows"
+        border
+        highlight-current-row
+        :fit="true"
+        style="width: 100%; margin-top: 15px;"
+      >
+        <el-table-column
+          align="center"
+          v-for="item in dialogShowColumns"
+          :key="item.col"
+          :prop="item.col"
+          :label="item.name"
+          :sortable="item.sort"
+        >
+          <template slot-scope="scope">
+            <el-switch
+              v-if="item.col === 'is_enable' || item.col === 'is_top'"
+              v-model="scope.row[item.col]"
+              active-color="#13ce66"
+              disabled
+            />
+            <el-input
+              v-else-if="item.col === 'title' || item.col === 'summary'"
+              v-model="scope.row[item.col]"
+              disabled
+            />
+            <template v-else-if="item.col === 'labels'">
+              <el-tag
+                v-for="label in scope.row.labels"
+                type="primary"
+                size="small"
+                effet="dark"
+              >
+              {{ totalLabelMap[label].label_name }}
+              </el-tag>
+            </template>
+            <div v-else v-html="convertHtml(scope.row[item.col])"></div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-row type="flex">
+        <el-col :span="2" :offset="20" style="padding-top: 15px"><el-button type="danger" @click="doBatchDelete(false)">确认删除</el-button></el-col>
+        <el-col :span="2" style="padding-top: 15px"><el-button type="success" @click="closeDeleteDialog()">取消删除</el-button></el-col>
+      </el-row>
+    </el-dialog>
+
+    <el-dialog
+      title="单条删除确认"
+      :visible.sync="singleDeleteVisible"
+      width="70%"
+    >
+      <el-row type="flex">
+        <el-col :span="2" :offset="12" style="padding-top: 15px"><el-button type="danger" @click="doBatchDelete(true)">确认删除</el-button></el-col>
+        <el-col :span="2" style="padding-top: 15px"><el-button type="success" @click="singleDeleteVisible=false">取消删除</el-button></el-col>
       </el-row>
     </el-dialog>
   </div>
@@ -168,7 +235,7 @@ export default {
         {"col": "update_time", "name": "更新时间", "sort": true},
         {"col": "operation", "name": "操作", "sort": false},
       ],
-      modifyShowColumns: [
+      dialogShowColumns: [
         {"col": "title", "name": "标题", "sort": false},
         {"col": "summary", "name": "摘要", "sort": false},
         {"col": "labels", "name": "标签", "sort": false},
@@ -176,48 +243,102 @@ export default {
         {"col": "is_top", "name": "是否置顶", "sort": false},
         {"col": "rank", "name": "排序权重", "sort": false},
       ],
-      selectedRows: [],
+      batchSelectedRows: [],
       totalLabelList: [],
       totalLabelMap: '',
       modifiedMap: '',
       modifiedRowsList: [],
       modifyVisible: false,
-      deleteVisible: false
+      batchDeleteVisible: false,
+      singleDeleteVisible: false,
+      singleDeleteRow: ''
     }
   },
   methods: {
     handleSizeChange(val) {
       this.pageSize = val
     },
+
     handleCurrentChange(val) {
       this.currentPage = val
     },
+
     handleSelectionChange(val) {
-      this.selectedRows = val
+      console.log(val)
+      this.batchSelectedRows = val
     },
+
     hasEditRow(row) {
-      console.log(row)
       this.modifiedMap[row.article_id] = row
     },
-    deleteArticle(row) {
-      console.log(row)
-    },
+
     convertHtml(text) {
       return `<span> ${text} </span>`
     },
+
+    deleteSingleArticle(row) {
+      this.singleDeleteRow = row
+      this.singleDeleteVisible = true
+    },
+
     saveAllChanges() {
       for (let article_id in this.modifiedMap) {
         this.modifiedRowsList.push(this.modifiedMap[article_id])
       }
       this.modifyVisible = true
     },
+
     deleteAllSelected() {
-      console.log(this.selectedRows)
+      this.batchDeleteVisible = true
     },
+
+    doBatchDelete(isSingle) {
+      var deleteArticleIDList = []
+      if (isSingle) {
+        deleteArticleIDList.push(this.singleDeleteRow.article_id)
+      } else {
+        for (let idx in this.batchSelectedRows) {
+          deleteArticleIDList.push(this.batchSelectedRows[idx].article_id)
+        }
+      }
+      if (deleteArticleIDList.length === 0) {
+        this.$notify({
+            title: 'Result',
+            type: 'info',
+            message: '没有数据'
+        })
+        this.batchDeleteVisible = false
+        return
+      }
+
+      var req = {
+        'delete_list': deleteArticleIDList
+      }
+
+      var instance = this
+      adminApi.batchDeleteArticle(req).then(function (res) {
+        var request_result = res.data.request_result
+        instance.displayApiResult(request_result["return_code"])
+        if (request_result["return_code"] === 0) {
+          instance.queryAllArticle()
+        }
+      })
+      this.singleDeleteVisible = false
+      this.batchDeleteVisible = false
+      this.batchSelectedRows = []
+      console.log(this.$refs)
+      this.$refs.artileTable.clearSelection()
+    },
+
     closeModifyDialog() {
       this.modifyVisible = false
       this.modifiedRowsList = []
     },
+
+    closeDeleteDialog() {
+      this.batchDeleteVisible = false
+    },
+
     displayApiResult(returnCode) {
       if (returnCode !== 0) {
         this.$notify({
@@ -234,6 +355,7 @@ export default {
         })
       }
     },
+
     queryAllArticle() {
       var instance = this
       instance.totalArticleList = []
@@ -256,18 +378,34 @@ export default {
         }
       })
     },
+
     batchModifyArticle() {
+      if (this.modifiedRowsList.length === 0) {
+        this.$notify({
+            title: 'Result',
+            type: 'info',
+            message: '没有数据'
+        })
+        this.modifyVisible = false
+        return
+      }
+
       var instance = this
       var req = {
         modify_list: instance.modifiedRowsList
       }
-      console.log(req)
       adminApi.batchModifyArticle(req).then(function (res) {
         var request_result = res.data.request_result
         instance.displayApiResult(request_result["return_code"])
-        instance.queryAllArticle()
+        if (request_result["return_code"] === 0) {
+          instance.modifiedRowsList = []
+          instance.modifiedMap = new Map()
+          instance.queryAllArticle()
+        }
       })
+      this.modifyVisible = false
     },
+
     queryAllLabel() {
       var instance = this
       instance.totalLabelList = []
@@ -289,6 +427,7 @@ export default {
       })
     }
   },
+
   created() {
     this.modifiedMap = new Map()
     this.queryAllArticle()

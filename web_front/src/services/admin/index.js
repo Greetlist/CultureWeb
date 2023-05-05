@@ -21,6 +21,10 @@ export function getTotalArticle() {
   return Get("/api/admin/getTotalArticle", {});
 }
 
+export function batchDeleteArticle(params) {
+  return Post("/api/admin/batchDeleteArticle", params)
+}
+
 export function batchModifyArticle(params) {
   return Post("/api/admin/batchModifyArticle", params)
 }
@@ -41,6 +45,7 @@ export const adminApi = {
   getTotalUserInfo,
   getUserInfo,
   getTotalArticle,
+  batchDeleteArticle,
   batchModifyArticle,
   getTotalLabel,
   addSingleLabel

@@ -33,6 +33,13 @@ type BatchModifyArticleResponse struct {
     Result RequestResult `json:"request_result"`
 }
 
+type BatchDeleteArticleRequest struct {
+    DeleteList []int `json:"delete_list"`
+}
+type BatchDeleteArticleResponse struct {
+    Result RequestResult `json:"request_result"`
+}
+
 type GetTotalArticleResponse struct {
     ArticleList []schema.ArticleDetail `json:"article_list"`
     Result RequestResult `json:"request_result"`
