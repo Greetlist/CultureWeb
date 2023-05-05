@@ -118,11 +118,18 @@ func (article *ArticleModelStruct) BatchModifyArticle(articleList *[]ModifyArtic
     return nil
 }
 
-func (article *ArticleModelStruct) BatchDeleteArticle(deleteList *[]int) *ErrorCode.ResponseError {
+func (article *ArticleModelStruct) BatchDeleteArticle(deleteList *[]uint) *ErrorCode.ResponseError {
+    tx := article.DB.Begin()
+    for _, articleID := range(*deleteList) {
+        var article schema.Article
+        article.ArticleDetail.ArticleID = articleID
+        tx.Model(&article).Association("Labels").Clear()
+        tx.Delete(&article)
+    }
+    if e := tx.Commit().Error; e != nil {
+        LOG.Logger.Errorf("DB Error: %v", e)
+        tx.Rollback()
+        return ErrorCode.DeleteArticleDetailError
+    }
     return nil
 }
-
-
-
-
-

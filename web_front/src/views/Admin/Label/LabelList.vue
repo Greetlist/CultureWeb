@@ -109,7 +109,7 @@ export default {
       tableColumns: [
         {"col": "label_id", "name": "标签ID", "sort": false},
         {"col": "label_name", "name": "标签名称", "sort": false},
-        {"col": "article_num", "name": "关联文章数量", "sort": true},
+        {"col": "article_number", "name": "关联文章数量", "sort": true},
         {"col": "operation", "name": "操作", "sort": false},
       ],
       modifyShowColumns: [
@@ -208,6 +208,7 @@ export default {
         if (request_result["return_code"] !== 0) {
           instance.totalLabelList = []
         } else {
+          console.log(res.data)
           for (let idx in res.data.labels) {
             var item = res.data.labels[idx]
             item["is_new"] = false

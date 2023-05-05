@@ -202,11 +202,11 @@
     <el-dialog
       title="单条删除确认"
       :visible.sync="singleDeleteVisible"
-      width="70%"
+      width="20%"
     >
       <el-row type="flex">
-        <el-col :span="2" :offset="12" style="padding-top: 15px"><el-button type="danger" @click="doBatchDelete(true)">确认删除</el-button></el-col>
-        <el-col :span="2" style="padding-top: 15px"><el-button type="success" @click="singleDeleteVisible=false">取消删除</el-button></el-col>
+        <el-col :span="2" style="padding-top: 15px"><el-button type="danger" @click="doBatchDelete(true)">确认删除</el-button></el-col>
+        <el-col :span="2" :offset="15" style="padding-top: 15px"><el-button type="success" @click="singleDeleteVisible=false">取消删除</el-button></el-col>
       </el-row>
     </el-dialog>
   </div>

@@ -1,10 +1,16 @@
 package model
 import (
-    "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
+    _ "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
 )
 
+type QueryLabelStruct struct {
+    LabelID int `json:"label_id"`
+    LabelName string `json:"label_name"`
+    RelateArticleNumber int64 `json:"article_number"`
+}
+
 type GetTotalLabelResponse struct {
-    LabelList []schema.Label `json:"labels"`
+    LabelList []QueryLabelStruct `json:"labels"`
     Result RequestResult `json:"request_result"`
 }
 

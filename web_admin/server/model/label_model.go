@@ -17,10 +17,15 @@ type LabelModelStruct struct {
 }
 
 func (label *LabelModelStruct) GetLabelList(response *GetTotalLabelResponse) *ErrorCode.ResponseError {
-    query_res := label.DB.Order("label_id").Find(&response.LabelList)
+    var oriLabelList []schema.Label
+    query_res := label.DB.Select([]string{"label_id", "label_name"}).Order("label_id").Find(&oriLabelList)
     if query_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", query_res.Error)
         return ErrorCode.GetLabelError
+    }
+    for _, item := range(oriLabelList) {
+        num := label.DB.Model(&item).Association("Articles").Count()
+        response.LabelList = append(response.LabelList, QueryLabelStruct{LabelID: item.LabelID, LabelName: item.LabelName, RelateArticleNumber: num})
     }
     return nil
 }

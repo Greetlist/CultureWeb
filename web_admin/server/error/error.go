@@ -61,6 +61,7 @@ var (
     InsertArticleError = NewResponseError(6000, "新增文章失败", http.StatusOK)
     GetArticleError = NewResponseError(6001, "获取文章失败", http.StatusOK)
     ModifyArticleDetailError = NewResponseError(6002, "修改文章详情失败", http.StatusOK)
+    DeleteArticleDetailError = NewResponseError(6003, "删除文章失败", http.StatusOK)
 
     //label Error
     GetLabelError = NewResponseError(7000, "获取标签失败", http.StatusOK)

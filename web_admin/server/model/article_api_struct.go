@@ -34,7 +34,7 @@ type BatchModifyArticleResponse struct {
 }
 
 type BatchDeleteArticleRequest struct {
-    DeleteList []int `json:"delete_list"`
+    DeleteList []uint `json:"delete_list"`
 }
 type BatchDeleteArticleResponse struct {
     Result RequestResult `json:"request_result"`
