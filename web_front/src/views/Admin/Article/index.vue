@@ -4,6 +4,6 @@
 
 <script>
 export default {
-  name: "ArticalIndex",
+  name: "ArticleIndex",
 };
 </script>

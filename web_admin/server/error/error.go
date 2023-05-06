@@ -68,5 +68,5 @@ var (
     GetLabelError = NewResponseError(7000, "获取标签失败", http.StatusOK)
     AddLabelError = NewResponseError(7001, "添加标签失败", http.StatusOK)
     DeleteLabelError = NewResponseError(7002, "删除标签失败", http.StatusOK)
-    ModifyLabelError = NewResponseError(7002, "删除标签失败", http.StatusOK)
+    ModifyLabelError = NewResponseError(7003, "修改标签失败", http.StatusOK)
 )

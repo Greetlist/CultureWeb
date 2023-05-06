@@ -69,7 +69,7 @@ import { container, ImageExtend } from 'quill-image-extend-module'
 Quill.register('modules/ImageExtend', ImageExtend)
 
 export default {
-  name: "AddArtical",
+  name: "AddArticle",
   data: function () {
     return {
       articleContent: '',

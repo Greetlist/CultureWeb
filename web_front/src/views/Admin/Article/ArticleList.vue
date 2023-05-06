@@ -240,7 +240,7 @@
 import { adminApi } from "@services/admin/"
 
 export default {
-  name: "ArticalList",
+  name: "ArticleList",
   data: function() {
     return {
       totalArticleList: [],

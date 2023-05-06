@@ -4,7 +4,7 @@ import LoginView from "@views/Login.vue";
 import Layout from "@/layout/index.vue";
 import OverviewIndex from "@/views/Admin/Overview/index.vue";
 import SystemIndex from "@/views/Admin/SystemConfig/index.vue";
-import ArticalIndex from "@/views/Admin/Artical/index.vue";
+import ArticleIndex from "@/views/Admin/Article/index.vue";
 import ActivityIndex from "@/views/Admin/Activities/index.vue";
 import SiteIndex from "@/views/Admin/Site/index.vue";
 import UserIndex from "@/views/Admin/UserManage/index.vue";
@@ -127,26 +127,26 @@ const adminRoutes = {
       ],
     },
     {
-      path: "/admin/articalManage",
-      name: "articalManage",
-      component: ArticalIndex,
+      path: "/admin/articleManage",
+      name: "articleManage",
+      component: ArticleIndex,
       meta: {
         title: "文章管理",
         icon: "el-icon-reading",
       },
       children: [
         {
-          path: "articalList",
-          name: "articalList",
-          component: () => import("@/views/Admin/Artical/ArticalList.vue"),
+          path: "articleList",
+          name: "articleList",
+          component: () => import("@/views/Admin/Article/ArticleList.vue"),
           meta: {
             title: "文章列表",
           },
         },
         {
-          path: "addArtical",
-          name: "addArtical",
-          component: () => import("@/views/Admin/Artical/AddArtical.vue"),
+          path: "addArticle",
+          name: "addArticle",
+          component: () => import("@/views/Admin/Article/AddArticle.vue"),
           meta: {
             title: "新增文章",
           },
