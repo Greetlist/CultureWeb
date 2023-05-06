@@ -133,3 +133,20 @@ func (article *ArticleModelStruct) BatchDeleteArticle(deleteList *[]uint) *Error
     }
     return nil
 }
+
+func (article *ArticleModelStruct) SearchArticle(keyWord string, res *SearchArticleResponse) *ErrorCode.ResponseError {
+    var idList []uint
+    article.DB.Debug().Raw("SELECT article_id FROM article WHERE MATCH(`content`) AGAINST(?)", keyWord).Scan(&idList)
+    LOG.Logger.Infof("%v", idList)
+
+    var articleList []schema.Article
+    query_res := article.DB.Where("article_id IN ?", idList).Model(schema.Article{}).Preload("Labels").Find(&articleList)
+    if query_res.Error != nil {
+        LOG.Logger.Errorf("DB Error: %v", query_res.Error)
+        return ErrorCode.SearchArticleError
+    }
+    for _, article := range(articleList) {
+        res.ArticleList = append(res.ArticleList, article.ArticleDetail)
+    }
+    return nil
+}

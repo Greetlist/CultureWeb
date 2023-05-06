@@ -14,4 +14,8 @@ func InitAdminArticleApiRouter(RouterGroup *gin.RouterGroup) {
     AdminUserRouterGroup.GET("/getTotalArticle", controller.GetTotalArticle)
     AdminUserRouterGroup.POST("/batchModifyArticle", controller.BatchModifyArticle)
     AdminUserRouterGroup.POST("/batchDeleteArticle", controller.BatchDeleteArticle)
+
+    UserRouterGroup := RouterGroup.Group("user")
+    UserNormalRouterGroup := UserRouterGroup.Group("normal")
+    UserNormalRouterGroup.POST("/searchArticle", controller.SearchArticle)
 }

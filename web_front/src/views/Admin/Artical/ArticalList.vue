@@ -4,10 +4,34 @@
       <el-col :span="2"><h2>文章列表</h2></el-col>
       <el-col :span="2" style="padding-top: 15px"><el-button type="success" @click="saveAllChanges(row)">保存所有更改</el-button></el-col>
       <el-col :span="2" style="padding-top: 15px"><el-button type="danger" @click="deleteAllSelected()">删除所选</el-button></el-col>
+      <el-col :span="2" style="padding-top: 15px">
+        <el-select
+          v-model="currentSelectLabel"
+          collapse-tags
+          size="medium"
+          placeholder="筛选标签"
+          clearable
+          @change="changeArticleList"
+          @clear="resetArticleList"
+        >
+          <el-option
+            v-for="item in totalLabelList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-col>
+      <el-col :span="2" :offset="12" style="padding-top: 15px">
+        <el-input v-model="searchKeyWord" placeholder="输入关键字"/>
+      </el-col>
+      <el-col :span="2" style="padding-top: 15px">
+        <el-button type="success" @click="searchArticle">搜索</el-button>
+      </el-col>
     </el-row>
     <el-table
       :data="
-        totalArticleList.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+        showArticleList.slice((currentPage - 1) * pageSize, currentPage * pageSize)
       "
       border
       highlight-current-row
@@ -87,7 +111,7 @@
       :page-sizes="[10, 20, 50]"
       :page-size="pageSize"
       layout="total,sizes,prev,pager,next,jumper"
-      :total="totalArticleList.length"
+      :total="showArticleList.length"
       background
       style="text-align: center;"
     >
@@ -220,6 +244,7 @@ export default {
   data: function() {
     return {
       totalArticleList: [],
+      showArticleList: [],
       currentPage: 1,
       pageSize: 10,
       tableColumns: [
@@ -251,7 +276,10 @@ export default {
       modifyVisible: false,
       batchDeleteVisible: false,
       singleDeleteVisible: false,
-      singleDeleteRow: ''
+      singleDeleteRow: '',
+
+      currentSelectLabel: '',
+      searchKeyWord: ''
     }
   },
   methods: {
@@ -347,6 +375,7 @@ export default {
             message: '调用失败'
         })
         this.totalArticleList = []
+        this.showArticleList = []
       } else {
         this.$notify({
             title: 'Result',
@@ -359,11 +388,13 @@ export default {
     queryAllArticle() {
       var instance = this
       instance.totalArticleList = []
+      instance.showArticleList = []
       adminApi.getTotalArticle().then(function (res) {
         var request_result = res.data.request_result
         instance.displayApiResult(request_result["return_code"])
         if (request_result["return_code"] !== 0) {
           instance.totalArticleList = []
+          instance.showArticleList = []
         } else {
           for (let idx in res.data.article_list) {
             var item = res.data.article_list[idx]
@@ -374,6 +405,7 @@ export default {
             }
             item['labels'] = currentLabelList
             instance.totalArticleList.push(item)
+            instance.showArticleList.push(item)
           }
         }
       })
@@ -422,6 +454,50 @@ export default {
             }
             instance.totalLabelList.push(option)
             instance.totalLabelMap[item.label_id] = item
+          }
+        }
+      })
+    },
+
+    changeArticleList(val) {
+      console.log(val)
+      this.showArticleList = []
+      for (let idx in this.totalArticleList) {
+        if (this.totalArticleList[idx]['labels'].indexOf(val) !== -1) {
+          this.showArticleList.push(this.totalArticleList[idx])
+        }
+      }
+    },
+
+    resetArticleList() {
+      this.showArticleList = this.totalArticleList
+    },
+
+    searchArticle() {
+      if (this.searchKeyWord === '') {
+        this.queryAllArticle()
+        return
+      }
+      var req = {
+        'key_word': this.searchKeyWord
+      }
+      var instance = this
+      adminApi.searchArticle(req).then(function (res) {
+        var request_result = res.data.request_result
+        instance.displayApiResult(request_result["return_code"])
+        if (request_result["return_code"] === 0) {
+          instance.totalArticleList = []
+          instance.showArticleList = []
+          for (let idx in res.data.article_list) {
+            var item = res.data.article_list[idx]
+            item["article_link"] = "/get_article" + "?article_id=" + item["local_save_name"]
+            var currentLabelList = []
+            for (let idx in item['labels']) {
+              currentLabelList.push(item['labels'][idx].label_id)
+            }
+            item['labels'] = currentLabelList
+            instance.totalArticleList.push(item)
+            instance.showArticleList.push(item)
           }
         }
       })

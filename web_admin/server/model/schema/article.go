@@ -30,7 +30,7 @@ type ArticleDetail struct {
 
 type Article struct {
     ArticleDetail ArticleDetail `gorm:"embedded;"`
-    Content string `gorm:"column:content;not null;" json:"content"`
+    Content string `gorm:"column:content;not null;type:longtext;index:,class:FULLTEXT,option:WITH PARSER ngram" json:"content"`
     Comments []*Comment `gorm:"foreignKey:CommentID" json:"comments"`
 }
 

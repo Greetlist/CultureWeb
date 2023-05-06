@@ -44,3 +44,13 @@ type GetTotalArticleResponse struct {
     ArticleList []schema.ArticleDetail `json:"article_list"`
     Result RequestResult `json:"request_result"`
 }
+
+
+type SearchArticleRequest struct {
+    KeyWord string `json:"key_word"`
+}
+type SearchArticleResponse struct {
+    ArticleList []schema.ArticleDetail `json:"article_list"`
+    Result RequestResult `json:"request_result"`
+}
+

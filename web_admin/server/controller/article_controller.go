@@ -53,6 +53,32 @@ func GetTotalArticle(c *gin.Context) {
     c.JSON(http.StatusOK, res)
 }
 
+// SearchArticle godoc
+// @Summary Seearch Article
+// @Description Search Article
+// @ID SearchArticle
+// @Produce json
+// @Param request_json body model.SearchArticleRequest true "Search Ariticle Form"
+// @Success 200 {object} model.SearchArticleResponse
+// @Router /api/user/normal/searchArticle [post]
+func SearchArticle(c *gin.Context) {
+    var req model.SearchArticleRequest
+    var res model.SearchArticleResponse
+    if e := c.ShouldBind(&req); e != nil {
+        LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
+        model.GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
+        c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
+        return
+    }
+    if e := model.ArticleModel.SearchArticle(req.KeyWord, &res); e != nil {
+        model.GenErrorReturn(ErrorCode.SearchArticleError, &res.Result)
+        c.JSON(ErrorCode.GetArticleError.HttpStatusCode, res)
+        return
+    }
+    model.GenSuccessReturn(&res.Result)
+    c.JSON(http.StatusOK, res)
+}
+
 // BatchModifyArticle godoc
 // @Summary Modify Article
 // @Description Modify Article
