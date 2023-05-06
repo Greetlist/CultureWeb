@@ -29,7 +29,9 @@ var (
     EmptyFileParamError = NewResponseError(1001, "没有上传文件", http.StatusOK)
     UploadFileError = NewResponseError(1002, "上传文件失败", http.StatusOK)
     CreateFileError = NewResponseError(1003, "创建文件失败", http.StatusOK)
-    WriteFileError = NewResponseError(1004, "写文件失败", http.StatusOK)
+    OpenFileError = NewResponseError(1004, "打开文件失败", http.StatusOK)
+    WriteFileError = NewResponseError(1005, "写文件失败", http.StatusOK)
+    ReadFileError = NewResponseError(1006, "读文件失败", http.StatusOK)
 
     //DB Error
     DBInsertError = NewResponseError(2000, "数据库插入失败", http.StatusOK)

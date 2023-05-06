@@ -49,6 +49,10 @@ export function batchModifyLabel(params) {
   return Post("/api/admin/modifyLabel", params)
 }
 
+export function getArticleContent(params) {
+  return Post("/api/user/normal/getArticleContent", params)
+}
+
 export const uploadMediaURL = baseURL + "/api/admin/saveMedia";
 
 export const adminApi = {
@@ -61,6 +65,7 @@ export const adminApi = {
   batchDeleteArticle,
   batchModifyArticle,
   searchArticle,
+  getArticleContent,
 
   getTotalLabel,
   addSingleLabel,

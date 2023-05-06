@@ -233,11 +233,15 @@
         <el-col :span="2" :offset="15" style="padding-top: 15px"><el-button type="success" @click="singleDeleteVisible=false">取消删除</el-button></el-col>
       </el-row>
     </el-dialog>
+
+    <PreviewArticleDialog ref="previewDialog"></PreviewArticleDialog>
   </div>
 </template>
 
 <script>
 import { adminApi } from "@services/admin/"
+import EditArticleDialog from "@views/Admin/Article/EditArticleDialog.vue"
+import PreviewArticleDialog from "@views/Admin/Article/PreviewArticleDialog.vue"
 
 export default {
   name: "ArticleList",
@@ -281,6 +285,10 @@ export default {
       currentSelectLabel: '',
       searchKeyWord: ''
     }
+  },
+  components: {
+    EditArticleDialog,
+    PreviewArticleDialog
   },
   methods: {
     handleSizeChange(val) {
@@ -501,6 +509,23 @@ export default {
           }
         }
       })
+    },
+
+    openEditDialog(row) {
+      this.$refs.editDialog.dialogVisible = true
+    },
+    openViewDialog(row) {
+      var req = {
+        'create_time': row.create_time,
+        'local_save_name': row.local_save_name,
+      }
+      var instance = this
+      adminApi.getArticleContent(req).then(function (res) {
+        var request_result = res.data.request_result
+        instance.displayApiResult(request_result["return_code"])
+        instance.$refs.previewDialog.articleContent = res.data.article_content
+      })
+      this.$refs.previewDialog.dialogVisible = true
     }
   },
 

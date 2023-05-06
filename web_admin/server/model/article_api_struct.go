@@ -54,3 +54,11 @@ type SearchArticleResponse struct {
     Result RequestResult `json:"request_result"`
 }
 
+type GetArticleContentRequest struct {
+    CreateTime string `json:"create_time"`
+    LocalSaveName string `json:"local_save_name"`
+}
+type GetArticleContentResponse struct {
+    ArticleContent string `json:"article_content"`
+    Result RequestResult `json:"request_result"`
+}

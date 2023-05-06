@@ -5,6 +5,7 @@ import (
     "os"
     "gorm.io/gorm"
     "path"
+    "strings"
     "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
     "github.com/Greetlist/CultureWeb/web_admin/server/config"
     uuid "github.com/nu7hatch/gouuid"
@@ -148,4 +149,21 @@ func (article *ArticleModelStruct) SearchArticle(keyWord string, res *SearchArti
         res.ArticleList = append(res.ArticleList, article.ArticleDetail)
     }
     return nil
+}
+
+func (article *ArticleModelStruct) GetLocalArticleContent(req *GetArticleContentRequest) (string, *ErrorCode.ResponseError) {
+    strList := strings.Split(req.CreateTime, "T")
+    if len(strList) < 1 {
+        LOG.Logger.Errorf("CreateTime Split Error.")
+        return "", ErrorCode.ParseParamError
+    }
+    baseDir := path.Join(config.GlobalConfig.ArticleSaveDir, strList[0])
+    finalPath := path.Join(baseDir, req.LocalSaveName)
+    b, err := os.ReadFile(finalPath)
+    if err != nil {
+        LOG.Logger.Errorf("Read File Error: %v", err)
+        return "", ErrorCode.ReadFileError
+    }
+    content := string(b)
+    return content, nil
 }

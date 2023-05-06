@@ -125,9 +125,39 @@ func BatchDeleteArticle(c *gin.Context) {
     LOG.Logger.Infof("Req is: %v", req)
     if e := model.ArticleModel.BatchDeleteArticle(&req.DeleteList); e != nil {
         LOG.Logger.Errorf("Req param is: %v", req)
+        c.JSON(ErrorCode.DeleteArticleDetailError.HttpStatusCode, res)
+        return
+    }
+    model.GenSuccessReturn(&res.Result)
+    c.JSON(http.StatusOK, res)
+}
+
+// GetArticleContent godoc
+// @Summary Get Article Content
+// @Description Get Article Content
+// @ID GetArticleContent
+// @Produce json
+// @Param request_json body model.GetArticleContentRequest true "Ariticle Info"
+// @Success 200 {object} model.GetArticleContentResponse
+// @Router /api/user/normal/getArticleContent [post]
+func GetArticleContent(c *gin.Context) {
+    var req model.GetArticleContentRequest
+    var res model.GetArticleContentResponse
+    if e := c.ShouldBind(&req); e != nil {
+        LOG.Logger.Errorf("Parse Param Error: %v", ErrorCode.ParseParamError)
+        model.GenErrorReturn(ErrorCode.ParseParamError, &res.Result)
         c.JSON(ErrorCode.ParseParamError.HttpStatusCode, res)
         return
     }
+
+    content, e := model.ArticleModel.GetLocalArticleContent(&req)
+    if e != nil {
+        LOG.Logger.Errorf("Req param is: %v", req)
+        model.GenErrorReturn(ErrorCode.ReadFileError, &res.Result)
+        c.JSON(ErrorCode.ReadFileError.HttpStatusCode, res)
+        return
+    }
+    res.ArticleContent = content
     model.GenSuccessReturn(&res.Result)
     c.JSON(http.StatusOK, res)
 }

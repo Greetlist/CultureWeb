@@ -18,4 +18,5 @@ func InitAdminArticleApiRouter(RouterGroup *gin.RouterGroup) {
     UserRouterGroup := RouterGroup.Group("user")
     UserNormalRouterGroup := UserRouterGroup.Group("normal")
     UserNormalRouterGroup.POST("/searchArticle", controller.SearchArticle)
+    UserNormalRouterGroup.POST("/getArticleContent", controller.GetArticleContent)
 }
