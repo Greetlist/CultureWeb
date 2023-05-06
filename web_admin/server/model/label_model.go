@@ -2,6 +2,7 @@ package model
 
 import (
     "gorm.io/gorm"
+    "strings"
     //"path"
     //"os"
     "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
@@ -31,10 +32,47 @@ func (label *LabelModelStruct) GetLabelList(response *GetTotalLabelResponse) *Er
 }
 
 func (label *LabelModelStruct) AddSingleLabel(req *AddSingleLabelRequest) *ErrorCode.ResponseError {
-    query_res := label.DB.Create(&schema.Label{LabelName: req.LabelName})
+    query_res := label.DB.Create(&schema.Label{LabelName: strings.Trim(req.LabelName, " ")})
     if query_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", query_res.Error)
         return ErrorCode.AddLabelError
+    }
+    return nil
+}
+
+func (label *LabelModelStruct) DeleteLabel(labels *[]int) *ErrorCode.ResponseError {
+    tx := label.DB.Begin()
+    for _, labelID := range(*labels) {
+        var label schema.Label
+        label.LabelID = labelID
+        tx.Model(&label).Association("Articles").Clear()
+        tx.Delete(&label)
+    }
+
+    if e := tx.Commit().Error; e != nil {
+        LOG.Logger.Errorf("DB Error: %v", e)
+        tx.Rollback()
+        return ErrorCode.DeleteLabelError
+    }
+    return nil
+}
+
+func (label *LabelModelStruct) ModifyLabel(mList *[]ModifyLabelItem) *ErrorCode.ResponseError {
+    tx := label.DB.Begin()
+    for _, item := range(*mList) {
+        var label schema.Label
+        label.LabelID = item.LabelID
+        update_res := tx.Model(&label).Update("label_name", strings.Trim(item.LabelName, " "))
+        if update_res.Error != nil {
+            LOG.Logger.Errorf("DB Error: %v", update_res.Error)
+            tx.Rollback()
+            return ErrorCode.ModifyLabelError
+        }
+    }
+    if e := tx.Commit().Error; e != nil {
+        LOG.Logger.Errorf("DB Error: %v", e)
+        tx.Rollback()
+        return ErrorCode.ModifyLabelError
     }
     return nil
 }

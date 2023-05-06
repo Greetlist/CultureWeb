@@ -20,3 +20,21 @@ type AddSingleLabelRequest struct {
 type AddSingleLabelResponse struct {
     Result RequestResult `json:"request_result"`
 }
+
+type DeleteLabelRequest struct {
+    Labels []int `json:"labels"`
+}
+type DeleteLabelResponse struct {
+    Result RequestResult `json:"request_result"`
+}
+
+type ModifyLabelItem struct {
+    LabelID int `json:"label_id"`
+    LabelName string `json:"label_name"`
+}
+type ModifyLabelRequest struct {
+    ModifyList []ModifyLabelItem `json:"modify_list"`
+}
+type ModifyLabelResponse struct {
+    Result RequestResult `json:"request_result"`
+}

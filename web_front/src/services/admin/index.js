@@ -41,17 +41,29 @@ export function addSingleLabel(params) {
   return Post("/api/admin/addSingleLabel", params)
 }
 
+export function deleteLabel(params) {
+  return Post("/api/admin/deleteLabel", params)
+}
+
+export function batchModifyLabel(params) {
+  return Post("/api/admin/modifyLabel", params)
+}
+
 export const uploadMediaURL = baseURL + "/api/admin/saveMedia";
 
 export const adminApi = {
   addUser,
-  submitArticle,
   getTotalUserInfo,
   getUserInfo,
+
+  submitArticle,
   getTotalArticle,
   batchDeleteArticle,
   batchModifyArticle,
+  searchArticle,
+
   getTotalLabel,
   addSingleLabel,
-  searchArticle
+  deleteLabel,
+  batchModifyLabel,
 };

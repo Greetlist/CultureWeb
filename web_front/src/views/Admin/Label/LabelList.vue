@@ -4,7 +4,7 @@
       <el-col :span="2"><h2>标签列表</h2></el-col>
       <el-col :span="2" style="padding-top: 15px"><el-button type="primary" @click="addNewLabel()">新增标签</el-button></el-col>
       <el-col :span="2" style="padding-top: 15px"><el-button type="success" @click="saveAllChanges()">保存所有更改</el-button></el-col>
-      <el-col :span="2" style="padding-top: 15px"><el-button type="danger" @click="deleteAllSelected()">删除所选</el-button></el-col>
+      <el-col :span="2" style="padding-top: 15px"><el-button type="danger" @click="deleteVisible=true">删除所选</el-button></el-col>
     </el-row>
     <el-table
       :data="
@@ -14,10 +14,12 @@
       highlight-current-row
       :fit="true"
       style="width: 100%; margin-top: 15px;"
+      :row-key="(row) => {return row.label_id}"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
         type="selection"
+        :reserve-selection="true"
         width="55"
       >
       </el-table-column>
@@ -61,9 +63,8 @@
     >
     </el-pagination>
 
-    <!-- For delete label-->
     <el-dialog
-      title="确认删除"
+      title="确认修改"
       :visible.sync="modifyVisible"
       width="70%"
       :before-close="closeModifyDialog"
@@ -93,6 +94,50 @@
         <el-col :span="2" style="padding-top: 15px"><el-button type="success" @click="closeModifyDialog()">取消</el-button></el-col>
       </el-row>
     </el-dialog>
+
+    <el-dialog
+      title="确认删除"
+      :visible.sync="deleteVisible"
+      width="70%"
+      :before-close="closeDeleteDialog"
+    >
+      <el-table
+        :data="selectedRows"
+        border
+        highlight-current-row
+        :fit="true"
+        style="width: 100%; margin-top: 15px;"
+      >
+        <el-table-column
+          align="center"
+          v-for="item in modifyShowColumns"
+          :key="item.col"
+          :prop="item.col"
+          :label="item.name"
+          :sortable="item.sort"
+        >
+          <template slot-scope="{ row }">
+            <div v-html="convertHtml(row[item.col])"></div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-row type="flex">
+        <el-col :span="2" :offset="20" style="padding-top: 15px"><el-button type="danger" @click="doDelete(false)">确认</el-button></el-col>
+        <el-col :span="2" style="padding-top: 15px"><el-button type="success" @click="closeDeleteDialog()">取消</el-button></el-col>
+      </el-row>
+    </el-dialog>
+
+    <el-dialog
+      title="单条删除确认"
+      :visible.sync="singleDeleteVisible"
+      width="20%"
+    >
+      <el-row type="flex">
+        <el-col :span="2" style="padding-top: 15px"><el-button type="danger" @click="doDelete(true)">确认删除</el-button></el-col>
+        <el-col :span="2" :offset="15" style="padding-top: 15px"><el-button type="success" @click="singleDeleteVisible=false">取消删除</el-button></el-col>
+      </el-row>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -115,12 +160,15 @@ export default {
       modifyShowColumns: [
         {"col": "label_id", "name": "标签ID", "sort": false},
         {"col": "label_name", "name": "标签名称", "sort": false},
+        {"col": "article_number", "name": "关联文章数量", "sort": true},
       ],
       selectedRows: [],
       modifiedMap: '',
       modifiedRowsList: [],
       modifyVisible: false,
-      deleteVisible: false
+      deleteVisible: false,
+      singleDeleteVisible: false,
+      singleDeleteRow: ''
     }
   },
   methods: {
@@ -136,13 +184,48 @@ export default {
     hasEditRow(row) {
       this.modifiedMap[row.label_id] = row
     },
+
     deleteExistLabel(row) {
-      console.log(index)
-      console.log(row)
+      this.singleDeleteRow = row
+      this.singleDeleteVisible = true
+    },
+    doDelete(isSingle) {
+      var labels = []
+      if (isSingle) {
+        labels.push(this.singleDeleteRow.label_id)
+      } else {
+        for (let idx in this.selectedRows) {
+          labels.push(this.selectedRows[idx].label_id)
+        }
+      }
+      if (labels.length === 0) {
+        this.$notify({
+            title: 'Result',
+            type: 'info',
+            message: '没有数据'
+        })
+        this.singleDeleteVisible = false
+        this.deleteVisible = false
+        return
+      }
+
+      var req = {
+        'labels': labels
+      }
+      var instance = this
+      adminApi.deleteLabel(req).then(function (res) {
+        instance.displayApiResult(request_result["return_code"])
+        if (request_result["return_code"] === 0) {
+          instance.queryAllLabel()
+        }
+      })
+      this.singleDeleteVisible = false
+      this.deleteVisible = false
     },
     deleteNewLabel(index) {
       this.totalLabelList.splice(index, 1)
     },
+
     addSingleLabel(index, row) {
       var req = {
         'label_name': row.label_name
@@ -177,12 +260,12 @@ export default {
       }
       this.modifyVisible = true
     },
-    deleteAllSelected() {
-      console.log(this.selectedRows)
-    },
     closeModifyDialog() {
       this.modifyVisible = false
       this.modifiedRowsList = []
+    },
+    closeDeleteDialog() {
+      this.deleteVisible = false
     },
     displayApiResult(returnCode) {
       if (returnCode !== 0) {

@@ -11,6 +11,8 @@ func InitAdminLabelApiRouter(RouterGroup *gin.RouterGroup) {
     AdminUserRouterGroup := RouterGroup.Group("admin")
     //AdminUserRouterGroup.Use(middleware.AdminCookieChecker())
     AdminUserRouterGroup.POST("/addSingleLabel", controller.AddSingleLabel)
+    AdminUserRouterGroup.POST("/deleteLabel", controller.DeleteLabel)
+    AdminUserRouterGroup.POST("/modifyLabel", controller.ModifyLabel)
 
     UserRouterGroup := RouterGroup.Group("user")
     UserNormalRouterGroup := UserRouterGroup.Group("normal")

@@ -136,8 +136,7 @@ func (article *ArticleModelStruct) BatchDeleteArticle(deleteList *[]uint) *Error
 
 func (article *ArticleModelStruct) SearchArticle(keyWord string, res *SearchArticleResponse) *ErrorCode.ResponseError {
     var idList []uint
-    article.DB.Debug().Raw("SELECT article_id FROM article WHERE MATCH(`content`) AGAINST(?)", keyWord).Scan(&idList)
-    LOG.Logger.Infof("%v", idList)
+    article.DB.Raw("SELECT article_id FROM article WHERE MATCH(`content`) AGAINST(?)", keyWord).Scan(&idList)
 
     var articleList []schema.Article
     query_res := article.DB.Where("article_id IN ?", idList).Model(schema.Article{}).Preload("Labels").Find(&articleList)
