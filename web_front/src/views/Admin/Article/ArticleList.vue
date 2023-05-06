@@ -234,6 +234,7 @@
       </el-row>
     </el-dialog>
 
+    <EditArticleDialog ref="editDialog"></EditArticleDialog>
     <PreviewArticleDialog ref="previewDialog"></PreviewArticleDialog>
   </div>
 </template>
