@@ -32,17 +32,15 @@
         <el-switch v-model="article_form.is_top"></el-switch>
       </el-form-item>
       <el-form-item label="内容">
-        <div class="top">
-          <quill-editor
-            class="editor"
-            ref="article"
-            v-model="article_form.content"
-            :options="editorOption"
-            @blur="onBlur($event)"
-            @focus="onFocus($event)"
-            @ready="onReady($event)"
-          />
-        </div>
+        <quill-editor
+          ref="article"
+          v-model="article_form.content"
+          :options="editorOption"
+          @blur="onBlur($event)"
+          @focus="onFocus($event)"
+          @ready="onReady($event)"
+          @change="onChange($event)"
+        />
       </el-form-item>
       <el-form-item label-width="0" style="text-align: center;">
         <el-button type="primary" style="margin-right: 20%;" @click="onSubmit">提交</el-button>
@@ -71,8 +69,6 @@ import { container, ImageExtend } from 'quill-image-extend-module'
 Quill.register('modules/ImageExtend', ImageExtend)
 
 import "quill/dist/quill.core.css"
-import "quill/dist/quill.snow.css"
-import "quill/dist/quill.bubble.css"
 
 export default {
   name: "AddArticle",
@@ -110,6 +106,12 @@ export default {
     onFocus(quill) {
     },
     onReady(quill) {
+    },
+    onChange(event) {
+      console.log(event.text.length)
+      if (event.text) {
+        this.$refs.article.quill.setSelection(event.text.length, event.text.length);
+      }
     },
     fillRequestParam(file) {
       this.uploadData.size = file.size
@@ -188,22 +190,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.top {
-  display: flex;
-  flex-direction: column;
+.ql-container{
+  overflow: auto;
+  max-height: 33rem;
+}
 
-  .editor {
-    height: 25rem;
-    overflow: hidden;
-  }
-
-  .output {
-    width: 100%;
-    height: 20rem;
-    margin: 0;
-    border: 1px solid #ccc;
-    overflow-y: auto;
-    resize: vertical;
-  }
+.ql-container ::-webkit-scrollbar{
+  width: 10px;
+  height: 10px;
+}
+.ql-container ::-webkit-scrollbar-thumb{
+  background: #666666;
+  border-radius: 5px;
+}
+.ql-container ::-webkit-scrollbar-track{
+  background: #ccc;
+  border-radius: 5px;
 }
 </style>
