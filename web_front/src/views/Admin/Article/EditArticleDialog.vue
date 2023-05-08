@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     title="修改文章"
-    width="70%"
+    width="85%"
     :visible.sync="dialogVisible"
   >
     <el-form ref="article_form" status-icon :rules="user_check_rules" :model="article_form" label-width="180px" size="medium" class="editor">
@@ -43,6 +43,7 @@
           @blur="onBlur($event)"
           @focus="onFocus($event)"
           @ready="onReady($event)"
+          @change="onChange($event)"
         />
       </el-form-item>
       <el-form-item label-width="0" style="text-align: center;">
@@ -76,7 +77,6 @@ export default {
   name: "EditArticleDialog",
   data: function () {
     return {
-      articleContent: '',
       uploadFileType: '',
       addRange: '',
       actionUrl: uploadMediaURL,
@@ -93,12 +93,18 @@ export default {
         }
       },
       article_form: {
+        article_id: '',
         title: '',
         summary: '',
         rank: '',
         label: '',
         is_top: false,
+        is_enable: false,
+
         content: '',
+        create_time: '',
+        local_save_name: '',
+        is_modify_content: false
       },
       dialogVisible: false
     }
@@ -109,6 +115,9 @@ export default {
     onFocus(quill) {
     },
     onReady(quill) {
+    },
+    onChange(quill) {
+      this.article_form.is_modify_content = true
     },
     fillRequestParam(file) {
       this.uploadData.size = file.size
@@ -148,7 +157,17 @@ export default {
     //}
 
     onSubmit() {
-      adminApi.submitArticle(this.article_form)
+      var instance = this
+      var modify = [this.article_form]
+      var req = {
+        modify_list: modify
+      }
+      console.log(req)
+      adminApi.batchModifyArticle(req).then(function (res) {
+        var request_result = res.data.request_result
+        instance.displayApiResult(request_result["return_code"])
+        instance.dialogVisible = false
+      })
     },
     closeDialog() {
       this.article_form.title = ''
@@ -158,31 +177,17 @@ export default {
       this.article_form.is_top = false
       this.article_form.content = ''
       this.dialogVisible = false
+
+      this.article_form.content = ''
+      this.article_form.create_time = ''
+      this.article_form.local_save_name = ''
+      this.article_form.is_modify_content = false
     }
   },
   computed: {
     editor() {
       return this.$refs.article.quill
     }
-  },
-  created() {
-    var instance = this
-    instance.totalLabelList = []
-    adminApi.getTotalLabel().then(function (res) {
-      var request_result = res.data.request_result
-      if (request_result["return_code"] !== 0) {
-        instance.totalLabelList = []
-      } else {
-        for (let idx in res.data.labels) {
-          var item = res.data.labels[idx]
-          var option = {
-            'value': item.label_id,
-            'label': item.label_name
-          }
-          instance.options.push(option)
-        }
-      }
-    })
   }
 };
 </script>

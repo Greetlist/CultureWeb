@@ -306,6 +306,10 @@ export default {
     },
 
     hasEditRow(row) {
+      row.is_modify_content = false
+      row.content = ""
+      row.create_time = row.create_time
+      row.local_save_name = row.local_save_name
       this.modifiedMap[row.article_id] = row
     },
 
@@ -512,10 +516,7 @@ export default {
       })
     },
 
-    openEditDialog(row) {
-      this.$refs.editDialog.dialogVisible = true
-    },
-    openViewDialog(row) {
+    getContent(row, target) {
       var req = {
         'create_time': row.create_time,
         'local_save_name': row.local_save_name,
@@ -524,9 +525,32 @@ export default {
       adminApi.getArticleContent(req).then(function (res) {
         var request_result = res.data.request_result
         instance.displayApiResult(request_result["return_code"])
-        instance.$refs.previewDialog.articleContent = res.data.article_content
+        if (target === "edit") {
+          instance.$refs.editDialog.article_form.content = res.data.article_content
+          instance.$refs.editDialog.dialogVisible = true
+        } else {
+          instance.$refs.previewDialog.articleContent = res.data.article_content
+          instance.$refs.previewDialog.dialogVisible = true
+        }
       })
-      this.$refs.previewDialog.dialogVisible = true
+    },
+
+    openEditDialog(row) {
+      this.$refs.editDialog.options = this.totalLabelList
+
+      this.$refs.editDialog.article_form.article_id = row.article_id
+      this.$refs.editDialog.article_form.title = row.title
+      this.$refs.editDialog.article_form.summary = row.summary
+      this.$refs.editDialog.article_form.rank = row.rank
+      this.$refs.editDialog.article_form.labels = row.labels
+      this.$refs.editDialog.article_form.is_top = row.is_top
+
+      this.$refs.editDialog.article_form.create_time = row.create_time
+      this.$refs.editDialog.article_form.local_save_name = row.local_save_name
+      this.getContent(row, "edit")
+    },
+    openViewDialog(row) {
+      this.getContent(row, "preview")
     }
   },
 

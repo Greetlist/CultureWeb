@@ -25,6 +25,12 @@ type ModifyArticleItem struct {
     Labels []int `json:"labels"`
     IsTop bool `json:"is_top"`
     IsEnable bool `json:"is_enable"`
+
+    //for modify article content
+    Content string `json:"content"`
+    CreateTime string `json:"create_time"`
+    LocalSaveName string `json:"local_save_name"`
+    IsModifyContent bool `json:"is_modify_content"`
 }
 type BatchModifyArticleRequest struct {
     ModifyList []ModifyArticleItem `json:"modify_list"`
@@ -44,7 +50,6 @@ type GetTotalArticleResponse struct {
     ArticleList []schema.ArticleDetail `json:"article_list"`
     Result RequestResult `json:"request_result"`
 }
-
 
 type SearchArticleRequest struct {
     KeyWord string `json:"key_word"`

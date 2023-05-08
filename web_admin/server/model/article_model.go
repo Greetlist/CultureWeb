@@ -20,7 +20,7 @@ type ArticleModelStruct struct {
 
 func (article *ArticleModelStruct) SaveArticle(req *SubmitArticleRequest) *ErrorCode.ResponseError {
     //save on local machine, manual RAID1
-    local_save_name, e := saveArticleLocal(req)
+    local_save_name, e := saveArticleLocal(req.Content, true, "", "")
     if e != nil {
         return e
     }
@@ -50,20 +50,32 @@ func (article *ArticleModelStruct) SaveArticle(req *SubmitArticleRequest) *Error
     return nil
 }
 
-func saveArticleLocal(req *SubmitArticleRequest) (string, *ErrorCode.ResponseError) {
-    todayStr := util.GetTodayStr()
-    baseDir := path.Join(config.GlobalConfig.ArticleSaveDir, todayStr)
-    os.MkdirAll(baseDir, os.FileMode(0744))
-    uid, _ := uuid.NewV4()
-    fileName := uid.String() + ".html"
-    finalPath := path.Join(baseDir, fileName)
+func saveArticleLocal(content string, isNew bool, createTime, localSaveName string) (string, *ErrorCode.ResponseError) {
+    var fileName, finalPath string
+    if isNew {
+        todayStr := util.GetTodayStr()
+        baseDir := path.Join(config.GlobalConfig.ArticleSaveDir, todayStr)
+        os.MkdirAll(baseDir, os.FileMode(0744))
+        uid, _ := uuid.NewV4()
+        fileName = uid.String() + ".html"
+        finalPath = path.Join(baseDir, fileName)
+    } else {
+        strList := strings.Split(createTime, "T")
+        if len(strList) < 1 {
+            LOG.Logger.Errorf("CreateTime Split Error.")
+            return "", ErrorCode.ParseParamError
+        }
+        baseDir := path.Join(config.GlobalConfig.ArticleSaveDir, strList[0])
+        fileName = localSaveName
+        finalPath = path.Join(baseDir, localSaveName)
+    }
     f, err := os.Create(finalPath)
     if err != nil {
         LOG.Logger.Errorf("Open File Error: %v", err)
         return "", ErrorCode.CreateFileError
     }
     w := bufio.NewWriter(f)
-    _, err = w.WriteString(req.Content)
+    _, err = w.WriteString(content)
     if err != nil {
         LOG.Logger.Errorf("Write File Error: %v", err)
         return "", ErrorCode.WriteFileError
@@ -90,20 +102,41 @@ func (article *ArticleModelStruct) BatchModifyArticle(articleList *[]ModifyArtic
     for _, item := range(*articleList) {
         var article schema.Article
         article.ArticleDetail.ArticleID = item.ArticleID
-        if e := tx.Model(&article).Updates(
-            schema.Article{
-                ArticleDetail: schema.ArticleDetail{
-                    Title: item.Title,
-                    Summary: item.Summary,
-                    Rank: item.Rank,
-                    IsTop: item.IsTop,
-                    IsEnable: item.IsEnable,
-                },
-            }).Error; e != nil {
-            LOG.Logger.Errorf("DB Error: %v", e)
-            tx.Rollback()
-            return ErrorCode.ModifyArticleDetailError
+
+        if item.IsModifyContent {
+            saveArticleLocal(item.Content, false, item.CreateTime, item.LocalSaveName)
+            if e := tx.Model(&article).Updates(
+                schema.Article{
+                    ArticleDetail: schema.ArticleDetail{
+                        Title: item.Title,
+                        Summary: item.Summary,
+                        Rank: item.Rank,
+                        IsTop: item.IsTop,
+                        IsEnable: item.IsEnable,
+                    },
+                    Content: item.Content,
+                }).Error; e != nil {
+                LOG.Logger.Errorf("DB Error: %v", e)
+                tx.Rollback()
+                return ErrorCode.ModifyArticleDetailError
+            }
+        } else {
+            if e := tx.Model(&article).Updates(
+                schema.Article{
+                    ArticleDetail: schema.ArticleDetail{
+                        Title: item.Title,
+                        Summary: item.Summary,
+                        Rank: item.Rank,
+                        IsTop: item.IsTop,
+                        IsEnable: item.IsEnable,
+                    },
+                }).Error; e != nil {
+                LOG.Logger.Errorf("DB Error: %v", e)
+                tx.Rollback()
+                return ErrorCode.ModifyArticleDetailError
+            }
         }
+
         var labelList []*schema.Label
         for _, labelID := range(item.Labels) {
             labelList = append(labelList, &schema.Label{LabelID: labelID})
