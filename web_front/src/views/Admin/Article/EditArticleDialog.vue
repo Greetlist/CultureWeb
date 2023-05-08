@@ -156,13 +156,38 @@ export default {
     //videoUpload() {
     //}
 
+    displayApiResult(returnCode) {
+      if (returnCode !== 0) {
+        this.$notify({
+            title: 'Result',
+            type: 'error',
+            message: '调用失败'
+        })
+        this.totalArticleList = []
+        this.showArticleList = []
+      } else {
+        this.$notify({
+            title: 'Result',
+            type: 'success',
+            message: '调用成功'
+        })
+      }
+    },
+
     onSubmit() {
       var instance = this
       var modify = [this.article_form]
       var req = {
         modify_list: modify
       }
-      console.log(req)
+      if (this.article_form.is_modify_content === false) {
+        this.$notify({
+            title: 'Result',
+            type: 'info',
+            message: '没有修改文章'
+        })
+        return
+      }
       adminApi.batchModifyArticle(req).then(function (res) {
         var request_result = res.data.request_result
         instance.displayApiResult(request_result["return_code"])
