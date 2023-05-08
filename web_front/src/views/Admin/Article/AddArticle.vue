@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>新增文章</h1>
-    <el-form ref="article_form" status-icon :rules="user_check_rules" :model="article_form" label-width="180px" size="medium" class="editor">
+    <el-form ref="article_form" status-icon :rules="user_check_rules" :model="article_form" label-width="180px" size="medium">
       <el-form-item label="标题" prop="title">
         <el-input v-model="article_form.title" clearable></el-input>
       </el-form-item>
@@ -32,15 +32,17 @@
         <el-switch v-model="article_form.is_top"></el-switch>
       </el-form-item>
       <el-form-item label="内容">
-        <quill-editor
-          class="editor"
-          ref="article"
-          v-model="article_form.content"
-          :options="editorOption"
-          @blur="onBlur($event)"
-          @focus="onFocus($event)"
-          @ready="onReady($event)"
-        />
+        <div class="top">
+          <quill-editor
+            class="editor"
+            ref="article"
+            v-model="article_form.content"
+            :options="editorOption"
+            @blur="onBlur($event)"
+            @focus="onFocus($event)"
+            @ready="onReady($event)"
+          />
+        </div>
       </el-form-item>
       <el-form-item label-width="0" style="text-align: center;">
         <el-button type="primary" style="margin-right: 20%;" @click="onSubmit">提交</el-button>
@@ -67,6 +69,10 @@ import { adminApi } from "@services/admin/"
 import { Quill } from 'vue-quill-editor'
 import { container, ImageExtend } from 'quill-image-extend-module'
 Quill.register('modules/ImageExtend', ImageExtend)
+
+import "quill/dist/quill.core.css"
+import "quill/dist/quill.snow.css"
+import "quill/dist/quill.bubble.css"
 
 export default {
   name: "AddArticle",
@@ -182,9 +188,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.editor {
-  width: 80%;
-  padding-left: 10%;
-  overflow: hidden;
+.top {
+  display: flex;
+  flex-direction: column;
+
+  .editor {
+    height: 25rem;
+    overflow: hidden;
+  }
+
+  .output {
+    width: 100%;
+    height: 20rem;
+    margin: 0;
+    border: 1px solid #ccc;
+    overflow-y: auto;
+    resize: vertical;
+  }
 }
 </style>
