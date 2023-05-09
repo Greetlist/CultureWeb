@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-header height="45px">
-      <Navbar title="XXX文化馆"></Navbar>
+      <Navbar></Navbar>
     </el-header>
     <el-container>
       <el-aside width="220px">

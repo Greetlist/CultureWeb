@@ -3,7 +3,7 @@
     <h2 style="text-align: center">{{ webBasicInfo.web_name }}</h2>
     <el-form ref="loginForm" :model="userInfo" class="login-form">
       <el-form-item
-        prop="name"
+        prop="account"
         autocomplete="off"
         :rules="{
           required: true,
@@ -11,10 +11,10 @@
           trigger: 'blur',
         }"
       >
-        <el-input v-model="userInfo.name" placeholder="用户名或邮箱"></el-input>
+        <el-input v-model="userInfo.account" placeholder="用户名或邮箱"></el-input>
       </el-form-item>
       <el-form-item
-        prop="passwd"
+        prop="password"
         :rules="{
           required: true,
           message: '请输入密码',
@@ -23,7 +23,7 @@
       >
         <el-input
           type="password"
-          v-model="userInfo.passwd"
+          v-model="userInfo.password"
           placeholder="密码"
           show-password
         ></el-input>
@@ -37,16 +37,16 @@
 
 <script>
 import { userNormalApi } from "@services/user/normal/";
+import { mapState } from "vuex"
 
 export default {
   name: "LoginView",
   data() {
     return {
       userInfo: {
-        name: "",
-        passwd: "",
-      },
-      webBasicInfo: ""
+        account: "",
+        password: "",
+      }
     };
   },
   methods: {
@@ -60,13 +60,15 @@ export default {
         if (valid) {
           const { userInfo } = this;
           const { status, data } = await userNormalApi.login({
-            account: userInfo?.name ?? "",
-            passwd: userInfo?.passwd ?? "",
+            account: userInfo?.account ?? "",
+            password: userInfo?.password ?? "",
           });
           loading.close();
           // TODO修改以下判断条件
-          if (status != 200 || data?.login_succ) {
-            this.$message.error("登录失败！");
+          console.log(data)
+          var res = data.request_result
+          if (res.return_code != 0) {
+            this.$message.error(res.error_msg);
             return;
           } else {
             this.$message({
@@ -87,9 +89,12 @@ export default {
   created() {
     var instance = this
     userNormalApi.getWebBasicInfo().then(function (res) {
-      instance.webBasicInfo = res.data.web_basic_info
+      instance.$store.commit('setWebBasicInfo', res.data.web_basic_info)
     })
-  }
+  },
+  computed: mapState([
+    'webBasicInfo'
+  ])
 };
 </script>
 <style lang="scss" scoped>

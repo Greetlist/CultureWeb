@@ -2,7 +2,7 @@
   <div class="nav-bar">
     <el-row>
       <el-col :span="18">
-        <div>{{ title }}</div>
+        <div>{{ webBasicInfo.web_name }}</div>
       </el-col>
       <el-col :span="6" class="user-info">
         <div>
@@ -14,17 +14,15 @@
   </div>
 </template>
 <script>
+import { mapState } from "vuex"
 export default {
   name: "NavBar",
-  props: {
-    title: {
-      type: String,
-      default: "默认标题",
-    },
-  },
   methods: {
     signout() {},
   },
+  computed: mapState([
+    'webBasicInfo'
+  ])
 };
 </script>
 <style lang="scss" scoped>
