@@ -108,10 +108,8 @@ export default {
     onReady(quill) {
     },
     onChange(event) {
-      console.log(event.text.length)
-      if (event.text) {
-        this.$refs.article.quill.setSelection(event.text.length, event.text.length);
-      }
+      //this.$refs.article.quill.setSelection(event.text.length+1)
+      //setTimeout(() => this.$refs.article.quill.setSelection(event.text.length+1), 0)
     },
     fillRequestParam(file) {
       this.uploadData.size = file.size
