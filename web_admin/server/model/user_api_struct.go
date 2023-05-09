@@ -1,4 +1,4 @@
-package controller
+package model
 
 import (
     "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
@@ -26,19 +26,6 @@ type AddUserRequest struct {
     State string `json:"state"`
 }
 type AddUserResponse struct {
-    Result RequestResult `json:"request_result"`
-}
-
-type UserRegisterRequest struct {
-    Account string `json:"account"`
-    Password string `json:"password"`
-    Name string `json:"name"`
-    PhoneNumber string `json:"phone_number"`
-    Sex string `json:"sex"`
-    Age int `json:"age"`
-    Address string `json:"address"`
-}
-type UserRegisterResponse struct {
     Result RequestResult `json:"request_result"`
 }
 

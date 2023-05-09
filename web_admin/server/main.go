@@ -9,18 +9,24 @@ import (
 
 var (
     config_file string
+    run_tls bool
 )
 
 var rootCmd = &cobra.Command {
-    Use: "./web --config_file config_path",
+    Use: "./web --config_file config_path --run_tls",
     Short: "Culture web admin",
     Run: func (cmd *cobra.Command, args []string) {
-        server.RunServer(config_file)
+        if run_tls {
+            server.RunTLSServer(config_file)
+        } else {
+            server.RunServer(config_file)
+        }
     },
 }
 
 func init() {
     rootCmd.PersistentFlags().StringVarP(&config_file, "config_file", "", "config.yaml", "config file path")
+    rootCmd.PersistentFlags().BoolVarP(&run_tls, "run_tls", "", false, "run tls or not")
 }
 
 func Execute() {

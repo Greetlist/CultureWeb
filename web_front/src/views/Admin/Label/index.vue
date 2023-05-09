@@ -1,8 +1,9 @@
 <template>
-  <div><h1>文章列表</h1></div>
+  <router-view />
 </template>
+
 <script>
 export default {
-  name: "ArticalList",
+  name: "LabelIndex",
 };
 </script>

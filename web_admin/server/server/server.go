@@ -10,8 +10,16 @@ import (
 func RunServer(config_file string) {
     initModule.InitAllModule(config_file)
     router := initModule.InitRouterAndMiddleware()
-    //router.Run(config.GlobalConfig.BindAddr + ":" + strconv.FormatInt(config.GlobalConfig.BindPort, 10))
+
+    LOG.Logger.Infof("Start No-TLS Server at: %v:%v", config.GlobalConfig.BindAddr, config.GlobalConfig.BindPort)
+    router.Run(config.GlobalConfig.BindAddr + ":" + strconv.FormatInt(config.GlobalConfig.BindPort, 10))
+}
+
+func RunTLSServer(config_file string) {
+    initModule.InitAllModule(config_file)
+    router := initModule.InitRouterAndMiddleware()
+
+    LOG.Logger.Infof("Start TLS Server at: %v:%v", config.GlobalConfig.BindAddr, config.GlobalConfig.BindPort)
     addr := config.GlobalConfig.BindAddr + ":" + strconv.FormatInt(config.GlobalConfig.BindPort, 10)
-    LOG.Logger.Infof("%v %v %v", addr, config.GlobalConfig.TLSConfig.ServerCrt, config.GlobalConfig.TLSConfig.ServerKey)
     router.RunTLS(addr, config.GlobalConfig.TLSConfig.ServerCrt, config.GlobalConfig.TLSConfig.ServerKey)
 }

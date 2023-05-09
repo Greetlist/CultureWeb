@@ -45,3 +45,39 @@ npm run lint
 ```
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Quill 富文本编辑器的各种司马问题
+1. 当文章过长的时候，滚动条是父组件的滚动条，不是编辑器的滚动条
+这个问题不能直接在自己的代码CSS里面写,写了没逼用
+```
+.ql-container {
+  overflow: auto;
+  max-height: 33rem;
+}
+```
+只能改源码里面的css:
+
+> ./node_modules/quill/dist/quill.bubble.css
+
+还他妈只能改这个文件里的```.ql-container```
+
+2. 往编辑器里面粘贴的时候，滚动条直接回到顶部
+也是直接改源码:
+
+> ./node_modules/quill/dist/quill.bubble.css
+
+```
+.ql-clipboard {
+  position: fixed;
+  display: none;
+}
+```
+
+3. 粘贴的时候，光标停止在当前位置
+可以监听change事件，手动把光标定位到最后
+
+```
+this.$refs.article.quill.setSelection(event.text.length+1)
+setTimeout(() => this.$refs.article.quill.setSelection(event.text.length+1), 0)
+```
+然后上面的代码第一行不管用，必须用第二种写法，嘻嘻

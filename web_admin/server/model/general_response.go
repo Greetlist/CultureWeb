@@ -1,8 +1,13 @@
-package controller
+package model
 
 import (
     err "github.com/Greetlist/CultureWeb/web_admin/server/error"
 )
+
+type RequestResult struct {
+    ReturnCode int `json:"return_code"`
+    ErrorMsg string `json:"error_msg"`
+}
 
 func GenErrorReturn(err *err.ResponseError, res *RequestResult) {
     res.ReturnCode = err.Code

@@ -1,48 +1,43 @@
 <template>
-  <div class="side-bar">
-    <el-menu router class="menu-box">
-      <el-submenu
-        :index="' ' + item1.order"
-        v-for="(item1, index) in adminMenuList"
-        :key="index"
+  <div>
+    <el-scrollbar wrap-class="scrollbar-wrapper">
+      <el-menu
+        :default-active="activeMenu"
+        :unique-opened="false"
+        :collapse-transition="false"
+        mode="vertical"
       >
-        <template slot="title">
-          <i :class="item1.headIcon"></i>
-          <span>{{ item1.name }}</span>
-        </template>
-        <el-menu-item
-          class="menuItem"
-          @click="clickMenuItem"
-          v-for="(item2, index) in item1.children"
-          :key="index"
-          :index="item2.path"
-        >
-          <span>{{ item2.name }}</span>
-        </el-menu-item>
-      </el-submenu>
-    </el-menu>
+        <sidebar-item
+          v-for="route in adminRoutes.children"
+          :key="route.path"
+          :item="route"
+          :base-path="route.path"
+        />
+      </el-menu>
+    </el-scrollbar>
   </div>
 </template>
+
 <script>
-import { adminMenuList } from "@constant/index";
+import SidebarItem from "./SideBarItem";
+import { adminRoutes } from "@/router";
 
 export default {
-  name: "SideBar",
+  components: { SidebarItem },
   data() {
     return {
-      adminMenuList,
+      adminRoutes,
     };
   },
-  methods: {
-    clickTitle() {},
-    clickMenuItem() {},
+  computed: {
+    activeMenu() {
+      const route = this.$route;
+      const { meta, path } = route;
+      if (meta.activeMenu) {
+        return meta.activeMenu;
+      }
+      return path;
+    },
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.menu-box {
-  height: calc(100vh - 45px);
-  text-align: left;
-}
-</style>

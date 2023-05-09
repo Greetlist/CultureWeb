@@ -1,11 +1,11 @@
 package schema
 
 type Label struct {
-    LabelID uint `gorm:"column:label_id;primary_key;AUTO_INCREMENT;" json:"label_id"`
-    LabelName string `gorm:"column:label_name;" json:"label_name"`
-    ArticleID uint `gorm:"column:article_id;primary_key;AUTO_INCREMENT;" json:"article_id"`
+    LabelID int `gorm:"column:label_id;primary_key;not null;autoIncrement" json:"label_id"`
+    LabelName string `gorm:"column:label_name;unique;not null" json:"label_name"`
+    Articles []*Article `gorm:"many2many:article_labels;" json:"articles"`
 }
 
-func (uv Label) TableName() string {
+func (l Label) TableName() string {
     return "label"
 }

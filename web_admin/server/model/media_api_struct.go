@@ -1,4 +1,4 @@
-package controller
+package model
 
 type GetTotalMediaResponse struct {
     Result RequestResult `json:"request_result"`
