@@ -34,3 +34,9 @@ mysql_config:
 token_config:
   token_name: "culture_web"
   token_expire_time: 28800
+
+web_basic_info:
+  web_name: "荔波文化馆"
+  address: "建设路2号（现小十字老百货门市处）"
+  phone_number: "2022‑4233465"
+  contact_name: "张飞"

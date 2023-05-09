@@ -1,6 +1,6 @@
 <template>
   <div class="login-view">
-    <h1>XXX文化馆</h1>
+    <h2 style="text-align: center">{{ webBasicInfo.web_name }}</h2>
     <el-form ref="loginForm" :model="userInfo" class="login-form">
       <el-form-item
         prop="name"
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { userApi } from "@services/index";
+import { userNormalApi } from "@services/user/normal/";
 
 export default {
   name: "LoginView",
@@ -46,6 +46,7 @@ export default {
         name: "",
         passwd: "",
       },
+      webBasicInfo: ""
     };
   },
   methods: {
@@ -58,7 +59,7 @@ export default {
         });
         if (valid) {
           const { userInfo } = this;
-          const { status, data } = await userApi.login({
+          const { status, data } = await userNormalApi.login({
             account: userInfo?.name ?? "",
             passwd: userInfo?.passwd ?? "",
           });
@@ -83,6 +84,12 @@ export default {
       });
     },
   },
+  created() {
+    var instance = this
+    userNormalApi.getWebBasicInfo().then(function (res) {
+      instance.webBasicInfo = res.data.web_basic_info
+    })
+  }
 };
 </script>
 <style lang="scss" scoped>

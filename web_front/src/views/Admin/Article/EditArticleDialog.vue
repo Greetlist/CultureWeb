@@ -21,6 +21,7 @@
           multiple
           collapse-tags
           placeholder="请选择标签"
+          style="width: 15rem;"
         >
           <el-option
             v-for="item in options"
@@ -97,7 +98,7 @@ export default {
         title: '',
         summary: '',
         rank: '',
-        label: '',
+        labels: [],
         is_top: false,
         is_enable: false,
 

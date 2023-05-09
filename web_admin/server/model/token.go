@@ -112,7 +112,7 @@ func RefreshRedisToken(token string) *ErrorCode.ResponseError {
 func GetUserInfoFromRedis(token string, rc redis.Conn) (*RedisSaveStruct, *ErrorCode.ResponseError) {
     var redisClient redis.Conn
     if rc == nil {
-        redisClient, _ := <- redisPool.RedisPool
+        redisClient, _ = <- redisPool.RedisPool
         defer redisPool.ReturnRedisClient(redisClient)
     } else {
         redisClient = rc
