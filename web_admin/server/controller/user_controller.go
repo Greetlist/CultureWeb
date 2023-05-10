@@ -154,7 +154,7 @@ func UserLogin(c *gin.Context) {
     }
     model.GenSuccessReturn(&res.Result)
     res.UserID = user.UserID
-    c.SetCookie(token.TokenName, token.Value, int(config.GlobalConfig.TokenConfig.TokenExpireTime), "/", config.GlobalConfig.CookieDomain, true, false)
+    c.SetCookie(token.TokenName, token.Value, int(config.GlobalConfig.TokenConfig.TokenExpireTime), "/", config.GlobalConfig.CookieDomain, false, false)
     c.JSON(http.StatusOK, res)
 }
 

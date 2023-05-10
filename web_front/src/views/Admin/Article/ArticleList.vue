@@ -54,6 +54,7 @@
         :prop="item.col"
         :label="item.name"
         :sortable="item.sort"
+        :width="item.width"
       >
         <template slot-scope="scope">
           <el-switch
@@ -253,17 +254,17 @@ export default {
       currentPage: 1,
       pageSize: 10,
       tableColumns: [
-        {"col": "title", "name": "标题", "sort": false},
-        {"col": "summary", "name": "摘要", "sort": false},
-        {"col": "article_link", "name": "内容", "sort": false},
-        {"col": "visit_number", "name": "访问数量", "sort": true},
-        {"col": "labels", "name": "标签", "sort": false},
-        {"col": "is_enable", "name": "是否激活", "sort": false},
-        {"col": "is_top", "name": "是否置顶", "sort": false},
-        {"col": "rank", "name": "排序权重", "sort": true},
-        {"col": "create_time", "name": "创建时间", "sort": true},
-        {"col": "update_time", "name": "更新时间", "sort": true},
-        {"col": "operation", "name": "操作", "sort": false},
+        {"col": "title", "name": "标题", "sort": false, width: 200},
+        {"col": "summary", "name": "摘要", "sort": false, width: 200},
+        {"col": "article_link", "name": "内容", "sort": false, width: 200},
+        {"col": "visit_number", "name": "访问数量", "sort": true, width: 100},
+        {"col": "labels", "name": "标签", "sort": false, width: 200},
+        {"col": "is_enable", "name": "是否激活", "sort": false, width: 75},
+        {"col": "is_top", "name": "是否置顶", "sort": false, width: 75},
+        {"col": "rank", "name": "排序权重", "sort": true, width: 200},
+        {"col": "create_time", "name": "创建时间", "sort": true, width: 100},
+        {"col": "update_time", "name": "更新时间", "sort": true, width: 100},
+        {"col": "operation", "name": "操作", "sort": false, width: 150},
       ],
       dialogShowColumns: [
         {"col": "title", "name": "标题", "sort": false},

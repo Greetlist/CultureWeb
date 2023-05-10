@@ -3,7 +3,7 @@ bind_port: 8900
 base_url: http://121.5.100.186:8900
 https_base_url: https://121.5.100.186:8900
 
-cookie_domain: .libo_culture.com
+cookie_domain: 121.5.100.186
 
 log_dir: ./log
 media_save_basedir: /home/greetlist/workspace/CultureWeb/web_admin/media/
