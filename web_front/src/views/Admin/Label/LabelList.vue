@@ -214,7 +214,7 @@ export default {
       }
       var instance = this
       adminApi.deleteLabel(req).then(function (res) {
-        instance.displayApiResult(request_result["return_code"])
+        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] === 0) {
           instance.queryAllLabel()
         }
@@ -233,7 +233,7 @@ export default {
       var instance = this
       adminApi.addSingleLabel(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] !== 0) {
           instance.totalLabelList.splice(index, 1)
         } else {
@@ -267,12 +267,12 @@ export default {
     closeDeleteDialog() {
       this.deleteVisible = false
     },
-    displayApiResult(returnCode) {
+    displayApiResult(returnCode, msg) {
       if (returnCode !== 0) {
         this.$notify({
             title: 'Result',
             type: 'error',
-            message: '调用失败'
+            message: msg
         })
       } else {
         this.$notify({
@@ -287,7 +287,7 @@ export default {
       instance.totalLabelList = []
       adminApi.getTotalLabel().then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] !== 0) {
           instance.totalLabelList = []
         } else {
@@ -308,7 +308,7 @@ export default {
       console.log(req)
       adminApi.batchModifyLabel(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
         instance.queryAllLabel()
       })
     }

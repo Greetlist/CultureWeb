@@ -360,7 +360,7 @@ export default {
       var instance = this
       adminApi.batchDeleteArticle(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] === 0) {
           instance.queryAllArticle()
         }
@@ -381,15 +381,13 @@ export default {
       this.batchDeleteVisible = false
     },
 
-    displayApiResult(returnCode) {
+    displayApiResult(returnCode, msg) {
       if (returnCode !== 0) {
         this.$notify({
             title: 'Result',
             type: 'error',
-            message: '调用失败'
+            message: msg
         })
-        this.totalArticleList = []
-        this.showArticleList = []
       } else {
         this.$notify({
             title: 'Result',
@@ -405,7 +403,8 @@ export default {
       instance.showArticleList = []
       adminApi.getTotalArticle().then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        console.log(request_result)
+        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] !== 0) {
           instance.totalArticleList = []
           instance.showArticleList = []
@@ -442,7 +441,7 @@ export default {
       }
       adminApi.batchModifyArticle(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] === 0) {
           instance.modifiedRowsList = []
           instance.modifiedMap = new Map()
@@ -458,7 +457,7 @@ export default {
       instance.totalLabelMap = new Map()
       adminApi.getTotalLabel().then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] === 0) {
           for (let idx in res.data.labels) {
             var item = res.data.labels[idx]
@@ -498,7 +497,7 @@ export default {
       var instance = this
       adminApi.searchArticle(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] === 0) {
           instance.totalArticleList = []
           instance.showArticleList = []
@@ -525,7 +524,7 @@ export default {
       var instance = this
       adminApi.getArticleContent(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
         if (target === "edit") {
           instance.$refs.editDialog.article_form.content = res.data.article_content
           instance.$refs.editDialog.dialogVisible = true

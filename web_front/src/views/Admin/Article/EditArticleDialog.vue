@@ -157,12 +157,12 @@ export default {
     //videoUpload() {
     //}
 
-    displayApiResult(returnCode) {
+    displayApiResult(returnCode, msg) {
       if (returnCode !== 0) {
         this.$notify({
             title: 'Result',
             type: 'error',
-            message: '调用失败'
+            message: msg
         })
         this.totalArticleList = []
         this.showArticleList = []
@@ -191,7 +191,7 @@ export default {
       }
       adminApi.batchModifyArticle(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
         instance.dialogVisible = false
       })
     },
