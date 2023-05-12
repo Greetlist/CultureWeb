@@ -12,8 +12,13 @@ export function getWebBasicInfo() {
   return Get("/api/user/normal/getWebBasicInfo", {})
 }
 
+export function checkLogin() {
+  return Get("/api/user/normal/checkLogin", {})
+}
+
 export const userNormalApi = {
   login,
   logout,
-  getWebBasicInfo
+  getWebBasicInfo,
+  checkLogin
 };
