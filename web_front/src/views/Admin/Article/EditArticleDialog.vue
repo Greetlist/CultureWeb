@@ -67,6 +67,7 @@
 
 <script>
 
+import { notifyApiResult } from "@js/notify"
 import { uploadMediaURL } from "@services/admin/index"
 import { adminApi } from "@services/admin/"
 
@@ -157,24 +158,6 @@ export default {
     //videoUpload() {
     //}
 
-    displayApiResult(returnCode, msg) {
-      if (returnCode !== 0) {
-        this.$notify({
-            title: 'Result',
-            type: 'error',
-            message: msg
-        })
-        this.totalArticleList = []
-        this.showArticleList = []
-      } else {
-        this.$notify({
-            title: 'Result',
-            type: 'success',
-            message: '调用成功'
-        })
-      }
-    },
-
     onSubmit() {
       var instance = this
       var modify = [this.article_form]
@@ -191,7 +174,7 @@ export default {
       }
       adminApi.batchModifyArticle(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
+        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         instance.dialogVisible = false
       })
     },

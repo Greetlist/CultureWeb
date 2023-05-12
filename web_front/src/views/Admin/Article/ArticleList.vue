@@ -242,6 +242,7 @@
 
 <script>
 import { adminApi } from "@services/admin/"
+import { notifyApiResult } from "@js/notify"
 import EditArticleDialog from "@views/Admin/Article/EditArticleDialog.vue"
 import PreviewArticleDialog from "@views/Admin/Article/PreviewArticleDialog.vue"
 
@@ -254,9 +255,9 @@ export default {
       currentPage: 1,
       pageSize: 10,
       tableColumns: [
-        {"col": "title", "name": "标题", "sort": false, width: 200},
-        {"col": "summary", "name": "摘要", "sort": false, width: 200},
-        {"col": "article_link", "name": "内容", "sort": false, width: 200},
+        {"col": "title", "name": "标题", "sort": false},
+        {"col": "summary", "name": "摘要", "sort": false},
+        {"col": "article_link", "name": "内容", "sort": false, width: 100},
         {"col": "visit_number", "name": "访问数量", "sort": true, width: 100},
         {"col": "labels", "name": "标签", "sort": false, width: 200},
         {"col": "is_enable", "name": "是否激活", "sort": false, width: 75},
@@ -264,7 +265,7 @@ export default {
         {"col": "rank", "name": "排序权重", "sort": true, width: 200},
         {"col": "create_time", "name": "创建时间", "sort": true, width: 100},
         {"col": "update_time", "name": "更新时间", "sort": true, width: 100},
-        {"col": "operation", "name": "操作", "sort": false, width: 150},
+        {"col": "operation", "name": "操作", "sort": false, width: 75},
       ],
       dialogShowColumns: [
         {"col": "title", "name": "标题", "sort": false},
@@ -360,7 +361,7 @@ export default {
       var instance = this
       adminApi.batchDeleteArticle(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
+        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] === 0) {
           instance.queryAllArticle()
         }
@@ -381,22 +382,6 @@ export default {
       this.batchDeleteVisible = false
     },
 
-    displayApiResult(returnCode, msg) {
-      if (returnCode !== 0) {
-        this.$notify({
-            title: 'Result',
-            type: 'error',
-            message: msg
-        })
-      } else {
-        this.$notify({
-            title: 'Result',
-            type: 'success',
-            message: '调用成功'
-        })
-      }
-    },
-
     queryAllArticle() {
       var instance = this
       instance.totalArticleList = []
@@ -404,7 +389,7 @@ export default {
       adminApi.getTotalArticle().then(function (res) {
         var request_result = res.data.request_result
         console.log(request_result)
-        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
+        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] !== 0) {
           instance.totalArticleList = []
           instance.showArticleList = []
@@ -441,7 +426,7 @@ export default {
       }
       adminApi.batchModifyArticle(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
+        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] === 0) {
           instance.modifiedRowsList = []
           instance.modifiedMap = new Map()
@@ -457,7 +442,7 @@ export default {
       instance.totalLabelMap = new Map()
       adminApi.getTotalLabel().then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
+        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] === 0) {
           for (let idx in res.data.labels) {
             var item = res.data.labels[idx]
@@ -497,7 +482,7 @@ export default {
       var instance = this
       adminApi.searchArticle(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
+        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] === 0) {
           instance.totalArticleList = []
           instance.showArticleList = []
@@ -524,7 +509,7 @@ export default {
       var instance = this
       adminApi.getArticleContent(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"], request_result["error_msg"])
+        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         if (target === "edit") {
           instance.$refs.editDialog.article_form.content = res.data.article_content
           instance.$refs.editDialog.dialogVisible = true

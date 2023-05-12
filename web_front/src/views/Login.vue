@@ -37,6 +37,7 @@
 
 <script>
 import { userNormalApi } from "@services/user/normal/";
+import { checkLogin } from "@js/checkLogin";
 import { mapState } from "vuex"
 
 export default {
@@ -91,6 +92,8 @@ export default {
     userNormalApi.getWebBasicInfo().then(function (res) {
       instance.$store.commit('setWebBasicInfo', res.data.web_basic_info)
     })
+    var res = checkLogin()
+    console.log(res)
   },
   computed: mapState([
     'webBasicInfo'

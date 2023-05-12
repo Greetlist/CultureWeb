@@ -22,6 +22,7 @@ func InitNormalUserApiRouter(RouterGroup *gin.RouterGroup) {
     UserNormalRouterGroup.POST("/userRegister", controller.UserRegister)
     UserNormalRouterGroup.POST("/login", controller.UserLogin)
     UserNormalRouterGroup.POST("/logout", controller.UserLogout)
+    UserNormalRouterGroup.GET("/checkLogin", controller.CheckLogin)
 
     // need cookie
     LoginUserRouterGroup := UserRouterGroup.Group("auth")

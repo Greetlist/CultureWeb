@@ -182,6 +182,29 @@ func UserLogout(c *gin.Context) {
     c.JSON(http.StatusOK, res)
 }
 
+// CheckLogin godoc
+// @Summary User CheckLogin
+// @Description User CheckLogin
+// @ID UserCheckLogin
+// @Produce json
+// @Success 200 {object} model.UserCheckLoginResponse
+// @Router /api/user/normal/checkLogin [get]
+func CheckLogin(c *gin.Context) {
+    var res model.UserCheckLoginResponse
+    cookie, _ := c.Cookie(config.GlobalConfig.TokenConfig.TokenName)
+    userInfo, err := model.GetUserInfoFromRedis(cookie, nil)
+    if userInfo == nil || err != nil {
+        res.IsLogin = false
+        model.GenErrorReturn(err, &res.Result)
+        c.JSON(err.HttpStatusCode, res)
+        return
+    } else {
+        res.IsLogin = true
+    }
+    model.GenSuccessReturn(&res.Result)
+    c.JSON(http.StatusOK, res)
+}
+
 // Modify User Info godoc
 // @Summary Modify User Info
 // @Description Modify User Info
