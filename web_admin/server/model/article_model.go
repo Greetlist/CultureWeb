@@ -6,7 +6,9 @@ import (
     "gorm.io/gorm"
     "path"
     "strings"
+    "strconv"
     "fmt"
+    "reflect"
     "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
     "github.com/Greetlist/CultureWeb/web_admin/server/config"
     uuid "github.com/nu7hatch/gouuid"
@@ -19,6 +21,9 @@ import (
 type ArticleModelStruct struct {
     DB *gorm.DB
 }
+
+var article_regex string = "article_visit_num#*"
+var article_key_template string = "article_visit_num#%d"
 
 func (article *ArticleModelStruct) SaveArticle(req *SubmitArticleRequest) *ErrorCode.ResponseError {
     //save on local machine, manual RAID1
@@ -207,7 +212,7 @@ func (article *ArticleModelStruct) IncrArticleVisitNumber(articleID uint) *Error
     redisClient, _ := <- redisPool.RedisPool
     defer redisPool.ReturnRedisClient(redisClient)
 
-    article_visit_key := fmt.Sprintf("article_%d_visit_num", articleID)
+    article_visit_key := fmt.Sprintf(article_key_template, articleID)
     if _, e := redisClient.Do("GET", article_visit_key); e != nil {
         LOG.Logger.Infof("Failed to get key from redis, fetch from db")
         articleDetail, queryError := article.GetArticleDetail(articleID);
@@ -236,6 +241,29 @@ func (article *ArticleModelStruct) GetArticleDetail(articleID uint) (*schema.Art
 }
 
 func (article *ArticleModelStruct) SaveArticleVisitNumToDB() {
-    
-}
+    LOG.Logger.Infof("Start save visit number to DB")
+    redisClient, _ := <- redisPool.RedisPool
+    defer redisPool.ReturnRedisClient(redisClient)
 
+    r, e := redisClient.Do("KEYS", article_regex)
+    if e != nil {
+        LOG.Logger.Warningf("Fetch from redis error: %v", e)
+        LOG.Logger.Infof("Failed to get key from redis, quit cron function at this round")
+        return
+    }
+
+    keyList := reflect.ValueOf(r)
+    for i := 0; i < keyList.Len(); i++ {
+        articleKey := fmt.Sprintf("%s", keyList.Index(i))
+        articleID, _ := strconv.ParseUint(strings.Split(articleKey, "#")[1], 10, 64)
+
+        redisRes, _ := redisClient.Do("GET", articleKey)
+        visitNum, _ := strconv.ParseUint(fmt.Sprintf("%s", redisRes), 10, 64)
+
+        var curArticle schema.Article
+        curArticle.ArticleDetail.ArticleID = uint(articleID)
+        if updateRes := article.DB.Model(&curArticle).Update("visit_number", uint(visitNum)); updateRes.Error != nil {
+            LOG.Logger.Errorf("Update Article VisitNumber error: %v", updateRes.Error)
+        }
+    }
+}

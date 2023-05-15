@@ -14,6 +14,7 @@ import (
     "github.com/Greetlist/CultureWeb/web_admin/server/database"
     "github.com/Greetlist/CultureWeb/web_admin/server/model"
     "github.com/Greetlist/CultureWeb/web_admin/server/redis"
+    _ "github.com/Greetlist/CultureWeb/web_admin/server/cron"
 )
 
 func InitAllModule(config_file string) {
