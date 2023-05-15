@@ -6,12 +6,14 @@ import (
     "gorm.io/gorm"
     "path"
     "strings"
+    "fmt"
     "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
     "github.com/Greetlist/CultureWeb/web_admin/server/config"
     uuid "github.com/nu7hatch/gouuid"
     LOG "github.com/Greetlist/CultureWeb/web_admin/server/logger"
     ErrorCode "github.com/Greetlist/CultureWeb/web_admin/server/error"
     "github.com/Greetlist/CultureWeb/web_admin/server/util"
+    redisPool "github.com/Greetlist/CultureWeb/web_admin/server/redis"
 )
 
 type ArticleModelStruct struct {
@@ -200,3 +202,40 @@ func (article *ArticleModelStruct) GetLocalArticleContent(req *GetArticleContent
     content := string(b)
     return content, nil
 }
+
+func (article *ArticleModelStruct) IncrArticleVisitNumber(articleID uint) *ErrorCode.ResponseError {
+    redisClient, _ := <- redisPool.RedisPool
+    defer redisPool.ReturnRedisClient(redisClient)
+
+    article_visit_key := fmt.Sprintf("article_%d_visit_num", articleID)
+    if _, e := redisClient.Do("GET", article_visit_key); e != nil {
+        LOG.Logger.Infof("Failed to get key from redis, fetch from db")
+        articleDetail, queryError := article.GetArticleDetail(articleID);
+        if queryError != nil {
+            LOG.Logger.Infof("Failed to get key from DB, skip this article")
+            return nil
+        }
+        if _, setError := redisClient.Do("SET", article_visit_key, articleDetail.VisitNumber); setError != nil {
+            LOG.Logger.Infof("Failed to set key, skip this article")
+            return nil
+        }
+    }
+    if _, e := redisClient.Do("INCR", article_visit_key); e != nil {
+        LOG.Logger.Errorf("INCR error is: %v", e)
+        return ErrorCode.RedisCommandError
+    }
+    return nil
+}
+
+func (article *ArticleModelStruct) GetArticleDetail(articleID uint) (*schema.ArticleDetail, *ErrorCode.ResponseError) {
+    var res schema.Article
+    if query_res := article.DB.Find(&res, articleID); query_res.Error != nil {
+        return nil, ErrorCode.SearchArticleError
+    }
+    return &res.ArticleDetail, nil
+}
+
+func (article *ArticleModelStruct) SaveArticleVisitNumToDB() {
+    
+}
+

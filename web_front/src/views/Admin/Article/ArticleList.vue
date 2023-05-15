@@ -505,6 +505,8 @@ export default {
       var req = {
         'create_time': row.create_time,
         'local_save_name': row.local_save_name,
+        'article_id': row.article_id,
+        'is_admin': true,
       }
       var instance = this
       adminApi.getArticleContent(req).then(function (res) {

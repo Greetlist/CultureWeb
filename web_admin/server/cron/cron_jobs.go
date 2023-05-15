@@ -6,6 +6,6 @@ import (
 
 func init() {
     c := cron.New()
-    c.AddFUnc("0 30 * * * *", model.CleanAllExpireRedisKey())
+    c.AddFunc("0 30 * * * *", model.CleanAllExpireRedisKey())
     c.Start()
 }
