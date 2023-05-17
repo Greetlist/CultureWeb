@@ -12,4 +12,4 @@ def static_proxy(path):
     return send_from_directory('dist/', path)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8900)
+    app.run(host='0.0.0.0', port=9000)

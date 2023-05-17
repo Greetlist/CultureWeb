@@ -62,6 +62,8 @@ type SearchArticleResponse struct {
 type GetArticleContentRequest struct {
     CreateTime string `json:"create_time"`
     LocalSaveName string `json:"local_save_name"`
+    ArticleID uint `json:"article_id"`
+    IsAdmin bool `json:"is_admin"`
 }
 type GetArticleContentResponse struct {
     ArticleContent string `json:"article_content"`

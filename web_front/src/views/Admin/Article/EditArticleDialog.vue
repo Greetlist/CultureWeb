@@ -21,6 +21,7 @@
           multiple
           collapse-tags
           placeholder="请选择标签"
+          style="width: 15rem;"
         >
           <el-option
             v-for="item in options"
@@ -66,6 +67,7 @@
 
 <script>
 
+import { notifyApiResult } from "@js/notify"
 import { uploadMediaURL } from "@services/admin/index"
 import { adminApi } from "@services/admin/"
 
@@ -97,7 +99,7 @@ export default {
         title: '',
         summary: '',
         rank: '',
-        label: '',
+        labels: [],
         is_top: false,
         is_enable: false,
 
@@ -156,24 +158,6 @@ export default {
     //videoUpload() {
     //}
 
-    displayApiResult(returnCode) {
-      if (returnCode !== 0) {
-        this.$notify({
-            title: 'Result',
-            type: 'error',
-            message: '调用失败'
-        })
-        this.totalArticleList = []
-        this.showArticleList = []
-      } else {
-        this.$notify({
-            title: 'Result',
-            type: 'success',
-            message: '调用成功'
-        })
-      }
-    },
-
     onSubmit() {
       var instance = this
       var modify = [this.article_form]
@@ -190,7 +174,7 @@ export default {
       }
       adminApi.batchModifyArticle(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         instance.dialogVisible = false
       })
     },

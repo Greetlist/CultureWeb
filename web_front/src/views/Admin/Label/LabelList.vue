@@ -143,6 +143,7 @@
 
 <script>
 import { adminApi } from "@services/admin/"
+import { notifyApiResult } from "@js/notify"
 
 export default {
   name: "LabelList",
@@ -214,7 +215,7 @@ export default {
       }
       var instance = this
       adminApi.deleteLabel(req).then(function (res) {
-        instance.displayApiResult(request_result["return_code"])
+        notify.ApiResult(instance, request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] === 0) {
           instance.queryAllLabel()
         }
@@ -233,7 +234,7 @@ export default {
       var instance = this
       adminApi.addSingleLabel(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] !== 0) {
           instance.totalLabelList.splice(index, 1)
         } else {
@@ -267,27 +268,12 @@ export default {
     closeDeleteDialog() {
       this.deleteVisible = false
     },
-    displayApiResult(returnCode) {
-      if (returnCode !== 0) {
-        this.$notify({
-            title: 'Result',
-            type: 'error',
-            message: '调用失败'
-        })
-      } else {
-        this.$notify({
-            title: 'Result',
-            type: 'success',
-            message: '调用成功'
-        })
-      }
-    },
     queryAllLabel() {
       var instance = this
       instance.totalLabelList = []
       adminApi.getTotalLabel().then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] !== 0) {
           instance.totalLabelList = []
         } else {
@@ -308,7 +294,7 @@ export default {
       console.log(req)
       adminApi.batchModifyLabel(req).then(function (res) {
         var request_result = res.data.request_result
-        instance.displayApiResult(request_result["return_code"])
+        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         instance.queryAllLabel()
       })
     }

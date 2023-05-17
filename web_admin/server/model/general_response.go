@@ -9,6 +9,10 @@ type RequestResult struct {
     ErrorMsg string `json:"error_msg"`
 }
 
+type GeneralResponse struct {
+    Result RequestResult `json:"request_result"`
+}
+
 func GenErrorReturn(err *err.ResponseError, res *RequestResult) {
     res.ReturnCode = err.Code
     res.ErrorMsg = err.Message

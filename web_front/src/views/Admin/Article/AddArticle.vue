@@ -18,6 +18,8 @@
           multiple
           collapse-tags
           placeholder="请选择标签"
+          size="medium"
+          style="width: 15rem;"
         >
           <el-option
             v-for="item in options"

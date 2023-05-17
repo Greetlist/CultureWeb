@@ -27,8 +27,8 @@ func AdminCookieChecker() gin.HandlerFunc {
 }
 
 func sendError(c *gin.Context, err *ErrorCode.ResponseError) {
-    var res model.RequestResult
-    model.GenErrorReturn(err, &res)
+    var res model.GeneralResponse
+    model.GenErrorReturn(err, &res.Result)
     c.AbortWithStatusJSON(err.HttpStatusCode, res)
 }
 

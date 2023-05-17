@@ -14,6 +14,7 @@ import (
     "github.com/Greetlist/CultureWeb/web_admin/server/database"
     "github.com/Greetlist/CultureWeb/web_admin/server/model"
     "github.com/Greetlist/CultureWeb/web_admin/server/redis"
+    _ "github.com/Greetlist/CultureWeb/web_admin/server/cron"
 )
 
 func InitAllModule(config_file string) {
@@ -47,5 +48,6 @@ func InitRouterAndMiddleware() *gin.Engine {
     routers.InitAdminArticleApiRouter(ApiRouterGroup)
     routers.InitNormalUserApiRouter(ApiRouterGroup)
     routers.InitAdminLabelApiRouter(ApiRouterGroup)
+    routers.InitBasicInfoRouter(ApiRouterGroup)
     return Router
 }

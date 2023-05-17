@@ -150,6 +150,13 @@ func GetArticleContent(c *gin.Context) {
         return
     }
 
+    if !req.IsAdmin {
+        incrErr := model.ArticleModel.IncrArticleVisitNumber(req.ArticleID)
+        if incrErr != nil {
+            LOG.Logger.Errorf("Redis Error, Req param is: %v", req)
+        }
+    }
+
     content, e := model.ArticleModel.GetLocalArticleContent(&req)
     if e != nil {
         LOG.Logger.Errorf("Req param is: %v", req)

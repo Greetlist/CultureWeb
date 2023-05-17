@@ -66,6 +66,11 @@ func SetTokenToRedis(ut *UserToken, user *schema.User) *ErrorCode.ResponseError 
         LOG.Logger.Errorf("HSET error is: %v", e)
         return ErrorCode.RedisCommandError
     }
+    if _, e := redisClient.Do("EXPIRE", ut.Value, config.GlobalConfig.TokenConfig.TokenExpireTime); e != nil {
+        LOG.Logger.Errorf("EXPIRE error is: %v, delete current key", e)
+        redisClient.Do("DEL", ut.Value)
+        return ErrorCode.RedisCommandError
+    }
     return nil
 }
 
@@ -112,7 +117,7 @@ func RefreshRedisToken(token string) *ErrorCode.ResponseError {
 func GetUserInfoFromRedis(token string, rc redis.Conn) (*RedisSaveStruct, *ErrorCode.ResponseError) {
     var redisClient redis.Conn
     if rc == nil {
-        redisClient, _ := <- redisPool.RedisPool
+        redisClient, _ = <- redisPool.RedisPool
         defer redisPool.ReturnRedisClient(redisClient)
     } else {
         redisClient = rc

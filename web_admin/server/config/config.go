@@ -34,6 +34,13 @@ type Token struct {
     TokenExpireTime int64 `yaml:"token_expire_time"`
 }
 
+type WebBasicInfo struct {
+    WebName string `yaml:"web_name" json:"web_name"`
+    Address string `yaml:"address" json:"address"`
+    PhoneNumber string `yaml:"phone_number" json:"phone_number"`
+    ContactName string `yaml:"contact_name" json:"contact_name"`
+}
+
 type YamlConfig struct {
     BindAddr string `yaml:"bind_addr"`
     BindPort int64 `yaml:"bind_port"`
@@ -49,6 +56,7 @@ type YamlConfig struct {
     TLSConfig TLS `yaml:"tls_config"`
     MysqlConfig Mysql `yaml:"mysql_config"`
     TokenConfig Token `yaml:"token_config"`
+    WebInfo WebBasicInfo `yaml:"web_basic_info"`
 }
 
 var GlobalConfig YamlConfig

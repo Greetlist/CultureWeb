@@ -66,3 +66,9 @@ type ChangePwdRequest struct {
 type ChangePwdResponse struct {
     Result RequestResult `json:"request_result"`
 }
+
+type UserCheckLoginResponse struct {
+    IsLogin bool `json:"is_login"`
+    Result RequestResult `json:"request_result"`
+}
+

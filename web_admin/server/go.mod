@@ -38,6 +38,7 @@ require (
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/phachon/go-logger v0.0.0-20191215032019-86e4227f71ea // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/spf13/cobra v1.6.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/swaggo/files v1.0.0 // indirect
