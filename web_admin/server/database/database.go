@@ -38,5 +38,6 @@ func AutoMigrate() {
         &schema.User{}, &schema.UserVerification{},
         &schema.Media{}, &schema.Collection{},
         &schema.Article{}, &schema.Statistic{},
+        &schema.Activity{},
     )
 }
