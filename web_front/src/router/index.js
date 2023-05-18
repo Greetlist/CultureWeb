@@ -165,8 +165,7 @@ const adminRoutes = {
         {
           path: "activitiesList",
           name: "activitiesList",
-          component: () =>
-            import("@/views/Admin/Activities/ActivitiesList.vue"),
+          component: () => import("@/views/Admin/Activities/ActivitiesList.vue"),
           meta: {
             title: "活动列表",
           },
