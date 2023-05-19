@@ -6,12 +6,12 @@ import (
 
 type SubmitActivityRequest struct {
     Title string `json:"title"`
-    Rank uint `json:"rank"`
     Summary string `json:"summary"`
     Labels []int `json:"labels"`
-    IsTop bool `json:"is_top"`
-    Content string `json:"content"`
     Author string `json:"author"`
+    StartTime string `json:"start_time"`
+    EndTime string `json:"end_time"`
+    Content string `json:"content"`
 }
 type SubmitActivityResponse struct {
     Result RequestResult `json:"request_result"`

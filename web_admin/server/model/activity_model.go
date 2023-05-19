@@ -8,6 +8,7 @@ import (
     "strings"
     "strconv"
     "fmt"
+    "time"
     "reflect"
     "github.com/Greetlist/CultureWeb/web_admin/server/model/schema"
     "github.com/Greetlist/CultureWeb/web_admin/server/config"
@@ -37,12 +38,18 @@ func (activity *ActivityModelStruct) SaveActivity(req *SubmitActivityRequest) *E
         item.LabelID = labelID
         labelList = append(labelList, &item)
     }
+    layout := "2006-01-02T15:04:05.000Z"
+    startTime, _ := time.Parse(layout, req.StartTime)
+    endTime, _ := time.Parse(layout, req.EndTime)
     a := &schema.Activity {
         ActivityDetail: schema.ActivityDetail {
             ActivityID: 0,
             Title: strings.Trim(req.Title, " "),
             Summary: req.Summary,
             Labels: labelList,
+            Author: req.Author,
+            StartTime: startTime,
+            EndTime: endTime,
             LocalSaveName: local_save_name,
         },
         Content: req.Content,

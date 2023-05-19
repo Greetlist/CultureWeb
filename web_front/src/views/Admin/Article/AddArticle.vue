@@ -162,7 +162,7 @@ export default {
         var request_result = res.data.request_result
         notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] === 0) {
-          this.resetForm()
+          instance.resetForm()
         }
       })
     },

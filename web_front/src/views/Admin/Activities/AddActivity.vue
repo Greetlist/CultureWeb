@@ -141,9 +141,22 @@ export default {
     onChange(quill) {
     },
     onSubmit() {
-      this.activity_form.start_time = this.form_time_select[0].toISOString()
-      this.activity_form.end_time = this.form_time_select[1].toISOString()
+      var cur_start_time = new Date(this.form_time_select[0].toISOString())
+      var cur_end_time = new Date(this.form_time_select[1].toISOString())
+      cur_start_time.setHours(cur_start_time.getHours() + 8)
+      cur_end_time.setHours(cur_end_time.getHours() + 8)
+
+      this.activity_form.start_time = cur_start_time.toISOString()
+      this.activity_form.end_time = cur_end_time.toISOString()
+      var instance = this
       console.log(this.activity_form)
+      adminApi.submitActivity(this.activity_form).then(function (res) {
+        var request_result = res.data.request_result
+        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
+        if (request_result["return_code"] === 0) {
+          instance.resetForm()
+        }
+      })
     },
     onReset() {
       this.resetForm()

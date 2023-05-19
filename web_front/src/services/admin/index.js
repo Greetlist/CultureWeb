@@ -5,16 +5,16 @@ export function addUser(params) {
   return Post("/api/admin/addUser", params);
 }
 
-export function submitArticle(params) {
-  return Post("/api/admin/submitArticle", params)
-}
-
 export function getTotalUserInfo() {
   return Get("/api/admin/getTotalUserInfo", {});
 }
 
 export function getUserInfo(params) {
   return Get("/api/admin/getUserInfo", params);
+}
+
+export function submitArticle(params) {
+  return Post("/api/admin/submitArticle", params)
 }
 
 export function getTotalArticle() {
@@ -37,6 +37,10 @@ export function batchModifyArticle(params) {
   return Post("/api/admin/batchModifyArticle", params)
 }
 
+export function getArticleContent(params) {
+  return Post("/api/user/normal/getArticleContent", params)
+}
+
 export function getTotalLabel() {
   return Get("/api/user/normal/getTotalLabel")
 }
@@ -53,9 +57,34 @@ export function batchModifyLabel(params) {
   return Post("/api/admin/modifyLabel", params)
 }
 
-export function getArticleContent(params) {
-  return Post("/api/user/normal/getArticleContent", params)
+export function submitActivity(params) {
+  return Post("/api/admin/submitActivity", params)
 }
+
+export function getTotalActivity() {
+  return Get("/api/admin/getTotalActivity", {});
+}
+
+export function getActivityInfo(params) {
+  return Post("/api/user/normal/getActivityInfo", params);
+}
+
+export function searchActivity(params) {
+  return Post("/api/user/normal/searchActivity", params);
+}
+
+export function batchDeleteActivity(params) {
+  return Post("/api/admin/batchDeleteActivity", params)
+}
+
+export function batchModifyActivity(params) {
+  return Post("/api/admin/batchModifyActivity", params)
+}
+
+export function getActivityContent(params) {
+  return Post("/api/user/normal/getActivityContent", params)
+}
+
 export const uploadMediaURL = baseURL + "/api/admin/saveMedia";
 
 export const adminApi = {
@@ -74,5 +103,13 @@ export const adminApi = {
   getTotalLabel,
   addSingleLabel,
   deleteLabel,
-  batchModifyLabel
+  batchModifyLabel,
+
+  submitActivity,
+  getTotalActivity,
+  batchDeleteActivity,
+  batchModifyActivity,
+  getActivityInfo,
+  searchActivity,
+  getActivityContent
 };
