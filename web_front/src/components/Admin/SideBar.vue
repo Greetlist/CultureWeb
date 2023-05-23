@@ -4,8 +4,9 @@
       <el-menu
         :default-active="activeMenu"
         :unique-opened="false"
-        :collapse-transition="false"
+        :collapse-transition="true"
         mode="vertical"
+        :collapse="isCollapse"
       >
         <sidebar-item
           v-for="route in adminRoutes.children"
@@ -27,6 +28,7 @@ export default {
   data() {
     return {
       adminRoutes,
+      isCollapse: true
     };
   },
   computed: {

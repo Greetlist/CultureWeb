@@ -231,8 +231,8 @@
 <script>
 import { adminApi } from "@services/admin/"
 import { notifyApiResult } from "@js/notify"
-import EditActivityDialog from "@views/Admin/Activity/EditActivityDialog.vue"
-import PreviewActivityDialog from "@views/Admin/Activity/PreviewActivityDialog.vue"
+import EditActivityDialog from "@views/Admin/Activities/EditActivityDialog.vue"
+import PreviewActivityDialog from "@views/Admin/Activities/PreviewActivityDialog.vue"
 
 export default {
   name: "ActivityList",

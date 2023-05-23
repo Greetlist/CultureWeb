@@ -78,4 +78,10 @@ var (
     ModifyActivityDetailError = NewResponseError(8002, "修改活动详情失败", http.StatusOK)
     DeleteActivityDetailError = NewResponseError(8003, "删除活动失败", http.StatusOK)
     SearchActivityError = NewResponseError(8004, "搜索活动失败", http.StatusOK)
+
+    //site Error
+    GetSiteError = NewResponseError(9000, "获取场馆失败", http.StatusOK)
+    AddSiteError = NewResponseError(9001, "添加场馆失败", http.StatusOK)
+    DeleteSiteError = NewResponseError(9002, "删除场馆失败", http.StatusOK)
+    ModifySiteError = NewResponseError(9003, "修改场馆失败", http.StatusOK)
 )

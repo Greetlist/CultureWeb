@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="修改文章"
+    title="修改活动"
     width="85%"
     :visible.sync="dialogVisible"
   >
