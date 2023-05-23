@@ -11,6 +11,7 @@ var (
     ActivityModel ActivityModelStruct
     StatisticModel StatisticModelStruct
     LabelModel LabelModelStruct
+    SiteModel SiteModelStruct
 )
 
 func InitModel(db *gorm.DB) {
@@ -20,4 +21,5 @@ func InitModel(db *gorm.DB) {
     ActivityModel = ActivityModelStruct{DB: db}
     StatisticModel = StatisticModelStruct{DB: db}
     LabelModel = LabelModelStruct{DB: db}
+    SiteModel = SiteModelStruct{DB: db}
 }

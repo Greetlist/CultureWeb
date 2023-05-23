@@ -198,14 +198,6 @@ const adminRoutes = {
           },
         },
         {
-          path: "addNewSite",
-          name: "addNewSite",
-          component: () => import("@/views/Admin/Site/AddNewSite.vue"),
-          meta: {
-            title: "新增场地",
-          },
-        },
-        {
           path: "listReservation",
           name: "listReservation",
           component: () => import("@/views/Admin/Site/ListReservation.vue"),

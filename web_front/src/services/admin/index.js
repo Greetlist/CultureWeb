@@ -57,6 +57,22 @@ export function batchModifyLabel(params) {
   return Post("/api/admin/modifyLabel", params)
 }
 
+export function getTotalSite() {
+  return Get("/api/user/normal/getTotalSite")
+}
+
+export function addSingleSite(params) {
+  return Post("/api/admin/addSingleSite", params)
+}
+
+export function deleteSite(params) {
+  return Post("/api/admin/deleteSite", params)
+}
+
+export function batchModifySite(params) {
+  return Post("/api/admin/modifySite", params)
+}
+
 export function submitActivity(params) {
   return Post("/api/admin/submitActivity", params)
 }
@@ -104,6 +120,11 @@ export const adminApi = {
   addSingleLabel,
   deleteLabel,
   batchModifyLabel,
+
+  getTotalSite,
+  addSingleSite,
+  deleteSite,
+  batchModifySite,
 
   submitActivity,
   getTotalActivity,

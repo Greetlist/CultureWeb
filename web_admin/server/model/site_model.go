@@ -17,22 +17,27 @@ type SiteModelStruct struct {
     DB *gorm.DB
 }
 
-func (label *SiteModelStruct) GetSiteList(response *GetTotalSiteResponse) *ErrorCode.ResponseError {
+func (site *SiteModelStruct) GetSiteList(response *GetTotalSiteResponse) *ErrorCode.ResponseError {
     var oriSiteList []schema.Site
-    query_res := label.DB.Select([]string{"label_id", "label_name"}).Order("label_id").Find(&oriSiteList)
+    query_res := site.DB.Select([]string{"site_id", "site_name"}).Order("site_id").Find(&oriSiteList)
     if query_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", query_res.Error)
         return ErrorCode.GetSiteError
     }
     for _, item := range(oriSiteList) {
-        num := label.DB.Model(&item).Association("Articles").Count()
+        num := site.DB.Model(&item).Association("Articles").Count()
         response.SiteList = append(response.SiteList, QuerySiteStruct{SiteID: item.SiteID, SiteName: item.SiteName, RelateArticleNumber: num})
     }
     return nil
 }
 
-func (label *SiteModelStruct) AddSingleSite(req *AddSingleSiteRequest) *ErrorCode.ResponseError {
-    query_res := label.DB.Create(&schema.Site{SiteName: strings.Trim(req.SiteName, " ")})
+func (site *SiteModelStruct) AddSingleSite(req *AddSingleSiteRequest) *ErrorCode.ResponseError {
+    query_res := site.DB.Create(
+        &schema.Site{
+            SiteName: strings.Trim(req.SiteName, " "),
+            Location: strings.Trim(req.Location, " "),
+            PhoneNumber: strings.Trim(req.PhoneNumber, " "),
+            ContactName: strings.Trim(req.ContactName, " ")})
     if query_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", query_res.Error)
         return ErrorCode.AddSiteError
@@ -40,13 +45,13 @@ func (label *SiteModelStruct) AddSingleSite(req *AddSingleSiteRequest) *ErrorCod
     return nil
 }
 
-func (label *SiteModelStruct) DeleteSite(labels *[]int) *ErrorCode.ResponseError {
-    tx := label.DB.Begin()
-    for _, labelID := range(*labels) {
-        var label schema.Site
-        label.SiteID = labelID
-        tx.Model(&label).Association("Articles").Clear()
-        tx.Delete(&label)
+func (site *SiteModelStruct) DeleteSite(sites *[]int) *ErrorCode.ResponseError {
+    tx := site.DB.Begin()
+    for _, siteID := range(*sites) {
+        var site schema.Site
+        site.SiteID = siteID
+        tx.Model(&site).Association("Articles").Clear()
+        tx.Delete(&site)
     }
 
     if e := tx.Commit().Error; e != nil {
@@ -57,12 +62,13 @@ func (label *SiteModelStruct) DeleteSite(labels *[]int) *ErrorCode.ResponseError
     return nil
 }
 
-func (label *SiteModelStruct) ModifySite(mList *[]ModifySiteItem) *ErrorCode.ResponseError {
-    tx := label.DB.Begin()
+func (site *SiteModelStruct) ModifySite(mList *[]ModifySiteItem) *ErrorCode.ResponseError {
+    tx := site.DB.Begin()
     for _, item := range(*mList) {
-        var label schema.Site
-        label.SiteID = item.SiteID
-        update_res := tx.Model(&label).Update("label_name", strings.Trim(item.SiteName, " "))
+        var site schema.Site
+        site.SiteID = item.SiteID
+        update_res := tx.Model(&site).Updates(
+            schema.Site{SiteName: strings.Trim(item.SiteName, " "), Location: strings.Trim(item.Location, " "), PhoneNumber: strings.Trim(item.PhoneNumber, " "), ContactName: strings.Trim(item.ContactName, " ")})
         if update_res.Error != nil {
             LOG.Logger.Errorf("DB Error: %v", update_res.Error)
             tx.Rollback()

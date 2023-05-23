@@ -16,6 +16,9 @@ type GetTotalSiteResponse struct {
 
 type AddSingleSiteRequest struct {
     SiteName string `json:"label_name"`
+    Location string `json:"location"`
+    PhoneNumber string `json:"phone_number"`
+    ContactName string `json:"contact_name"`
 }
 type AddSingleSiteResponse struct {
     Result RequestResult `json:"request_result"`
@@ -31,6 +34,9 @@ type DeleteSiteResponse struct {
 type ModifySiteItem struct {
     SiteID int `json:"label_id"`
     SiteName string `json:"label_name"`
+    Location string `json:"location"`
+    PhoneNumber string `json:"phone_number"`
+    ContactName string `json:"contact_name"`
 }
 type ModifySiteRequest struct {
     ModifyList []ModifySiteItem `json:"modify_list"`
