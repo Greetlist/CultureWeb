@@ -153,15 +153,19 @@ export default {
       currentPage: 1,
       pageSize: 10,
       tableColumns: [
-        {"col": "site_id", "name": "标签ID", "sort": false},
+        {"col": "site_id", "name": "场地ID", "sort": true},
         {"col": "site_name", "name": "标签名称", "sort": false},
-        {"col": "article_number", "name": "关联文章数量", "sort": true},
+        {"col": "location", "name": "场馆地址", "sort": false},
+        {"col": "phone_number", "name": "联系电话", "sort": false},
+        {"col": "contact_name", "name": "联系人", "sort": false},
         {"col": "operation", "name": "操作", "sort": false},
       ],
       modifyShowColumns: [
-        {"col": "site_id", "name": "标签ID", "sort": false},
+        {"col": "site_id", "name": "场地ID", "sort": true},
         {"col": "site_name", "name": "标签名称", "sort": false},
-        {"col": "article_number", "name": "关联文章数量", "sort": true},
+        {"col": "location", "name": "场馆地址", "sort": false},
+        {"col": "phone_number", "name": "联系电话", "sort": false},
+        {"col": "contact_name", "name": "联系人", "sort": false},
       ],
       selectedRows: [],
       modifiedMap: '',
@@ -229,7 +233,10 @@ export default {
 
     addSingleSite(index, row) {
       var req = {
-        'site_name': row.site_name
+        'site_name': row.site_name,
+        'location': row.location,
+        'phone_number': row.phone_number,
+        'contact_name': row.contact_name
       }
       var instance = this
       adminApi.addSingleSite(req).then(function (res) {
@@ -250,7 +257,9 @@ export default {
       var newLine = {
         "site_id": "-",
         "site_name": "",
-        "article_num": 0,
+        "location": "",
+        "phone_number": "",
+        "contact_name": "",
         "is_new": true
       }
       this.totalSiteList.unshift(newLine)
