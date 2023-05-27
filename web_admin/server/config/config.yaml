@@ -12,6 +12,9 @@ media_base_url: media/
 article_save_basedir: /home/greetlist/workspace/CultureWeb/web_admin/article/
 article_base_url: article/
 
+activity_save_basedir: /home/greetlist/workspace/CultureWeb/web_admin/activity/
+activity_base_url: activity/
+
 redis_config:
   pool_size: 10
   redis_server: 127.0.0.1

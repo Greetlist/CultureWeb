@@ -1,13 +1,16 @@
 <template>
-  <div>
-    <h1>新增文章</h1>
-    <el-form ref="article_form" status-icon :rules="user_check_rules" :model="article_form" label-width="180px" size="medium">
+  <el-dialog
+    title="修改活动"
+    width="85%"
+    :visible.sync="dialogVisible"
+  >
+    <el-form ref="activity_form" status-icon :rules="user_check_rules" :model="activity_form" label-width="180px" size="medium" class="editor">
       <el-form-item label="标题" prop="title">
-        <el-input v-model="article_form.title" clearable maxlength="30"></el-input>
+        <el-input v-model="activity_form.title" clearable maxlength="30"></el-input>
       </el-form-item>
       <el-form-item label="简要" prop="summary">
         <el-input
-          v-model="article_form.summary"
+          v-model="activity_form.summary"
           clearable
           type="textarea"
           maxlength="300"
@@ -15,17 +18,13 @@
         >
         </el-input>
       </el-form-item>
-      <el-form-item label="排序" prop="rank">
-        <el-input-number v-model="article_form.rank" :min="1" :max="10" :step="1"></el-input>
-      </el-form-item>
       <el-form-item label="标签" prop="label">
         <el-select
-          v-model="article_form.labels"
+          v-model="activity_form.labels"
           clearable
           multiple
           collapse-tags
           placeholder="请选择标签"
-          size="medium"
           style="width: 15rem;"
         >
           <el-option
@@ -37,13 +36,11 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="是否置顶">
-        <el-switch v-model="article_form.is_top"></el-switch>
-      </el-form-item>
       <el-form-item label="内容">
         <quill-editor
-          ref="article"
-          v-model="article_form.content"
+          class="editor"
+          ref="activity"
+          v-model="activity_form.content"
           :options="editorOption"
           @blur="onBlur($event)"
           @focus="onFocus($event)"
@@ -52,8 +49,8 @@
         />
       </el-form-item>
       <el-form-item label-width="0" style="text-align: center;">
-        <el-button type="primary" style="margin-right: 20%;" @click="onSubmit">提交</el-button>
-        <el-button type="danger" @click="onReset">重置</el-button>
+        <el-button type="primary" style="margin-right: 20%;" @click="onSubmit">提交修改</el-button>
+        <el-button type="danger" @click="closeDialog">放弃修改</el-button>
       </el-form-item>
     </el-form>
     <el-upload
@@ -66,22 +63,21 @@
     >
       <el-button size="small" type="primary" id="imgInput" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="uploading">Upload</el-button>
     </el-upload>
-  </div>
+  </el-dialog>
 </template>
+
 <script>
 
+import { notifyApiResult } from "@js/notify"
 import { uploadMediaURL } from "@services/admin/index"
 import { adminApi } from "@services/admin/"
-import { notifyApiResult } from "@js/notify"
 
 import { Quill } from 'vue-quill-editor'
 import { container, ImageExtend } from 'quill-image-extend-module'
 Quill.register('modules/ImageExtend', ImageExtend)
 
-import "quill/dist/quill.core.css"
-
 export default {
-  name: "AddArticle",
+  name: "EditActivityDialog",
   data: function () {
     return {
       uploadFileType: '',
@@ -99,14 +95,19 @@ export default {
           }
         }
       },
-      article_form: {
+      activity_form: {
+        activity_id: '',
         title: '',
         summary: '',
-        rank: '',
-        label: '',
-        is_top: false,
+        labels: [],
+        is_enable: false,
+
         content: '',
-      }
+        create_time: '',
+        local_save_name: '',
+        is_modify_content: false
+      },
+      dialogVisible: false
     }
   },
   methods: {
@@ -116,9 +117,8 @@ export default {
     },
     onReady(quill) {
     },
-    onChange(event) {
-      //this.$refs.article.quill.setSelection(event.text.length+1)
-      //setTimeout(() => this.$refs.article.quill.setSelection(event.text.length+1), 0)
+    onChange(quill) {
+      this.activity_form.is_modify_content = true
     },
     fillRequestParam(file) {
       this.uploadData.size = file.size
@@ -132,7 +132,7 @@ export default {
     },
     imageUpload(state) {
       this.uploadFileType = 'image'
-      this.addRange = this.$refs.article.quill.getSelection()
+      this.addRange = this.$refs.activity.quill.getSelection()
       if (state) {
         let fileInput = document.getElementById('imgInput')
         fileInput.click()
@@ -147,8 +147,8 @@ export default {
       }
       if (url !== '') {
         let value = url
-        vm.addRange = vm.$refs.article.quill.getSelection()
-        vm.$refs.article.quill.insertEmbed(vm.addRange !== null ? vm.addRange.index : 0, vm.uploadFileType, value, Quill.sources.USER)
+        vm.addRange = vm.$refs.activity.quill.getSelection()
+        vm.$refs.activity.quill.insertEmbed(vm.addRange !== null ? vm.addRange.index : 0, vm.uploadFileType, value, Quill.sources.USER)
       } else {
         console.log("inert image error")
       }
@@ -158,69 +158,50 @@ export default {
     //}
 
     onSubmit() {
-      adminApi.submitArticle(this.article_form).then(function (res) {
+      var instance = this
+      var modify = [this.activity_form]
+      var req = {
+        modify_list: modify
+      }
+      if (this.activity_form.is_modify_content === false) {
+        this.$notify({
+            title: 'Result',
+            type: 'info',
+            message: '没有修改文章'
+        })
+        return
+      }
+      adminApi.batchModifyActivity(req).then(function (res) {
         var request_result = res.data.request_result
         notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
-        if (request_result["return_code"] === 0) {
-          instance.resetForm()
-        }
+        instance.dialogVisible = false
       })
     },
-    onReset() {
-      this.resetForm()
-    },
-    resetForm() {
-      this.article_form.title = ''
-      this.article_form.summary = ''
-      this.article_form.rank = ''
-      this.article_form.labels = []
-      this.article_form.is_top = false
-      this.article_form.content = ''
+    closeDialog() {
+      this.activity_form.title = ''
+      this.activity_form.summary = ''
+      this.activity_form.labels = []
+      this.activity_form.content = ''
+      this.dialogVisible = false
+
+      this.activity_form.content = ''
+      this.activity_form.create_time = ''
+      this.activity_form.local_save_name = ''
+      this.activity_form.is_modify_content = false
     }
   },
   computed: {
     editor() {
-      return this.$refs.article.quill
+      return this.$refs.activity.quill
     }
-  },
-  created() {
-    var instance = this
-    instance.totalLabelList = []
-    adminApi.getTotalLabel().then(function (res) {
-      var request_result = res.data.request_result
-      if (request_result["return_code"] !== 0) {
-        instance.totalLabelList = []
-      } else {
-        for (let idx in res.data.labels) {
-          var item = res.data.labels[idx]
-          var option = {
-            'value': item.label_id,
-            'label': item.label_name
-          }
-          instance.options.push(option)
-        }
-      }
-    })
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.ql-container{
-  overflow: auto;
-  max-height: 33rem;
-}
-
-.ql-container ::-webkit-scrollbar{
-  width: 10px;
-  height: 10px;
-}
-.ql-container ::-webkit-scrollbar-thumb{
-  background: #666666;
-  border-radius: 5px;
-}
-.ql-container ::-webkit-scrollbar-track{
-  background: #ccc;
-  border-radius: 5px;
+.editor {
+  width: 80%;
+  padding-left: 10%;
+  overflow: hidden;
 }
 </style>

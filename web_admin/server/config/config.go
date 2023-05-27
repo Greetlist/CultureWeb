@@ -52,6 +52,8 @@ type YamlConfig struct {
     MediaBaseUrl string `yaml:"media_base_url"`
     ArticleSaveDir string `yaml:"article_save_basedir"`
     ArticleBaseUrl string `yaml:"article_base_url"`
+    ActivitySaveDir string `yaml:"activity_save_basedir"`
+    ActivityBaseUrl string `yaml:"activity_base_url"`
     RedisConfig Redis `yaml:"redis_config"`
     TLSConfig TLS `yaml:"tls_config"`
     MysqlConfig Mysql `yaml:"mysql_config"`

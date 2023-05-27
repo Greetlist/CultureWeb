@@ -40,7 +40,7 @@ func (article *ArticleModelStruct) SaveArticle(req *SubmitArticleRequest) *Error
     a := &schema.Article {
         ArticleDetail: schema.ArticleDetail {
             ArticleID: 0,
-            Title: req.Title,
+            Title: strings.Trim(req.Title, " "),
             Rank: req.Rank,
             Summary: req.Summary,
             Labels: labelList,

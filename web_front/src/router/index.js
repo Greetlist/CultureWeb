@@ -165,8 +165,7 @@ const adminRoutes = {
         {
           path: "activitiesList",
           name: "activitiesList",
-          component: () =>
-            import("@/views/Admin/Activities/ActivitiesList.vue"),
+          component: () => import("@/views/Admin/Activities/ActivitiesList.vue"),
           meta: {
             title: "活动列表",
           },
@@ -191,19 +190,27 @@ const adminRoutes = {
       },
       children: [
         {
-          path: "siteManagementLis",
-          name: "siteManagementLis",
-          component: () => import("@/views/Admin/Site/SiteList.vue"),
+          path: "addNewReservation",
+          name: "addNewReservation",
+          component: () => import("@/views/Admin/Site/AddNewReservation.vue"),
+          meta: {
+            title: "新增预约",
+          },
+        },
+        {
+          path: "listReservation",
+          name: "listReservation",
+          component: () => import("@/views/Admin/Site/ListReservation.vue"),
           meta: {
             title: "所有预约",
           },
         },
         {
-          path: "siteManagementList",
-          name: "siteManagementList",
-          component: () => import("@/views/Admin/Site/AddNewSite.vue"),
+          path: "listSite",
+          name: "listSite",
+          component: () => import("@/views/Admin/Site/SiteList.vue"),
           meta: {
-            title: "新增场地",
+            title: "所有场地",
           },
         },
       ],

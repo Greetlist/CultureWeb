@@ -6,10 +6,17 @@
   >
     <el-form ref="article_form" status-icon :rules="user_check_rules" :model="article_form" label-width="180px" size="medium" class="editor">
       <el-form-item label="标题" prop="title">
-        <el-input v-model="article_form.title" clearable></el-input>
+        <el-input v-model="article_form.title" clearable maxlength="30"></el-input>
       </el-form-item>
       <el-form-item label="简要" prop="summary">
-        <el-input v-model="article_form.summary" clearable></el-input>
+        <el-input
+          v-model="article_form.summary"
+          clearable
+          type="textarea"
+          maxlength="300"
+          show-word-limit
+        >
+        </el-input>
       </el-form-item>
       <el-form-item label="排序" prop="rank">
         <el-input-number v-model="article_form.rank" :min="1" :max="10" :step="1"></el-input>

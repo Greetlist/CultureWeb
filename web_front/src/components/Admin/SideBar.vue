@@ -26,7 +26,7 @@ export default {
   components: { SidebarItem },
   data() {
     return {
-      adminRoutes,
+      adminRoutes
     };
   },
   computed: {

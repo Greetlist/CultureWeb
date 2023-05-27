@@ -15,7 +15,7 @@ type Comment struct {
 
 type ArticleDetail struct {
     ArticleID uint `gorm:"column:article_id;primary_key;AUTO_INCREMENT;" json:"article_id"`
-    Title string `gorm:"column:title;not null;" json:"title"`
+    Title string `gorm:"column:title;unique;not null;" json:"title"`
     Rank uint `gorm:"column:rank;default:0;" json:"rank"`
     Summary string `gorm:"column:summary;not null;" json:"summary"`
     Labels []*Label `gorm:"many2many:article_labels;" json:"labels"`

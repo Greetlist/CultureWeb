@@ -71,4 +71,17 @@ var (
     AddLabelError = NewResponseError(7001, "添加标签失败", http.StatusOK)
     DeleteLabelError = NewResponseError(7002, "删除标签失败", http.StatusOK)
     ModifyLabelError = NewResponseError(7003, "修改标签失败", http.StatusOK)
+
+    //activity Error
+    InsertActivityError = NewResponseError(8000, "新增活动失败", http.StatusOK)
+    GetActivityError = NewResponseError(8001, "获取活动失败", http.StatusOK)
+    ModifyActivityDetailError = NewResponseError(8002, "修改活动详情失败", http.StatusOK)
+    DeleteActivityDetailError = NewResponseError(8003, "删除活动失败", http.StatusOK)
+    SearchActivityError = NewResponseError(8004, "搜索活动失败", http.StatusOK)
+
+    //site Error
+    GetSiteError = NewResponseError(9000, "获取场馆失败", http.StatusOK)
+    AddSiteError = NewResponseError(9001, "添加场馆失败", http.StatusOK)
+    DeleteSiteError = NewResponseError(9002, "删除场馆失败", http.StatusOK)
+    ModifySiteError = NewResponseError(9003, "修改场馆失败", http.StatusOK)
 )
