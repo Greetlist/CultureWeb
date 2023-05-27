@@ -28,25 +28,31 @@
         v-for="item in tableColumns"
         :key="item.col"
         :prop="item.col"
-        :site="item.name"
+        :label="item.name"
         :sortable="item.sort"
       >
         <template slot-scope="scope">
-          <el-input
-            v-if="item.col === 'site_name'"
-            v-model="scope.row[item.col]"
-            @change=hasEditRow(scope.row)
-          />
-          <template v-else-if="item.col === 'operation'">
-            <template v-if="scope.row['is_new'] === false">
-              <el-button size="small" type="danger" icon="el-icon-delete" @click="deleteExistSite(scope.row)"></el-button>
-            </template>
-            <template v-else>
+          <template v-if="scope.row['is_new'] === false">
+            <div v-if="item.col === 'site_id'" v-html="convertHtml(scope.row[item.col])"></div>
+            <el-button v-else-if="item.col === 'operation'" size="small" type="danger" icon="el-icon-delete" @click="deleteExistSite(scope.row)"></el-button>
+            <el-input
+              v-else
+              v-model="scope.row[item.col]"
+              @change=hasEditRow(scope.row)
+            />
+          </template>
+          <template v-else>
+            <div v-if="item.col === 'site_id'" v-html="convertHtml(scope.row[item.col])"></div>
+            <template v-else-if="item.col === 'operation'">
               <el-button size="small" type="success" icon="el-icon-circle-check" @click="addSingleSite(scope.$index, scope.row)"></el-button>
               <el-button size="small" type="danger" icon="el-icon-circle-close" @click="deleteNewSite(scope.$index)"></el-button>
             </template>
+            <el-input
+              v-else
+              v-model="scope.row[item.col]"
+              @change=hasEditRow(scope.row)
+            />
           </template>
-          <div v-else v-html="convertHtml(scope.row[item.col])"></div>
         </template>
       </el-table-column>
     </el-table>
@@ -81,7 +87,7 @@
           v-for="item in modifyShowColumns"
           :key="item.col"
           :prop="item.col"
-          :site="item.name"
+          :label="item.name"
           :sortable="item.sort"
         >
           <template slot-scope="{ row }">
@@ -154,7 +160,7 @@ export default {
       pageSize: 10,
       tableColumns: [
         {"col": "site_id", "name": "场地ID", "sort": true},
-        {"col": "site_name", "name": "标签名称", "sort": false},
+        {"col": "site_name", "name": "场馆名称", "sort": false},
         {"col": "location", "name": "场馆地址", "sort": false},
         {"col": "phone_number", "name": "联系电话", "sort": false},
         {"col": "contact_name", "name": "联系人", "sort": false},
@@ -162,7 +168,7 @@ export default {
       ],
       modifyShowColumns: [
         {"col": "site_id", "name": "场地ID", "sort": true},
-        {"col": "site_name", "name": "标签名称", "sort": false},
+        {"col": "site_name", "name": "场馆名称", "sort": false},
         {"col": "location", "name": "场馆地址", "sort": false},
         {"col": "phone_number", "name": "联系电话", "sort": false},
         {"col": "contact_name", "name": "联系人", "sort": false},

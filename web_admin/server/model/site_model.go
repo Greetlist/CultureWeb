@@ -19,14 +19,14 @@ type SiteModelStruct struct {
 
 func (site *SiteModelStruct) GetSiteList(response *GetTotalSiteResponse) *ErrorCode.ResponseError {
     var oriSiteList []schema.Site
-    query_res := site.DB.Select([]string{"site_id", "site_name"}).Order("site_id").Find(&oriSiteList)
+    query_res := site.DB.Order("site_id").Find(&oriSiteList)
     if query_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", query_res.Error)
         return ErrorCode.GetSiteError
     }
     for _, item := range(oriSiteList) {
-        num := site.DB.Model(&item).Association("Articles").Count()
-        response.SiteList = append(response.SiteList, QuerySiteStruct{SiteID: item.SiteID, SiteName: item.SiteName, RelateArticleNumber: num})
+        LOG.Logger.Infof("%v", item)
+        response.SiteList = append(response.SiteList, QuerySiteStruct{SiteID: item.SiteID, SiteName: item.SiteName, Location: item.Location, PhoneNumber: item.PhoneNumber, ContactName: item.ContactName})
     }
     return nil
 }
