@@ -25,7 +25,6 @@ func (site *SiteModelStruct) GetSiteList(response *GetTotalSiteResponse) *ErrorC
         return ErrorCode.GetSiteError
     }
     for _, item := range(oriSiteList) {
-        LOG.Logger.Infof("%v", item)
         response.SiteList = append(response.SiteList, QuerySiteStruct{SiteID: item.SiteID, SiteName: item.SiteName, Location: item.Location, PhoneNumber: item.PhoneNumber, ContactName: item.ContactName})
     }
     return nil
