@@ -10,7 +10,7 @@ type GetTotalReservationResponse struct {
 
 type SubmitReservationRequest struct {
     Usage string `json:"usage"`
-    SiteList []int `json:"site_list"`
+    Site int `json:"site"`
     StartTime string `json:"start_time"`
     EndTime string `json:"end_time"`
 }

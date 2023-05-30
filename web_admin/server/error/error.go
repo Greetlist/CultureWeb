@@ -90,4 +90,5 @@ var (
     SubmitReservationError = NewResponseError(10001, "添加预约失败", http.StatusOK)
     CancelReservationError = NewResponseError(10002, "取消预约失败", http.StatusOK)
     ModifyReservationError = NewResponseError(10003, "修改预约失败", http.StatusOK)
+    ReservationDupError = NewResponseError(10004, "预约时间段重复", http.StatusOK)
 )

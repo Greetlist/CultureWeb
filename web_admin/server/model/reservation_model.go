@@ -26,20 +26,41 @@ func (reservation *ReservationModelStruct) SubmitReservation(req *SubmitReservat
     layout := "2006-01-02T15:04:05.000Z"
     startTime, _ := time.Parse(layout, req.StartTime)
     endTime, _ := time.Parse(layout, req.EndTime)
-    var siteList []*schema.Site
-    for _, v := range(req.SiteList) {
-        var site schema.Site
-        site.SiteID = v
-        siteList = append(siteList, &site)
+
+    LOG.Logger.Infof("args: %v", req)
+    var resList []schema.Reservation
+    //check time range conflict
+    query_res := reservation.DB.Debug().Where("start_time >= ? AND end_time <= ?", startTime, endTime).Find(&resList)
+    if query_res.Error != nil {
+        LOG.Logger.Errorf("DB Error: %v", query_res.Error)
+        return ErrorCode.SubmitReservationError
     }
-    query_res := reservation.DB.Create(
+    if query_res.RowsAffected != 0 {
+        var siteList []schema.Site
+        for _, item := range(resList) {
+            reservation.DB.Debug().Model(&item).Association("Sites").Find(&siteList)
+            for _, s := range(siteList) {
+                if req.Site == s.SiteID {
+                    LOG.Logger.Errorf("Duplicate Time Range: %v", resList)
+                    return ErrorCode.ReservationDupError
+                }
+            }
+        }
+    }
+
+    var siteList []*schema.Site
+    var site schema.Site
+    site.SiteID = req.Site
+    siteList = append(siteList, &site)
+
+    create_res := reservation.DB.Create(
         &schema.Reservation{
             Usage: strings.Trim(req.Usage, " "),
             Sites: siteList,
             StartTime: startTime,
             EndTime: endTime})
-    if query_res.Error != nil {
-        LOG.Logger.Errorf("DB Error: %v", query_res.Error)
+    if create_res.Error != nil {
+        LOG.Logger.Errorf("DB Error: %v", create_res.Error)
         return ErrorCode.SubmitReservationError
     }
     return nil
