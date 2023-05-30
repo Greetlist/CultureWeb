@@ -84,4 +84,10 @@ var (
     AddSiteError = NewResponseError(9001, "添加场馆失败", http.StatusOK)
     DeleteSiteError = NewResponseError(9002, "删除场馆失败", http.StatusOK)
     ModifySiteError = NewResponseError(9003, "修改场馆失败", http.StatusOK)
+
+    //site Error
+    GetReservationError = NewResponseError(10000, "获取预约失败", http.StatusOK)
+    SubmitReservationError = NewResponseError(10001, "添加预约失败", http.StatusOK)
+    CancelReservationError = NewResponseError(10002, "取消预约失败", http.StatusOK)
+    ModifyReservationError = NewResponseError(10003, "修改预约失败", http.StatusOK)
 )

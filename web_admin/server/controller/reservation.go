@@ -26,13 +26,13 @@ func GetTotalReservation(c *gin.Context) {
     c.JSON(http.StatusOK, res)
 }
 
-// AddSingleReservation godoc
+// SubmitReservation godoc
 // @Summary Add Reservation
 // @Description Add New Reservation
-// @ID AddSingleReservation
+// @ID SubmitReservation
 // @Produce json
-// @Param request_json body model.AddSingleReservationRequest true "reservation Form"
-// @Success 200 {object} model.AddSingleReservationResponse
+// @Param request_json body model.SubmitReservationRequest true "reservation Form"
+// @Success 200 {object} model.SubmitReservationResponse
 // @Router /api/admin/submitReservation [post]
 func SubmitReservation(c *gin.Context) {
     var req model.SubmitReservationRequest
@@ -45,8 +45,8 @@ func SubmitReservation(c *gin.Context) {
     }
 
     if e := model.ReservationModel.SubmitReservation(&req); e != nil {
-        model.GenErrorReturn(ErrorCode.AddReservationError, &res.Result)
-        c.JSON(ErrorCode.AddReservationError.HttpStatusCode, res)
+        model.GenErrorReturn(ErrorCode.SubmitReservationError, &res.Result)
+        c.JSON(ErrorCode.SubmitReservationError.HttpStatusCode, res)
         return
     }
     model.GenSuccessReturn(&res.Result)
@@ -99,7 +99,6 @@ func ModifyReservation(c *gin.Context) {
         return
     }
 
-    LOG.Logger.Infof("%v", req)
     if e := model.ReservationModel.ModifyReservation(&req.ModifyList); e != nil {
         model.GenErrorReturn(ErrorCode.ModifyReservationError, &res.Result)
         c.JSON(ErrorCode.ModifyReservationError.HttpStatusCode, res)
