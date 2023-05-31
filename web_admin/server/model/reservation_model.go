@@ -30,7 +30,7 @@ func (reservation *ReservationModelStruct) SubmitReservation(req *SubmitReservat
     LOG.Logger.Infof("args: %v", req)
     var resList []schema.Reservation
     //check time range conflict
-    query_res := reservation.DB.Debug().Where("start_time >= ? AND end_time <= ?", startTime, endTime).Find(&resList)
+    query_res := reservation.DB.Debug().Where("start_time <= ? AND end_time >= ?", endTime, startTime).Find(&resList)
     if query_res.Error != nil {
         LOG.Logger.Errorf("DB Error: %v", query_res.Error)
         return ErrorCode.SubmitReservationError
