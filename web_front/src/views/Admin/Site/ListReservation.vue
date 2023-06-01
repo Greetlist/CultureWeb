@@ -33,7 +33,7 @@
       style="width: 100%; margin-top: 15px;"
       :row-key="(row) => {return row.reservation_id}"
       @selection-change="handleSelectionChange"
-      ref="artileTable"
+      ref="reservationTable"
     >
       <el-table-column
         type="selection"
@@ -62,11 +62,7 @@
             v-model="scope.row[item.col]"
             @change=hasEditRow(scope.row)
           />
-          <template v-else-if="item.col === 'reservation_link'">
-            <el-button size="small" type="primary" icon="el-icon-edit" circle @click="openEditDialog(scope.row)"></el-button>
-            <el-button size="small" type="success" icon="el-icon-view" circle @click="openViewDialog(scope.row)"></el-button>
-          </template>
-          <template v-else-if="item.col === 'labels'">
+          <template v-else-if="item.col === 'site'">
             <el-select
               v-model="scope.row[item.col]"
               multiple
@@ -220,13 +216,10 @@
     </el-dialog>
 
     <EditReservationDialog ref="editDialog"></EditReservationDialog>
-    <PreviewReservationDialog ref="previewDialog"></PreviewReservationDialog>
 </template>
 <script>
 import { adminApi } from "@services/admin/"
 import { notifyApiResult } from "@js/notify"
-import EditReservationDialog from "@views/Admin/Activities/EditReservationDialog.vue"
-import PreviewReservationDialog from "@views/Admin/Activities/PreviewReservationDialog.vue"
 
 export default {
   name: "ReservationList",
@@ -237,21 +230,17 @@ export default {
       currentPage: 1,
       pageSize: 10,
       tableColumns: [
-        {"col": "title", "name": "标题", "sort": false},
-        {"col": "summary", "name": "摘要", "sort": false},
-        {"col": "reservation_link", "name": "内容", "sort": false, width: 100},
-        {"col": "visit_number", "name": "访问数量", "sort": true, width: 100},
-        {"col": "labels", "name": "标签", "sort": false, width: 200},
-        {"col": "is_enable", "name": "是否激活", "sort": false, width: 75},
-        {"col": "create_time", "name": "创建时间", "sort": true, width: 100},
-        {"col": "update_time", "name": "更新时间", "sort": true, width: 100},
+        {"col": "reservation_id", "name": "ID", "sort": true},
+        {"col": "site", "name": "场馆", "sort": false},
+        {"col": "start_time", "name": "开始时间", "sort": false, width: 200},
+        {"col": "end_time", "name": "结束时间", "sort": false, width: 200},
         {"col": "operation", "name": "操作", "sort": false, width: 75},
       ],
       dialogShowColumns: [
-        {"col": "title", "name": "标题", "sort": false},
-        {"col": "summary", "name": "摘要", "sort": false},
-        {"col": "labels", "name": "标签", "sort": false},
-        {"col": "is_enable", "name": "是否激活", "sort": false},
+        {"col": "reservation_id", "name": "标题", "sort": false},
+        {"col": "site", "name": "摘要", "sort": false},
+        {"col": "start_time", "name": "开始时间", "sort": false},
+        {"col": "end_time", "name": "结束时间", "sort": false},
       ],
       batchSelectedRows: [],
       totalSiteList: [],
@@ -281,7 +270,6 @@ export default {
     },
 
     handleSelectionChange(val) {
-      console.log(val)
       this.batchSelectedRows = val
     },
 
@@ -347,8 +335,7 @@ export default {
       this.singleDeleteVisible = false
       this.batchDeleteVisible = false
       this.batchSelectedRows = []
-      console.log(this.$refs)
-      this.$refs.artileTable.clearSelection()
+      this.$refs.reservationTable.clearSelection()
     },
 
     closeModifyDialog() {
@@ -435,10 +422,9 @@ export default {
     },
 
     changeReservationList(val) {
-      console.log(val)
       this.showReservationList = []
       for (let idx in this.totalReservationList) {
-        if (this.totalReservationList[idx]['labels'].indexOf(val) !== -1) {
+        if (this.totalReservationList[idx]['site'] === val) {
           this.showReservationList.push(this.totalReservationList[idx])
         }
       }
@@ -446,36 +432,6 @@ export default {
 
     resetReservationList() {
       this.showReservationList = this.totalReservationList
-    },
-
-    searchReservation() {
-      if (this.searchKeyWord === '') {
-        this.queryAllReservation()
-        return
-      }
-      var req = {
-        'key_word': this.searchKeyWord
-      }
-      var instance = this
-      adminApi.searchReservation(req).then(function (res) {
-        var request_result = res.data.request_result
-        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
-        if (request_result["return_code"] === 0) {
-          instance.totalReservationList = []
-          instance.showReservationList = []
-          for (let idx in res.data.reservation_list) {
-            var item = res.data.reservation_list[idx]
-            item["reservation_link"] = "/get_reservation" + "?reservation_id=" + item["local_save_name"]
-            var currentLabelList = []
-            for (let idx in item['labels']) {
-              currentLabelList.push(item['labels'][idx].label_id)
-            }
-            item['labels'] = currentLabelList
-            instance.totalReservationList.push(item)
-            instance.showReservationList.push(item)
-          }
-        }
-      })
     },
 
     getContent(row, target) {
@@ -497,22 +453,6 @@ export default {
           instance.$refs.previewDialog.dialogVisible = true
         }
       })
-    },
-
-    openEditDialog(row) {
-      this.$refs.editDialog.options = this.totalSiteList
-
-      this.$refs.editDialog.reservation_form.reservation_id = row.reservation_id
-      this.$refs.editDialog.reservation_form.title = row.title
-      this.$refs.editDialog.reservation_form.summary = row.summary
-      this.$refs.editDialog.reservation_form.labels = row.labels
-
-      this.$refs.editDialog.reservation_form.create_time = row.create_time
-      this.$refs.editDialog.reservation_form.local_save_name = row.local_save_name
-      this.getContent(row, "edit")
-    },
-    openViewDialog(row) {
-      this.getContent(row, "preview")
     }
   },
 
