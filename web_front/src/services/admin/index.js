@@ -101,6 +101,19 @@ export function getActivityContent(params) {
   return Post("/api/user/normal/getActivityContent", params)
 }
 
+export function submitReservation(params) {
+  return Post("/api/admin/submitReservation", params)
+}
+export function getTotalReservation(params) {
+  return Post("/api/admin/getTotalReservation", params)
+}
+export function modifyReservation(params) {
+  return Post("/api/admin/modifyReservation", params)
+}
+export function cancelReservation(params) {
+  return Post("/api/admin/cancelReservation", params)
+}
+
 export const uploadMediaURL = baseURL + "/api/admin/saveMedia";
 
 export const adminApi = {
@@ -132,5 +145,10 @@ export const adminApi = {
   batchModifyActivity,
   getActivityInfo,
   searchActivity,
-  getActivityContent
+  getActivityContent,
+
+  submitReservation,
+  getTotalReservation,
+  modifyReservation,
+  cancelReservation
 };

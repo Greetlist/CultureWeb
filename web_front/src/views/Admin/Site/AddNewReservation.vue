@@ -4,7 +4,7 @@
     <el-form ref="reservation_form" status-icon :rules="user_check_rules" :model="reservation_form" label-width="180px" size="medium">
       <el-form-item label="用途" prop="summary">
         <el-input
-          v-model="reservation_form.summary"
+          v-model="reservation_form.usage"
           clearable
           type="textarea"
           maxlength="300"
@@ -57,6 +57,7 @@ export default {
   data: function () {
     return {
       options: [],
+      form_time_select: '',
       reservation_form: {
         usage: '',
         site: '',
@@ -67,6 +68,14 @@ export default {
   },
   methods: {
     onSubmit() {
+      var instance = this
+      var cur_start_time = new Date(this.form_time_select[0].toISOString())
+      var cur_end_time = new Date(this.form_time_select[1].toISOString())
+      cur_start_time.setHours(cur_start_time.getHours() + 8)
+      cur_end_time.setHours(cur_end_time.getHours() + 8)
+      this.reservation_form.start_time = cur_start_time.toISOString()
+      this.reservation_form.end_time = cur_end_time.toISOString()
+
       adminApi.submitReservation(this.reservation_form).then(function (res) {
         var request_result = res.data.request_result
         notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])

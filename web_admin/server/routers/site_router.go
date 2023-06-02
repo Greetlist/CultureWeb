@@ -7,7 +7,6 @@ import (
 )
 
 func InitAdminSiteApiRouter(RouterGroup *gin.RouterGroup) {
-    //TODO API
     AdminUserRouterGroup := RouterGroup.Group("admin")
     AdminUserRouterGroup.Use(middleware.AdminCookieChecker())
     AdminUserRouterGroup.POST("/addSingleSite", controller.AddSingleSite)
