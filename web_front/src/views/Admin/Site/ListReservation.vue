@@ -6,7 +6,7 @@
       <el-col :span="2" style="padding-top: 15px"><el-button type="danger" @click="deleteAllSelected()">删除所选</el-button></el-col>
       <el-col :span="2" style="padding-top: 15px">
         <el-select
-          v-model="currentSelectLabel"
+          v-model="currentSelectSite"
           collapse-tags
           size="medium"
           placeholder="筛选场馆"
@@ -51,21 +51,18 @@
         :width="item.width"
       >
         <template slot-scope="scope">
-          <el-switch
-            v-if="item.col === 'is_enable'"
-            v-model="scope.row[item.col]"
-            active-color="#13ce66"
-            @change=hasEditRow(scope.row)
-          />
           <el-input
-            v-else-if="item.col === 'title' || item.col === 'summary'"
+            v-if="item.col === 'usage'"
+            type="textarea"
+            clearable
+            maxlength="300"
+            show-word-limit
             v-model="scope.row[item.col]"
             @change=hasEditRow(scope.row)
           />
-          <template v-else-if="item.col === 'site'">
+          <template v-else-if="item.col === 'site_id'">
             <el-select
               v-model="scope.row[item.col]"
-              multiple
               collapse-tags
               size="small"
               @change="hasEditRow(scope.row)"
@@ -131,14 +128,13 @@
               v-model="scope.row[item.col]"
               disabled
             />
-            <template v-else-if="item.col === 'labels'">
+            <template v-else-if="item.col === 'site_id'">
               <el-tag
-                v-for="label in scope.row.labels"
                 type="primary"
                 size="small"
                 effet="dark"
               >
-              {{ totalLabelMap[label].label_name }}
+              {{ totalSiteMap[item.col].site_name }}
               </el-tag>
             </template>
             <div v-else v-html="convertHtml(scope.row[item.col])"></div>
@@ -184,14 +180,13 @@
               v-model="scope.row[item.col]"
               disabled
             />
-            <template v-else-if="item.col === 'labels'">
+            <template v-else-if="item.col === 'site_id'">
               <el-tag
-                v-for="label in scope.row.labels"
                 type="primary"
                 size="small"
                 effet="dark"
               >
-              {{ totalLabelMap[label].label_name }}
+              {{ totalSiteMap[item.col].site_name }}
               </el-tag>
             </template>
             <div v-else v-html="convertHtml(scope.row[item.col])"></div>
@@ -215,7 +210,6 @@
       </el-row>
     </el-dialog>
 
-    <EditReservationDialog ref="editDialog"></EditReservationDialog>
 </template>
 <script>
 import { adminApi } from "@services/admin/"
@@ -230,35 +224,31 @@ export default {
       currentPage: 1,
       pageSize: 10,
       tableColumns: [
-        {"col": "reservation_id", "name": "ID", "sort": true},
-        {"col": "site", "name": "场馆", "sort": false},
+        {"col": "reservation_id", "name": "预约ID", "sort": true, width: 100},
+        {"col": "usage", "name": "用途", "sort": false},
+        {"col": "site_id", "name": "场馆", "sort": false, width: 150},
         {"col": "start_time", "name": "开始时间", "sort": false, width: 200},
         {"col": "end_time", "name": "结束时间", "sort": false, width: 200},
         {"col": "operation", "name": "操作", "sort": false, width: 75},
       ],
       dialogShowColumns: [
-        {"col": "reservation_id", "name": "标题", "sort": false},
-        {"col": "site", "name": "摘要", "sort": false},
+        {"col": "reservation_id", "name": "预约ID", "sort": false},
+        {"col": "usage", "name": "用途", "sort": false},
+        {"col": "site_id", "name": "场馆", "sort": false},
         {"col": "start_time", "name": "开始时间", "sort": false},
         {"col": "end_time", "name": "结束时间", "sort": false},
       ],
       batchSelectedRows: [],
       totalSiteList: [],
-      totalLabelMap: '',
+      totalSiteMap: '',
       modifiedMap: '',
       modifiedRowsList: [],
       modifyVisible: false,
       batchDeleteVisible: false,
       singleDeleteVisible: false,
       singleDeleteRow: '',
-
-      currentSelectLabel: '',
-      searchKeyWord: ''
+      currentSelectSite: '',
     }
-  },
-  components: {
-    EditReservationDialog,
-    PreviewReservationDialog
   },
   methods: {
     handleSizeChange(val) {
@@ -274,10 +264,7 @@ export default {
     },
 
     hasEditRow(row) {
-      row.is_modify_content = false
-      row.content = ""
-      row.create_time = row.create_time
-      row.local_save_name = row.local_save_name
+      console.log(row)
       this.modifiedMap[row.reservation_id] = row
     },
 
@@ -353,20 +340,14 @@ export default {
       instance.showReservationList = []
       adminApi.getTotalReservation().then(function (res) {
         var request_result = res.data.request_result
-        console.log(request_result)
         notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
         if (request_result["return_code"] !== 0) {
           instance.totalReservationList = []
           instance.showReservationList = []
         } else {
-          for (let idx in res.data.reservation_list) {
-            var item = res.data.reservation_list[idx]
-            item["reservation_link"] = "/get_reservation" + "?reservation_id=" + item["local_save_name"]
-            var currentLabelList = []
-            for (let idx in item['labels']) {
-              currentLabelList.push(item['labels'][idx].label_id)
-            }
-            item['labels'] = currentLabelList
+          for (let idx in res.data.reservations) {
+            var item = res.data.reservations[idx]
+            item['site_id'] = item['sites'][0].site_id
             instance.totalReservationList.push(item)
             instance.showReservationList.push(item)
           }
@@ -403,6 +384,7 @@ export default {
 
     queryAllSite() {
       var instance = this
+      this.totalSiteMap = new Map()
       instance.totalSiteList = []
       adminApi.getTotalSite().then(function (res) {
         var request_result = res.data.request_result
@@ -415,8 +397,10 @@ export default {
               'value': item.site_id,
               'label': item.site_name
             }
-            instance.options.push(option)
+            instance.totalSiteList.push(option)
+            instance.totalSiteMap[item.site_id] = item
           }
+          console.log(instance.totalSiteMap)
         }
       })
     },
@@ -424,7 +408,7 @@ export default {
     changeReservationList(val) {
       this.showReservationList = []
       for (let idx in this.totalReservationList) {
-        if (this.totalReservationList[idx]['site'] === val) {
+        if (this.totalReservationList[idx]['site_id'] === val) {
           this.showReservationList.push(this.totalReservationList[idx])
         }
       }
@@ -432,27 +416,6 @@ export default {
 
     resetReservationList() {
       this.showReservationList = this.totalReservationList
-    },
-
-    getContent(row, target) {
-      var req = {
-        'create_time': row.create_time,
-        'local_save_name': row.local_save_name,
-        'reservation_id': row.reservation_id,
-        'is_admin': true,
-      }
-      var instance = this
-      adminApi.getReservationContent(req).then(function (res) {
-        var request_result = res.data.request_result
-        notifyApiResult(instance, request_result["return_code"], request_result["error_msg"])
-        if (target === "edit") {
-          instance.$refs.editDialog.reservation_form.content = res.data.reservation_content
-          instance.$refs.editDialog.dialogVisible = true
-        } else {
-          instance.$refs.previewDialog.reservationContent = res.data.reservation_content
-          instance.$refs.previewDialog.dialogVisible = true
-        }
-      })
     }
   },
 
