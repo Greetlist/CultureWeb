@@ -1,12 +1,12 @@
 <template>
   <el-dialog
-    title="预览文章"
+    title="预览活动"
     width="70%"
     :visible.sync="dialogVisible"
     :before-close="closeDialog"
   >
     <div class="ql-containter ql-snow">
-      <div class="ql-editor" v-html="articleContent"></div>
+      <div class="ql-editor" v-html="activityContent"></div>
     </div>
   </el-dialog>
 </template>
@@ -21,13 +21,13 @@ export default {
   name: "PreviewActivityDialog",
   data: function () {
     return {
-      articleContent: '',
+      activityContent: '',
       dialogVisible: false
     }
   },
   methods: {
     closeDialog() {
-      this.articleContent = ''
+      this.activityContent = ''
       this.dialogVisible = false
     }
   }
