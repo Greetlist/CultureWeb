@@ -12,6 +12,6 @@ func InitAdminReservationApiRouter(RouterGroup *gin.RouterGroup) {
     AdminUserRouterGroup.Use(middleware.AdminCookieChecker())
     AdminUserRouterGroup.POST("/getTotalReservation", controller.GetTotalReservation)
     AdminUserRouterGroup.POST("/submitReservation", controller.SubmitReservation)
-    AdminUserRouterGroup.POST("/modifyReservation", controller.ModifyReservation)
+    AdminUserRouterGroup.POST("/batchModifyReservation", controller.BatchModifyReservation)
     AdminUserRouterGroup.POST("/cancelReservation", controller.CancelReservation)
 }

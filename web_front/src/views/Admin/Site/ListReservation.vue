@@ -398,7 +398,7 @@ export default {
               'label': item.site_name
             }
             instance.totalSiteList.push(option)
-            instance.totalSiteMap[item.site_id] = item
+            instance.totalSiteMap["site_id"] = item
           }
           console.log(instance.totalSiteMap)
         }

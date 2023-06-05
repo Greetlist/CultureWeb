@@ -70,9 +70,10 @@ func (reservation *ReservationModelStruct) CancelReservation(reservations *[]int
     return nil
 }
 
-func (reservation *ReservationModelStruct) ModifyReservation(mList *[]ModifyReservationItem) *ErrorCode.ResponseError {
+func (reservation *ReservationModelStruct) ModifyReservation(mList *[]ModifyReservationItem, res *ModifyReservationResponse) *ErrorCode.ResponseError {
     tx := reservation.DB.Begin()
-    for _, item := range(*mList) {
+    need_rollback := false
+    for idx, item := range(*mList) {
         layout := "2006-01-02T15:04:05.000Z"
         startTime, _ := time.Parse(layout, item.StartTime)
         endTime, _ := time.Parse(layout, item.EndTime)
@@ -82,9 +83,13 @@ func (reservation *ReservationModelStruct) ModifyReservation(mList *[]ModifyRese
             schema.Reservation{Usage: strings.Trim(item.Usage, " "),  StartTime: startTime, EndTime: endTime})
         if update_res.Error != nil {
             LOG.Logger.Errorf("DB Error: %v", update_res.Error)
-            tx.Rollback()
-            return ErrorCode.ModifyReservationError
+            res.ConflictIndex = append(res.ConflictIndex, idx)
+            need_rollback = true
         }
+    }
+    if need_rollback {
+        tx.Rollback()
+        return ErrorCode.ModifyReservationError
     }
     if e := tx.Commit().Error; e != nil {
         LOG.Logger.Errorf("DB Error: %v", e)

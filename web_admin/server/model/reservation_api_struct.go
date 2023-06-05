@@ -36,4 +36,5 @@ type ModifyReservationRequest struct {
 }
 type ModifyReservationResponse struct {
     Result RequestResult `json:"request_result"`
+    ConflictIndex []int `json:"conflict_index"`
 }
