@@ -29,9 +29,12 @@
         ></el-input>
       </el-form-item>
     </el-form>
-    <el-button type="primary" @click="onLogin('loginForm')" class="login-button"
-      >登录</el-button
-    >
+    <el-button type="primary" @click="onLogin('loginForm')" class="login-button">
+      登录
+    </el-button>
+    <el-button type="primary" @click="toHome()" class="login-button">
+      Home
+    </el-button>
   </div>
 </template>
 
@@ -84,6 +87,9 @@ export default {
           return;
         }
       });
+    },
+    toHome() {
+      this.$router.replace("/home");
     }
   },
   created() {
@@ -110,12 +116,6 @@ export default {
   min-width: 100px;
   .login-button {
     width: 100%;
-  }
-  /deep/ {
-    .el-button--primary {
-      border: none;
-      color: #fff;
-    }
   }
 }
 </style>

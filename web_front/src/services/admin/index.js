@@ -107,8 +107,8 @@ export function submitReservation(params) {
 export function getTotalReservation(params) {
   return Post("/api/admin/getTotalReservation", params)
 }
-export function modifyReservation(params) {
-  return Post("/api/admin/modifyReservation", params)
+export function batchModifyReservation(params) {
+  return Post("/api/admin/batchModifyReservation", params)
 }
 export function cancelReservation(params) {
   return Post("/api/admin/cancelReservation", params)
@@ -149,6 +149,6 @@ export const adminApi = {
 
   submitReservation,
   getTotalReservation,
-  modifyReservation,
+  batchModifyReservation,
   cancelReservation
 };

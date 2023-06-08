@@ -88,8 +88,8 @@ func CancelReservation(c *gin.Context) {
 // @Produce json
 // @Param request_json body model.ModifyReservationRequest true "modify reservation list"
 // @Success 200 {object} model.ModifyReservationResponse
-// @Router /api/admin/modifyReservation [post]
-func ModifyReservation(c *gin.Context) {
+// @Router /api/admin/batchModifyReservation [post]
+func BatchModifyReservation(c *gin.Context) {
     var req model.ModifyReservationRequest
     var res model.ModifyReservationResponse
     if e := c.ShouldBindJSON(&req); e != nil {
@@ -99,7 +99,7 @@ func ModifyReservation(c *gin.Context) {
         return
     }
 
-    if e := model.ReservationModel.ModifyReservation(&req.ModifyList); e != nil {
+    if e := model.ReservationModel.ModifyReservation(&req.ModifyList, &res); e != nil {
         model.GenErrorReturn(ErrorCode.ModifyReservationError, &res.Result)
         c.JSON(ErrorCode.ModifyReservationError.HttpStatusCode, res)
         return
