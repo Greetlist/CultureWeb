@@ -1,6 +1,9 @@
 <template>
   <div>
-    Type: {{ type }}, Width: {{ width }}, Height: {{ height }}
+    <el-button v-if="type === 'mobile'" type="primary">{{ type }}</el-button>
+    <el-button v-else-if="type === 'pad'" type="info">{{ type }}</el-button>
+    <el-button v-else type="danger">{{ type }}</el-button>
+    Width: {{ width }}, Height: {{ height }}
   </div>
 </template>
 
@@ -29,7 +32,7 @@ export default {
       } else if (window.innerWidth >= 500 && window.innerWidth <= 1200) {
         this.type = "pad"
       } else {
-        this.type = "computer"
+        this.type = "screen"
       }
       this.width = window.innerWidth
       this.height = window.innerHeight
@@ -40,5 +43,6 @@ export default {
   }
 };
 </script>
+
 <style lang="scss" scoped>
 </style>
