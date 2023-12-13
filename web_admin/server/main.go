@@ -5,6 +5,7 @@ import (
     "fmt"
     "os"
     "github.com/Greetlist/CultureWeb/web_admin/server/server"
+    _ "github.com/shopspring/decimal"
 )
 
 var (
