@@ -23,7 +23,11 @@
         </el-select>
       </el-col>
       <el-col :span="2" :offset="12" style="padding-top: 15px">
-        <el-input v-model="searchKeyWord" placeholder="输入关键字"/>
+        <el-input
+          @keyup.enter.native="searchArticle"
+          v-model="searchKeyWord"
+          placeholder="输入关键字"
+        />
       </el-col>
       <el-col :span="2" style="padding-top: 15px">
         <el-button type="success" @click="searchArticle">搜索</el-button>
